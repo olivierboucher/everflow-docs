@@ -21,7 +21,7 @@
             "pages": [
               "api-reference/get-networksreportingclicks",
               "api-reference/get-networksreportingconversions",
-              "api-reference/post-networksreportingclickstream",
+              "api-reference/post-networksreportingclicksstream",
               "api-reference/post-networksreportingconversions",
               "api-reference/post-networksreportingentitytable"
             ]
