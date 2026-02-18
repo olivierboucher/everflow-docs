@@ -1,3 +1,15 @@
 ---
+title: Get Aggregated Reporting Data
 openapi: post /networks/reporting/entity/table
 ---
+
+The main endpoint on which you can pivot your data. Each request must contain :
+
+- `from` and `to` dates
+- `timezone_id` used for the request. Find all timezones <a href="{{< ref "timezones.md" >}}">here</a>
+- `currency_id` used for the reporting metrics
+- At least one column
+
+Optional query filters can then be added to the call.
+
+Please note that the endpoint is limited to 10,000 rows. If you hit the limit, response will include `"incomplete_results": true` in the payload. When that's the case, either reduce the number of columns or reduce the scope of the report you are requesting.

@@ -1,3 +1,19 @@
 ---
+title: Get Conversion Report
 openapi: post /networks/reporting/conversions
 ---
+
+The conversion report is the most flexible way to extract a list of conversions and post-conversion events. It allows you to fetch a list of conversions and post-conversion events while specifying filters to narrow down the scope of the set of data you are pulling.
+
+If you are only looking to pull a limited set of columns in your response, you must use the Conversion Report Export endpoint documented below.
+
+Each request must contain :
+
+- `from` and `to` dates (format can be `YYYY-mm-DD or YYYY-mm-DD hh:mm:ss`)
+- The `timezone_id` used for the request. Find all timezones <a href="{{< ref "timezones.md" >}}">here</a>
+- A `show_conversions` boolean value that determines whether base conversions are returned (`true` / `false`)
+- A `show_events` boolean value that determines whether post-conversion events are returned (`true` / `false`)
+
+Please note that the conversion report is limited to the prior 365 days only and are limited to a <strong>maximum duration of one year</strong>. Requests outside of this range will result in an error.
+
+Optional query filters can be added to the call.
