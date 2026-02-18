@@ -5,15 +5,15 @@ openapi: post /networks/reporting/clicks/stream
 
 This endpoint is used to extract a raw list of clicks. In the result of this request, each click will be one element / row. To avoid extremely slow response times and limit the size of the payload, this endpoint is limited in what it actually returns.
 
-The maximum number of clicks that can be returned by this endpoint is : <strong>10 000</strong>. If there are more than 10 000 clicks that match the request, they will not be returned.
+The maximum number of clicks that can be returned by this endpoint is : 10 000. If there are more than 10 000 clicks that match the request, they will not be returned.
 
 Requests are only allowed for a period of 14 days of less. Requesting a longer period will result in an error (`400 bad request`).
 
-This endpoint should not be used to extract every click from the platform. Requests to extracts large lists of clicks should be made via the <a href="https://helpdesk.everflow.io/customer/saved-scheduled-requested-reports#requested-reports" target="_blank">Request Report</a> feature.
+This endpoint should not be used to extract every click from the platform. Requests to extracts large lists of clicks should be made via the Request Report feature.
 
 Each request must contain :
 
 - `from` and `to` dates in `YYYY-mm-DD HH:MM:SS` format
-- `timezone_id` used for the request. Find all timezones <a href="{{< ref "timezones.md" >}}">here</a>
+- `timezone_id` used for the request.
 
 but can also contain optional query filters.
