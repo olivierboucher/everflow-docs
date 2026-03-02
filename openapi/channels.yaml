@@ -1,0 +1,141 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Channels
+  description: Endpoints for managing channels in the Everflow network.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Channels
+paths:
+  /networks/channels:
+    get:
+      summary: List Channels
+      description: >
+        Retrieve all channels for the network. Returns a paginated list.
+        Channels are used to organize offers into logical groups for reporting
+        and management purposes.
+      tags:
+        - Channels
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number (1-based).
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            default: 50
+          description: Number of results per page.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  channels:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        network_channel_id:
+                          type: integer
+                          description: Unique channel ID.
+                        network_id:
+                          type: integer
+                        name:
+                          type: string
+                          description: Channel name.
+                        status:
+                          type: string
+                          enum:
+                            - active
+                            - inactive
+                          description: Channel status.
+                        time_created:
+                          type: integer
+                          description: Unix timestamp of creation.
+                        time_saved:
+                          type: integer
+                          description: Unix timestamp of last update.
+                        relationship:
+                          type: object
+                          properties:
+                            offers_count:
+                              type: string
+                              description: Number of offers in this channel.
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+      security:
+        - API Key: []
+    post:
+      summary: Create Channel
+      description: >
+        Create a new channel. Channels are used to categorize and organize
+        offers for reporting and management.
+      tags:
+        - Channels
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              name: "Display Ads"
+              status: "active"
+            schema:
+              type: object
+              required:
+                - name
+                - status
+              properties:
+                name:
+                  type: string
+                  description: Channel name.
+                status:
+                  type: string
+                  enum:
+                    - active
+                    - inactive
+                  description: Channel status.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  network_channel_id:
+                    type: integer
+                    description: The newly created channel ID.
+                  network_id:
+                    type: integer
+                  name:
+                    type: string
+                  status:
+                    type: string
+                  time_created:
+                    type: integer
+                  time_saved:
+                    type: integer
+      security:
+        - API Key: []
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

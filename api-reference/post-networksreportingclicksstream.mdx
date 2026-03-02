@@ -1,6 +1,6 @@
 ---
 title: Get Click Report
-openapi: post /networks/reporting/clicks/stream
+openapi: /openapi/reporting.yaml post /networks/reporting/clicks/stream
 ---
 
 This endpoint is used to extract a raw list of clicks. In the result of this request, each click will be one element / row. To avoid extremely slow response times and limit the size of the payload, this endpoint is limited in what it actually returns.

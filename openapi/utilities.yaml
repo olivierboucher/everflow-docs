@@ -1,0 +1,128 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Utilities
+  description: Utility endpoints for managing labels and encoding IDs.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Labels
+  - name: Encoding
+paths:
+  /networks/labels:
+    get:
+      summary: List Labels
+      description: >
+        Retrieve all labels for the network. Labels can be applied to offers,
+        affiliates, advertisers, campaigns, and offer groups to organize and
+        filter resources.
+      tags:
+        - Labels
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    label:
+                      type: string
+                      description: The label name.
+                    advertiser_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: Advertiser IDs this label is applied to.
+                    affiliate_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: Affiliate IDs this label is applied to.
+                    campaign_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: Campaign IDs this label is applied to.
+                    offer_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: Offer IDs this label is applied to.
+                    offer_group_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: Offer group IDs this label is applied to.
+      security:
+        - API Key: []
+  /networks/encode:
+    post:
+      summary: Encode IDs
+      description: >
+        Encode numeric Everflow IDs into their encoded string representation.
+        Useful for constructing tracking links, signup URLs, and other contexts
+        where encoded IDs are required instead of raw numeric IDs.
+      tags:
+        - Encoding
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              type: "tracking_link_affiliate"
+              ids: [1, 2, 3]
+            schema:
+              type: object
+              required:
+                - type
+                - ids
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - tracking_link_affiliate
+                    - tracking_link_offer
+                    - smart_link_affiliate
+                    - smart_link_smart_link
+                    - signup_affiliate_employee
+                    - signup_advertiser_employee
+                    - signup_affiliate_affiliate
+                  description: >
+                    The encoding context. Determines how the IDs are encoded
+                    based on their intended use.
+                ids:
+                  type: array
+                  items:
+                    type: integer
+                  description: The numeric IDs to encode.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  values:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        decoded:
+                          type: integer
+                          description: The original numeric ID.
+                        encoded:
+                          type: string
+                          description: The encoded string representation.
+      security:
+        - API Key: []
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

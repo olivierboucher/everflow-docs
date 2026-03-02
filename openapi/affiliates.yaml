@@ -1,0 +1,318 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Affiliates
+  description: >
+    Affiliate management endpoints for the Everflow partner marketing platform.
+    Search and retrieve affiliate details.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Affiliates
+    description: Endpoints for searching and managing affiliates.
+paths:
+  /networks/affiliatestable:
+    post:
+      summary: Search Affiliates
+      description: >
+        Search and filter affiliates with text search and structured filters.
+        Returns a paginated list of affiliates.
+        Supports the `relationship` query parameter with values: signup, users.
+      tags:
+        - Affiliates
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number (1-based).
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            default: 50
+            maximum: 2000
+          description: Number of results per page.
+        - in: query
+          name: relationship
+          schema:
+            type: string
+            enum:
+              - signup
+              - users
+          description: Include related data.
+      requestBody:
+        content:
+          application/json:
+            example:
+              search_terms:
+                - search_type: "name"
+                  value: ""
+              filters:
+                account_status: "active"
+            schema:
+              type: object
+              properties:
+                search_terms:
+                  type: array
+                  description: Text search filters.
+                  items:
+                    type: object
+                    properties:
+                      search_type:
+                        type: string
+                        enum:
+                          - name
+                        description: The field to search on.
+                      value:
+                        type: string
+                        description: The search term.
+                filters:
+                  type: object
+                  description: Structured filters to narrow results.
+                  properties:
+                    account_status:
+                      type: string
+                      enum:
+                        - active
+                        - inactive
+                        - pending
+                        - suspended
+                      description: Filter by account status.
+                    account_manager_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: Filter by account manager IDs.
+                    network_account_executives_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: Filter by account executive IDs.
+                    billing_frequency:
+                      type: string
+                      enum:
+                        - weekly
+                        - bimonthly
+                        - monthly
+                        - two_months
+                        - quarterly
+                        - manual
+                        - other
+                      description: Filter by billing frequency.
+                    payment_type:
+                      type: string
+                      enum:
+                        - none
+                        - pay
+                        - paypal
+                        - check
+                        - wire
+                        - direct_deposit
+                        - tipalti
+                        - paxum
+                        - veem
+                        - payoneer
+                        - bitcoin
+                        - webmoney
+                        - capitalist
+                        - transferwise
+                        - gift_card
+                        - masspay
+                        - skrill
+                      description: Filter by payment type.
+                    labels:
+                      type: array
+                      items:
+                        type: string
+                      description: Filter by label names.
+                    ran_traffic_in_last_hours:
+                      type: integer
+                      description: Only return affiliates that had traffic within the last N hours.
+                    network_tracking_domain_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: Filter by tracking domain IDs.
+                    country_codes:
+                      type: array
+                      items:
+                        type: string
+                      description: Filter by country codes (e.g. US, CA).
+                    region_codes:
+                      type: array
+                      items:
+                        type: string
+                      description: Filter by region codes.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  affiliates:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        network_affiliate_id:
+                          type: integer
+                          description: Unique affiliate ID.
+                        network_id:
+                          type: integer
+                        name:
+                          type: string
+                          description: Affiliate name.
+                        account_status:
+                          type: string
+                          enum:
+                            - active
+                            - inactive
+                            - pending
+                            - suspended
+                        network_employee_id:
+                          type: integer
+                          description: Account manager ID.
+                        internal_notes:
+                          type: string
+                        default_currency_id:
+                          type: string
+                        is_contact_address_enabled:
+                          type: boolean
+                        enable_media_cost_tracking_links:
+                          type: boolean
+                        referrer_id:
+                          type: integer
+                        labels:
+                          type: array
+                          items:
+                            type: string
+                        time_created:
+                          type: integer
+                        time_saved:
+                          type: integer
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+      security:
+        - API Key: []
+  /networks/affiliates/{affiliateId}:
+    get:
+      summary: Get Affiliate by ID
+      description: >
+        Retrieve a single affiliate by its ID.
+        Use the `relationship` query parameter to include related data such as
+        users, signup, billing, coupon_codes, visibility, reporting, and more.
+      tags:
+        - Affiliates
+      parameters:
+        - in: path
+          name: affiliateId
+          required: true
+          schema:
+            type: integer
+          description: The unique affiliate ID.
+        - in: query
+          name: relationship
+          schema:
+            type: string
+            enum:
+              - reporting
+              - billing
+              - coupon_codes
+              - users
+              - audits
+              - visibility
+              - signup
+              - api
+              - traffic_source
+              - referral_link
+              - referrer
+              - referral
+              - supply_partner
+          description: Include related data. Repeat for multiple relationships.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  network_affiliate_id:
+                    type: integer
+                    description: Unique affiliate ID.
+                  network_id:
+                    type: integer
+                  name:
+                    type: string
+                    description: Affiliate name.
+                  account_status:
+                    type: string
+                    enum:
+                      - active
+                      - inactive
+                      - pending
+                      - suspended
+                  network_employee_id:
+                    type: integer
+                    description: Account manager employee ID.
+                  internal_notes:
+                    type: string
+                  default_currency_id:
+                    type: string
+                  enable_media_cost_tracking_links:
+                    type: boolean
+                  is_contact_address_enabled:
+                    type: boolean
+                  network_affiliate_tier_id:
+                    type: integer
+                  referrer_id:
+                    type: integer
+                  contact_address:
+                    type: object
+                    properties:
+                      address_1:
+                        type: string
+                      address_2:
+                        type: string
+                      city:
+                        type: string
+                      region_code:
+                        type: string
+                      country_code:
+                        type: string
+                      zip_postal_code:
+                        type: string
+                  labels:
+                    type: array
+                    items:
+                      type: string
+                  time_created:
+                    type: integer
+                  time_saved:
+                    type: integer
+                  relationship:
+                    type: object
+                    description: Related data (only present when requested via query parameter).
+        "404":
+          description: Affiliate not found.
+      security:
+        - API Key: []
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

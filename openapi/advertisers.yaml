@@ -1,0 +1,140 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Advertisers
+  description: Endpoints for managing advertisers in the Everflow network.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Advertisers
+paths:
+  /networks/advertisers/{advertiserId}:
+    get:
+      summary: Get Advertiser by ID
+      description: >
+        Retrieve a single advertiser by its ID.
+        Use the `relationship` query parameter to include related data such as
+        labels, billing, integrations, demand_partner, reporting, and api.
+      tags:
+        - Advertisers
+      parameters:
+        - in: path
+          name: advertiserId
+          required: true
+          schema:
+            type: integer
+          description: The unique advertiser ID.
+        - in: query
+          name: relationship
+          schema:
+            type: string
+            enum:
+              - reporting
+              - labels
+              - demand_partner
+              - billing
+              - integrations
+              - api
+          description: Include related data. Repeat for multiple relationships.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  network_advertiser_id:
+                    type: integer
+                    description: Unique advertiser ID.
+                  network_id:
+                    type: integer
+                  name:
+                    type: string
+                    description: Advertiser name.
+                  account_status:
+                    type: string
+                    enum:
+                      - active
+                      - inactive
+                      - pending
+                      - suspended
+                  network_employee_id:
+                    type: integer
+                    description: Account manager employee ID.
+                  sales_manager_id:
+                    type: integer
+                  internal_notes:
+                    type: string
+                  default_currency_id:
+                    type: string
+                  platform_name:
+                    type: string
+                  platform_url:
+                    type: string
+                  platform_username:
+                    type: string
+                  reporting_timezone_id:
+                    type: integer
+                  attribution_method:
+                    type: string
+                    enum:
+                      - first_touch
+                      - last_touch
+                  email_attribution_method:
+                    type: string
+                    enum:
+                      - last_affiliate_attribution
+                      - first_affiliate_attribution
+                  attribution_priority:
+                    type: string
+                    enum:
+                      - click
+                      - coupon_code
+                  accounting_contact_email:
+                    type: string
+                  verification_token:
+                    type: string
+                  offer_id_macro:
+                    type: string
+                  affiliate_id_macro:
+                    type: string
+                  is_contact_address_enabled:
+                    type: boolean
+                  contact_address:
+                    type: object
+                    properties:
+                      address_1:
+                        type: string
+                      address_2:
+                        type: string
+                      city:
+                        type: string
+                      region_code:
+                        type: string
+                      country_code:
+                        type: string
+                      zip_postal_code:
+                        type: string
+                  labels:
+                    type: array
+                    items:
+                      type: string
+                  time_created:
+                    type: integer
+                  time_saved:
+                    type: integer
+                  relationship:
+                    type: object
+                    description: Related data (only present when requested via query parameter).
+        "404":
+          description: Advertiser not found.
+      security:
+        - API Key: []
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

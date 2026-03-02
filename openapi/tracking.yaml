@@ -1,0 +1,94 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Tracking Links
+  description: Endpoints for generating tracking links for offers and affiliates.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Tracking Links
+paths:
+  /networks/tracking/offers/clicks:
+    post:
+      summary: Generate Tracking Link
+      description: >
+        Generate a click tracking link for an offer and affiliate pair.
+        The affiliate must have visibility on the offer and be allowed to run it.
+        Returns a ready-to-use tracking URL.
+      tags:
+        - Tracking Links
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              network_offer_id: 1
+              network_affiliate_id: 1
+            schema:
+              type: object
+              required:
+                - network_offer_id
+                - network_affiliate_id
+              properties:
+                network_offer_id:
+                  type: integer
+                  description: The offer to generate the tracking link for.
+                network_affiliate_id:
+                  type: integer
+                  description: The affiliate to associate with the link.
+                network_tracking_domain_id:
+                  type: integer
+                  description: Override the default tracking domain.
+                network_offer_url_id:
+                  type: integer
+                  description: Use a specific offer URL (must belong to the specified offer).
+                creative_id:
+                  type: integer
+                  description: Associate a creative with the link (must belong to the specified offer).
+                network_traffic_source_id:
+                  type: integer
+                  description: Traffic source ID. Ignored if the affiliate has a default traffic source.
+                source_id:
+                  type: string
+                  description: Custom source identifier.
+                sub1:
+                  type: string
+                  description: Sub-parameter 1 for tracking.
+                sub2:
+                  type: string
+                  description: Sub-parameter 2 for tracking.
+                sub3:
+                  type: string
+                  description: Sub-parameter 3 for tracking.
+                sub4:
+                  type: string
+                  description: Sub-parameter 4 for tracking.
+                sub5:
+                  type: string
+                  description: Sub-parameter 5 for tracking.
+                is_encrypt_parameters:
+                  type: boolean
+                  description: Whether to encrypt the URL parameters.
+                is_redirect_link:
+                  type: boolean
+                  description: Override the direct linking setting for this link.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    description: The generated tracking link URL.
+      security:
+        - API Key: []
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

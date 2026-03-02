@@ -1,0 +1,492 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Offers
+  description: >
+    Offer management endpoints for the Everflow partner marketing platform.
+    Search, retrieve, and manage offers.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Offers
+    description: Endpoints for searching and managing offers.
+paths:
+  /networks/offerstable:
+    post:
+      summary: Search Offers
+      description: >
+        Search and filter offers with text search and structured filters.
+        Returns a paginated list of offers matching the criteria.
+        Use query parameters `page` and `page_size` to control pagination.
+        Supports the `relationship` query parameter with values: visibility, ruleset, tracking_domain, urls, affiliate_tier, account_manager, sales_manager, dmo.
+      tags:
+        - Offers
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number (1-based).
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            default: 50
+            maximum: 2000
+          description: Number of results per page (max 2000).
+        - in: query
+          name: relationship
+          schema:
+            type: string
+            enum:
+              - visibility
+              - ruleset
+              - tracking_domain
+              - urls
+              - affiliate_tier
+              - account_manager
+              - sales_manager
+              - dmo
+          description: Include related data in the response. Repeat for multiple relationships.
+      requestBody:
+        content:
+          application/json:
+            example:
+              search_terms:
+                - search_type: "name"
+                  value: ""
+              filters:
+                offer_status: "active"
+            schema:
+              properties:
+                search_terms:
+                  type: array
+                  description: Text search filters. Each entry searches a specific field.
+                  items:
+                    type: object
+                    properties:
+                      search_type:
+                        type: string
+                        enum:
+                          - name
+                          - encoded_value
+                          - advertiser_name
+                        description: The field to search on.
+                      value:
+                        type: string
+                        description: The search term.
+                filters:
+                  type: object
+                  description: Structured filters to narrow results.
+                  properties:
+                    network_advertiser_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: Filter by advertiser IDs.
+                    network_offer_group_id:
+                      type: integer
+                      description: Filter by offer group ID.
+                    network_category_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: Filter by category IDs.
+                    offer_status:
+                      type: string
+                      enum:
+                        - active
+                        - paused
+                        - pending
+                        - deleted
+                      description: Filter by offer status.
+                    visibilities:
+                      type: array
+                      items:
+                        type: string
+                        enum:
+                          - public
+                          - require_approval
+                          - private
+                      description: Filter by visibility setting.
+                    labels:
+                      type: array
+                      items:
+                        type: string
+                      description: Filter by label names.
+                    business_unit_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: Filter by business unit IDs.
+                    account_manager_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: Filter by account manager IDs.
+                    sales_manager_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: Filter by sales manager IDs.
+                    network_tracking_domain_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: Filter by tracking domain IDs.
+                    network_channel_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: Filter by channel IDs.
+                    revenue_types:
+                      type: array
+                      items:
+                        type: string
+                      description: Filter by revenue type.
+                    payout_types:
+                      type: array
+                      items:
+                        type: string
+                      description: Filter by payout type.
+                    country_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: Filter by targeted country IDs.
+                    platforms_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: Filter by targeted platform IDs.
+                    device_types_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: Filter by targeted device type IDs.
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  offers:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        network_offer_id:
+                          type: integer
+                          description: Unique offer ID.
+                        network_id:
+                          type: integer
+                          description: Network ID.
+                        network_advertiser_id:
+                          type: integer
+                          description: Advertiser that owns this offer.
+                        network_offer_group_id:
+                          type: integer
+                          description: Offer group this offer belongs to.
+                        name:
+                          type: string
+                          description: Offer name.
+                        offer_status:
+                          type: string
+                          enum:
+                            - active
+                            - paused
+                            - pending
+                            - deleted
+                          description: Current status of the offer.
+                        thumbnail_url:
+                          type: string
+                          description: Offer thumbnail image URL.
+                        visibility:
+                          type: string
+                          enum:
+                            - public
+                            - require_approval
+                            - private
+                          description: Offer visibility setting.
+                        currency_id:
+                          type: string
+                          description: Currency used for this offer.
+                        destination_url:
+                          type: string
+                          description: The destination URL where traffic is sent.
+                        preview_url:
+                          type: string
+                          description: Preview URL for the offer landing page.
+                        network_category_id:
+                          type: integer
+                          description: Category ID.
+                        conversion_method:
+                          type: string
+                          description: How conversions are tracked.
+                        payout:
+                          type: object
+                          description: Payout configuration.
+                          properties:
+                            payout_type:
+                              type: string
+                            payout_amount:
+                              type: number
+                        revenue:
+                          type: object
+                          description: Revenue configuration.
+                          properties:
+                            revenue_type:
+                              type: string
+                            revenue_amount:
+                              type: number
+                        is_caps_enabled:
+                          type: boolean
+                          description: Whether caps are enabled.
+                        daily_conversion_cap:
+                          type: integer
+                        weekly_conversion_cap:
+                          type: integer
+                        monthly_conversion_cap:
+                          type: integer
+                        global_conversion_cap:
+                          type: integer
+                        daily_click_cap:
+                          type: integer
+                        weekly_click_cap:
+                          type: integer
+                        monthly_click_cap:
+                          type: integer
+                        global_click_cap:
+                          type: integer
+                        time_created:
+                          type: integer
+                          description: Unix timestamp of creation.
+                        time_saved:
+                          type: integer
+                          description: Unix timestamp of last update.
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+      security:
+        - API Key: []
+  /networks/offers/{offerId}:
+    get:
+      summary: Get Offer by ID
+      description: >
+        Retrieve a single offer by its ID with full configuration details.
+        Use the `relationship` query parameter to include related data such as
+        advertiser, visibility, payout_revenue, urls, ruleset, targeting, and more.
+      tags:
+        - Offers
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: integer
+          description: The unique offer ID.
+        - in: query
+          name: relationship
+          schema:
+            type: string
+            enum:
+              - advertiser
+              - offer_group
+              - visibility
+              - payout_revenue
+              - custom_cap_settings
+              - custom_scrub_rate_settings
+              - custom_payout_revenue_settings
+              - custom_creative_settings
+              - redirects
+              - traffic_filters
+              - targeting
+              - files
+              - audits
+              - source_name
+              - urls
+              - integrations
+              - campaigns
+              - reporting
+          description: Include related data. Repeat for multiple relationships.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  network_offer_id:
+                    type: integer
+                    description: Unique offer ID.
+                  network_id:
+                    type: integer
+                  network_advertiser_id:
+                    type: integer
+                    description: Advertiser that owns this offer.
+                  network_offer_group_id:
+                    type: integer
+                    description: Offer group ID.
+                  name:
+                    type: string
+                    description: Offer name.
+                  offer_status:
+                    type: string
+                    enum:
+                      - active
+                      - paused
+                      - pending
+                      - deleted
+                  thumbnail_url:
+                    type: string
+                  visibility:
+                    type: string
+                    enum:
+                      - public
+                      - require_approval
+                      - private
+                  currency_id:
+                    type: string
+                  destination_url:
+                    type: string
+                    description: Destination URL for the offer.
+                  server_side_url:
+                    type: string
+                    description: Server-side postback URL.
+                  preview_url:
+                    type: string
+                  html_description:
+                    type: string
+                    description: HTML description of the offer.
+                  internal_notes:
+                    type: string
+                    description: Internal notes (not visible to affiliates).
+                  network_category_id:
+                    type: integer
+                  project_id:
+                    type: string
+                  date_live_until:
+                    type: string
+                    description: Offer expiration date (YYYY-MM-DD).
+                  conversion_method:
+                    type: string
+                    enum:
+                      - server_postback
+                      - http_image_pixel
+                      - https_image_pixel
+                      - http_iframe_pixel
+                      - https_iframe_pixel
+                      - javascript
+                      - cookie_based
+                  redirect_mode:
+                    type: string
+                    enum:
+                      - standard
+                      - single_meta_refresh
+                      - double_meta_refresh
+                  session_definition:
+                    type: string
+                    enum:
+                      - cookie
+                      - ip
+                      - ip_user_agent
+                      - google_ad_id
+                      - idfa
+                  session_duration:
+                    type: integer
+                    description: Session duration in hours.
+                  attribution_method:
+                    type: string
+                    enum:
+                      - first_touch
+                      - last_touch
+                  is_caps_enabled:
+                    type: boolean
+                  daily_conversion_cap:
+                    type: integer
+                  weekly_conversion_cap:
+                    type: integer
+                  monthly_conversion_cap:
+                    type: integer
+                  global_conversion_cap:
+                    type: integer
+                  daily_payout_cap:
+                    type: integer
+                  weekly_payout_cap:
+                    type: integer
+                  monthly_payout_cap:
+                    type: integer
+                  global_payout_cap:
+                    type: integer
+                  daily_revenue_cap:
+                    type: integer
+                  weekly_revenue_cap:
+                    type: integer
+                  monthly_revenue_cap:
+                    type: integer
+                  global_revenue_cap:
+                    type: integer
+                  daily_click_cap:
+                    type: integer
+                  weekly_click_cap:
+                    type: integer
+                  monthly_click_cap:
+                    type: integer
+                  global_click_cap:
+                    type: integer
+                  is_use_scrub_rate:
+                    type: boolean
+                  scrub_rate_percentage:
+                    type: integer
+                  is_duplicate_filter_enabled:
+                    type: boolean
+                  is_block_already_converted:
+                    type: boolean
+                  is_use_secure_link:
+                    type: boolean
+                  is_allow_deep_link:
+                    type: boolean
+                  is_session_tracking_enabled:
+                    type: boolean
+                  is_whitelist_check_enabled:
+                    type: boolean
+                  network_tracking_domain_id:
+                    type: integer
+                  caps_timezone_id:
+                    type: integer
+                  app_identifier:
+                    type: string
+                  labels:
+                    type: array
+                    items:
+                      type: string
+                  time_created:
+                    type: integer
+                  time_saved:
+                    type: integer
+                  relationship:
+                    type: object
+                    description: Related data (only present when requested via query parameter).
+        "404":
+          description: Offer not found.
+      security:
+        - API Key: []
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey
