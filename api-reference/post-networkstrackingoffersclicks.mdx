@@ -1,0 +1,15 @@
+---
+title: Generate Tracking Link
+openapi: post /networks/tracking/offers/clicks
+---
+
+Generate a click tracking link for a specific offer and affiliate pair. The affiliate must have visibility on the offer and be allowed to run it.
+
+Returns a ready-to-use tracking URL. Optionally customize the link with a specific tracking domain, offer URL, creative, traffic source, and sub-parameters.
+
+**Requirements:**
+- `network_offer_id` and `network_affiliate_id` are required
+- The affiliate must have visibility on the offer
+- If `network_offer_url_id` is specified, it must belong to the given offer
+- If `creative_id` is specified, it must belong to the given offer
+- If the affiliate has a default traffic source, `network_traffic_source_id` is ignored

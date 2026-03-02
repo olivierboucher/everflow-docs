@@ -1,0 +1,13 @@
+---
+title: Search Offers
+openapi: post /networks/offerstable
+---
+
+The primary endpoint for finding offers. Supports text search by offer name, encoded value, or advertiser name, along with structured filters for status, visibility, labels, and more.
+
+Returns a paginated list of offers. Use `page` and `page_size` query parameters to control pagination. Include the `relationship` query parameter to fetch related data like visibility settings, rulesets, or URLs alongside each offer.
+
+**Common use cases:**
+- List all active offers: set `filters.offer_status` to `active`
+- Find offers by name: add a `search_terms` entry with `search_type: "name"`
+- Get offers for a specific advertiser: use `filters.network_advertiser_ids`

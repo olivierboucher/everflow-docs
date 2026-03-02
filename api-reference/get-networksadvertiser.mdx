@@ -1,0 +1,14 @@
+---
+title: Get Advertiser by ID
+openapi: get /networks/advertisers/{advertiserId}
+---
+
+Retrieve the full details for a single advertiser by its ID, including platform info, attribution settings, contact address, and labels.
+
+Use the `relationship` query parameter to include related data. You can repeat it for multiple relationships:
+
+```
+GET /v1/networks/advertisers/10?relationship=labels&relationship=billing
+```
+
+**Available relationships:** `reporting`, `labels`, `demand_partner`, `billing`, `integrations`, `api`

@@ -1,0 +1,20 @@
+---
+title: "Errors"
+description: "HTTP status codes and error handling for the Everflow API."
+---
+
+The Everflow API uses conventional HTTP status codes. Codes in the `2xx` range indicate success. Codes in the `4xx` range indicate a client error. Codes in the `5xx` range indicate a server-side issue.
+
+All error responses are returned as JSON.
+
+## Status codes
+
+| Code | Meaning | Description |
+|------|---------|-------------|
+| `200` | OK | The request succeeded. |
+| `400` | Bad Request | The request could not be processed, usually due to missing or malformed parameters. |
+| `401` | Unauthorized | No valid API key was provided. |
+| `403` | Forbidden / Out Of Realm | The API key does not grant access to the requested resource. This often means the wrong API type is being used (e.g. an Affiliate key on a Network endpoint). |
+| `404` | Not Found | The requested resource does not exist. |
+| `429` | Too Many Requests | You have exceeded the rate limit. See [Rate Limiting](/user-guide/rate-limiting). |
+| `500` | Internal Server Error | Something went wrong on the Everflow side. |

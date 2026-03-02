@@ -1,0 +1,134 @@
+---
+title: "Rulesets"
+description: "How to configure offer targeting rules (geo, device, connection, day parting, IP) in the Everflow API."
+---
+
+Rulesets define targeting restrictions for offers. They control which traffic is accepted based on geography, device characteristics, connection type, scheduling, and IP addresses.
+
+## Rule categories
+
+**Geotargeting:** `countries`, `regions`, `cities`, `dmas`, `postal_codes`, `mobile_carriers`
+
+**Device:** `browsers`, `device_types`, `brands`, `os_versions`, `platforms`
+
+**Connection:** `isp`, `connection_types`
+
+**Other:** `ips`, `languages`, `is_block_proxy`, day parting settings
+
+## Common fields
+
+Every rule entry includes:
+
+| Field | Values | Description |
+|-------|--------|-------------|
+| `targeting_type` | `include`, `exclude` | Whether to allow or block matching traffic. |
+| `match_type` | `exact`, `minimum`, `maximum`, `range` | How the value is compared. |
+
+### Match type support
+
+| Match type | Supported by |
+|------------|-------------|
+| `exact` | countries, regions, cities, dmas, postal_codes, mobile_carriers, browsers, device_types, brands, platforms, ips |
+| `minimum` | os_versions |
+| `maximum` | os_versions |
+| `range` | ips |
+
+## Geotargeting precedence
+
+When combining geotargeting rules, more specific rules override less specific ones:
+
+**City > DMA > ZIP/Postal Code > Region > Country**
+
+For example, if you exclude the US but include New York City, traffic from New York City is still accepted.
+
+## Examples
+
+### Empty ruleset (all traffic allowed)
+
+```json
+{ "ruleset": {} }
+```
+
+### Single country targeting
+
+```json
+{
+  "ruleset": {
+    "countries": [
+      { "country_id": 227, "match_type": "exact", "targeting_type": "include" }
+    ]
+  }
+}
+```
+
+### OS version range (iOS 12.0+)
+
+```json
+{
+  "ruleset": {
+    "os_versions": [
+      {
+        "os_version_id": 34,
+        "match_type": "minimum",
+        "targeting_type": "include",
+        "platform_id": 2
+      }
+    ]
+  }
+}
+```
+
+### IP exclusion range
+
+```json
+{
+  "ruleset": {
+    "ips": [
+      {
+        "match_type": "range",
+        "targeting_type": "exclude",
+        "ip_from": "10.11.12.13",
+        "ip_to": "10.11.12.100"
+      }
+    ]
+  }
+}
+```
+
+## Day parting
+
+Control when an offer accepts traffic by time of day and day of week.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `is_use_day_parting` | boolean | Enable day parting. |
+| `day_parting_apply_to` | string | `user_timezone` or `selected_timezone`. |
+| `day_parting_timezone_id` | integer | Timezone ID (when using `selected_timezone`). |
+| `days_parting` | array | Time windows per day. |
+
+Each entry in `days_parting`:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `day_of_week` | integer | 0 = Sunday, 1 = Monday, ..., 6 = Saturday. |
+| `start_hour` | integer | Start hour (0–23). |
+| `start_minute` | integer | Start minute (0–59). |
+| `end_hour` | integer | End hour (0–23). |
+| `end_minute` | integer | End minute (0–59). |
+
+### Day parting example (Mon–Thu, 9AM–6PM user timezone)
+
+```json
+{
+  "ruleset": {
+    "is_use_day_parting": true,
+    "day_parting_apply_to": "user_timezone",
+    "days_parting": [
+      { "day_of_week": 1, "start_hour": 9, "end_hour": 18 },
+      { "day_of_week": 2, "start_hour": 9, "end_hour": 18 },
+      { "day_of_week": 3, "start_hour": 9, "end_hour": 18 },
+      { "day_of_week": 4, "start_hour": 9, "end_hour": 18 }
+    ]
+  }
+}
+```

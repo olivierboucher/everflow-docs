@@ -1,0 +1,52 @@
+---
+title: "Rate Limiting"
+description: "Understand the Everflow API rate limits, concurrency caps, and BigQuery quotas."
+---
+
+The Everflow API enforces rate limits to ensure platform stability. Limits are shared among all users within the same organization.
+
+## Request quotas
+
+| User type | Requests per second |
+|-----------|---------------------|
+| Network | 20 |
+| Affiliate | 5 |
+| Advertiser | 5 |
+| Partner | 5 |
+
+Rate limits reset every **30 seconds**. Every response includes headers indicating your current quota:
+
+| Header | Description |
+|--------|-------------|
+| `X-RateLimit-Limit` | Total requests allowed per 30-second window |
+| `X-RateLimit-Remaining` | Requests still available in the current window |
+
+Once you exhaust your limit, all requests return a **429 Too Many Requests** error until the window resets.
+
+## Concurrent request limits
+
+The `/v1/networks/reporting/*` endpoints allow a maximum of **10 concurrent requests**. Additional concurrent requests will return an error. Wait for in-flight requests to complete before sending new ones.
+
+## BigQuery quotas
+
+Reporting requests that include certain columns trigger a BigQuery query instead of a standard database lookup. These have separate rate limits:
+
+| User type | Queries per hour |
+|-----------|------------------|
+| Network | 1,000 |
+| Affiliate | 1,000 |
+| Advertiser | 1,000 |
+
+The hourly limit is enforced on a rolling 60-minute window (not aligned to clock hours).
+
+### Columns that trigger BigQuery
+
+A reporting request triggers a BigQuery call when it includes at least one of these columns:
+
+**Geolocation:** Country, Region, City, DMA, Carrier, ISP, Connection Type, Postal Code, Is Proxy
+
+**Device:** Platform, OS Version, Device Type, Browser, Device Brand, Language, Device Model, Device Make
+
+**Offer:** Offer Group, Offer URL, Event Name, Advertiser Event Name, Payout Type, Payout Amount, Revenue Type, Revenue Amount, Custom Payout Revenue
+
+**Miscellaneous:** Adv1–Adv5, Sub1–Sub5, Source ID, Project ID, Referrer, Coupon Code, Tracking Domain, Order ID, Attribution Method, Account Referred By

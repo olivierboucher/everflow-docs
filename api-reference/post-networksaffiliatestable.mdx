@@ -1,0 +1,14 @@
+---
+title: Search Affiliates
+openapi: post /networks/affiliatestable
+---
+
+Search and filter affiliates with text search and structured filters. Returns a paginated list of affiliates matching the criteria.
+
+Use `page` and `page_size` query parameters for pagination. Include the `relationship` query parameter to fetch related data like signup settings or users.
+
+**Common use cases:**
+- List all active affiliates: set `filters.account_status` to `active`
+- Find affiliates by name: add a `search_terms` entry with `search_type: "name"`
+- Find affiliates with recent traffic: use `filters.ran_traffic_in_last_hours`
+- Filter by payment type or billing frequency for finance-related queries

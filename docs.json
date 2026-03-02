@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Everflow API",
   "colors": {
     "primary": "#16A34A",
     "light": "#07C983",
@@ -14,16 +14,83 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "API reference",
+        "tab": "User Guide",
         "groups": [
           {
-            "group": "Endpoints",
+            "group": "Getting Started",
             "pages": [
-              "api-reference/get-networksreportingclicks",
-              "api-reference/get-networksreportingconversions",
-              "api-reference/post-networksreportingclicksstream",
+              "user-guide/authentication",
+              "user-guide/rate-limiting",
+              "user-guide/errors"
+            ]
+          },
+          {
+            "group": "Working with Data",
+            "pages": [
+              "user-guide/paging",
+              "user-guide/api-filters",
+              "user-guide/relationships",
+              "user-guide/rulesets"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Offers",
+            "pages": [
+              "api-reference/post-networksofferstable",
+              "api-reference/get-networksoffer"
+            ]
+          },
+          {
+            "group": "Affiliates",
+            "pages": [
+              "api-reference/post-networksaffiliatestable",
+              "api-reference/get-networksaffiliate"
+            ]
+          },
+          {
+            "group": "Advertisers",
+            "pages": [
+              "api-reference/get-networksadvertiser"
+            ]
+          },
+          {
+            "group": "Tracking Links",
+            "pages": [
+              "api-reference/post-networkstrackingoffersclicks"
+            ]
+          },
+          {
+            "group": "Channels",
+            "pages": [
+              "api-reference/get-networkschannels",
+              "api-reference/post-networkschannels"
+            ]
+          },
+          {
+            "group": "Labels",
+            "pages": [
+              "api-reference/get-networkslabels"
+            ]
+          },
+          {
+            "group": "Encoding",
+            "pages": [
+              "api-reference/post-networksencode"
+            ]
+          },
+          {
+            "group": "Reporting",
+            "pages": [
+              "api-reference/post-networksreportingentitytable",
               "api-reference/post-networksreportingconversions",
-              "api-reference/post-networksreportingentitytable"
+              "api-reference/post-networksreportingclicksstream",
+              "api-reference/get-networksreportingclicks",
+              "api-reference/get-networksreportingconversions"
             ]
           }
         ]
@@ -39,7 +106,7 @@
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "mailto:support@everflow.io"
       }
     ]
   },
@@ -57,9 +124,8 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "x": "https://x.com/everflowio",
+      "linkedin": "https://linkedin.com/company/everflow-io"
     }
   }
 }

@@ -1,0 +1,39 @@
+---
+title: "API Filters"
+description: "How to filter results on Everflow API list endpoints using query parameters."
+---
+
+Certain list endpoints support filtering via the `filter` query parameter. Filter availability depends on the specific endpoint.
+
+## Syntax
+
+```
+?filter=<field><operator><value>
+```
+
+| Part | Description |
+|------|-------------|
+| `field` | The field to filter on (varies by endpoint). |
+| `operator` | The comparison operator. |
+| `value` | The value to compare against. |
+
+## Operators
+
+Since operators are not URL-safe, use the encoded values unless your HTTP client handles URL encoding automatically.
+
+| Operator | Symbol | URL-encoded |
+|----------|--------|-------------|
+| Equals | `=` | `%3D` |
+| Greater than | `>` | `%3E` |
+| Less than | `<` | `%3C` |
+
+## Example
+
+Filter affiliates to only return those with an active account status:
+
+```bash
+curl -H "X-Eflow-API-Key: <your-api-key>" \
+  "https://api.eflow.team/v1/networks/affiliates?filter=account_status%3Dactive"
+```
+
+Multiple filters can be combined by repeating the `filter` parameter.

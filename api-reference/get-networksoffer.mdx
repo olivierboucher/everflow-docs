@@ -1,0 +1,14 @@
+---
+title: Get Offer by ID
+openapi: get /networks/offers/{offerId}
+---
+
+Retrieve the full configuration for a single offer by its ID. The response includes all offer settings such as destination URL, caps, conversion method, tracking configuration, and more.
+
+Use the `relationship` query parameter to include related data. You can repeat it for multiple relationships:
+
+```
+GET /v1/networks/offers/123?relationship=payout_revenue&relationship=urls&relationship=visibility
+```
+
+**Available relationships:** `advertiser`, `offer_group`, `visibility`, `payout_revenue`, `custom_cap_settings`, `custom_scrub_rate_settings`, `custom_payout_revenue_settings`, `custom_creative_settings`, `redirects`, `traffic_filters`, `targeting`, `files`, `audits`, `source_name`, `urls`, `integrations`, `campaigns`, `reporting`

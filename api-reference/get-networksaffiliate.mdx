@@ -1,0 +1,14 @@
+---
+title: Get Affiliate by ID
+openapi: get /networks/affiliates/{affiliateId}
+---
+
+Retrieve the full details for a single affiliate by its ID, including contact information, account settings, and labels.
+
+Use the `relationship` query parameter to include related data. You can repeat it for multiple relationships:
+
+```
+GET /v1/networks/affiliates/5?relationship=users&relationship=billing&relationship=signup
+```
+
+**Available relationships:** `reporting`, `billing`, `coupon_codes`, `users`, `audits`, `visibility`, `signup`, `api`, `traffic_source`, `referral_link`, `referrer`, `referral`, `supply_partner`

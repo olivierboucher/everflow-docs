@@ -1,0 +1,52 @@
+---
+title: "Authentication"
+description: "How to authenticate requests to the Everflow API using API keys."
+---
+
+All requests to the Everflow API must be made over HTTPS and authenticated using an API key.
+
+## Making requests
+
+Include your API key in the `X-Eflow-API-Key` header on every request. The `Accept` header is optional but can be set to `application/json`. When submitting data via `POST`, `PUT`, or `PATCH`, send the payload as JSON.
+
+```bash
+curl -H "X-Eflow-API-Key: <your-api-key>" \
+  https://api.eflow.team/v1/networks/offers
+```
+
+Requests made without authentication will fail with a `401` error. Using an API key for the wrong portal (e.g. an Affiliate key to access a Network endpoint) returns a `403 Out of realm` error.
+
+## API key types
+
+Each Everflow portal has its own API keys. The base URL path prefix changes depending on the portal:
+
+| Portal | Base path | Key created by |
+|--------|-----------|----------------|
+| **Network** | `/v1/networks/...` | Network users, under Control Center > Security |
+| **Affiliate** | `/v1/affiliates/...` | Network users, under Manage Affiliate > API tab |
+| **Advertiser** | `/v1/advertisers/...` | Network users, under Manage Advertiser > API Keys tab |
+| **Marketplace** | `/v1/partners/...` | Must be requested from your account manager |
+
+## Key management
+
+- API keys are shown **only once** at creation time. Store them securely.
+- Each Network API key has its own set of permissions, independent of the user it is associated with.
+- Affiliate and advertiser users **cannot** create keys themselves; a network user must create and provide the key.
+- If a key is compromised, revoke it immediately in the Everflow UI.
+
+## Example requests
+
+```bash Network API
+curl -H "X-Eflow-API-Key: <your-api-key>" \
+  https://api.eflow.team/v1/networks/offers
+```
+
+```bash Affiliate API
+curl -H "X-Eflow-API-Key: <your-api-key>" \
+  https://api.eflow.team/v1/affiliates/affiliate
+```
+
+```bash Advertiser API
+curl -H "X-Eflow-API-Key: <your-api-key>" \
+  https://api.eflow.team/v1/advertisers/advertiser
+```

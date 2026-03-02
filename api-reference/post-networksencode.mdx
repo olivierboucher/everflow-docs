@@ -1,0 +1,18 @@
+---
+title: Encode IDs
+openapi: post /networks/encode
+---
+
+Encode numeric Everflow IDs into their encoded string representation. This is useful when constructing tracking links, signup URLs, or any context where encoded IDs are required instead of raw numeric values.
+
+The `type` field determines the encoding context:
+
+| Type | Use case |
+|------|----------|
+| `tracking_link_affiliate` | Encode an affiliate ID for use in tracking links |
+| `tracking_link_offer` | Encode an offer ID for use in tracking links |
+| `smart_link_affiliate` | Encode an affiliate ID for use in smart links |
+| `smart_link_smart_link` | Encode a smart link ID |
+| `signup_affiliate_employee` | Encode an employee ID for affiliate signup URLs |
+| `signup_advertiser_employee` | Encode an employee ID for advertiser signup URLs |
+| `signup_affiliate_affiliate` | Encode an affiliate ID for affiliate signup URLs |

@@ -1,0 +1,62 @@
+---
+title: "Relationships"
+description: "How to request related data alongside resources in the Everflow API."
+---
+
+By default, API responses return only the requested resource. You can include related objects by using the `relationship` query parameter.
+
+## Default response
+
+```json
+{
+  "network_affiliate_id": 5,
+  "network_id": 1,
+  "name": "Google",
+  "account_status": "active"
+}
+```
+
+## With relationships
+
+Request the `users` relationship to include associated user data:
+
+```
+GET /v1/networks/affiliates/5?relationship=users
+```
+
+```json
+{
+  "network_affiliate_id": 5,
+  "network_id": 1,
+  "name": "Google",
+  "account_status": "active",
+  "relationship": {
+    "users": {
+      "total": 1,
+      "entries": [
+        {
+          "network_affiliate_user_id": 12,
+          "first_name": "John",
+          "last_name": "Doe"
+        }
+      ]
+    }
+  }
+}
+```
+
+## Requesting multiple relationships
+
+Repeat the `relationship` parameter to include more than one:
+
+```
+GET /v1/networks/affiliates/5?relationship=users&relationship=signup
+```
+
+## Availability
+
+Not all endpoints support relationships. Each endpoint's documentation lists its available relationships. Common examples include:
+
+- **Offers:** `advertiser`, `visibility`, `payout_revenue`, `urls`, `ruleset`, `targeting`
+- **Affiliates:** `users`, `signup`, `billing`, `visibility`, `reporting`
+- **Advertisers:** `labels`, `billing`, `integrations`, `api`

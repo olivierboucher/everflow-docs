@@ -1,0 +1,37 @@
+---
+title: "Paging"
+description: "How to paginate through results in the Everflow API."
+---
+
+Endpoints that return lists of resources use pagination. Paginated responses include a `paging` object:
+
+```json
+{
+  "paging": {
+    "page": 2,
+    "page_size": 50,
+    "total_count": 150
+  }
+}
+```
+
+| Field | Description |
+|-------|-------------|
+| `page` | The current page number (1-based). |
+| `page_size` | The number of results per page. |
+| `total_count` | The total number of results available. |
+
+## Requesting a specific page
+
+Use the `page` and `page_size` query parameters:
+
+```bash
+curl -H "X-Eflow-API-Key: <your-api-key>" \
+  "https://api.eflow.team/v1/networks/offers?page=2&page_size=10"
+```
+
+## Defaults and limits
+
+- When not specified, the API returns page 1 with a page size of **50**.
+- The maximum page size is typically **2,000**, though some endpoints enforce a smaller limit.
+- Endpoints that return paginated responses are identified as such in their documentation.
