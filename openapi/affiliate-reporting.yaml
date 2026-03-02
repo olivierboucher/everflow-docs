@@ -1,0 +1,257 @@
+openapi: 3.0.3
+info:
+  title: Everflow Affiliate API - Reporting
+  description: >
+    Reporting endpoints for the Everflow Affiliate API. These endpoints are
+    accessed by affiliate/partner users using their own API key and return
+    data scoped to the authenticated affiliate's account only.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Affiliate Reporting
+    description: Reporting endpoints available to affiliate users.
+paths:
+  /affiliates/reporting/entity/table:
+    post:
+      summary: Get Aggregated Reporting Data
+      description: >
+        The main reporting endpoint for affiliates. Pivot your performance data
+        by one or more dimensions (offer, country, device, sub-parameters, etc.)
+        over a date range. Returns aggregated metrics including clicks, conversions,
+        revenue, and computed rates.
+
+
+        This endpoint is scoped to the authenticated affiliate's data only — no
+        affiliate filter is needed. The API key determines which affiliate's data
+        is returned.
+
+
+        Results are limited to 10,000 rows. If the limit is hit, the response
+        includes `incomplete_results: true`. Reduce columns or narrow filters
+        to get complete results.
+      tags:
+        - Affiliate Reporting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              from: "2024-01-01"
+              to: "2024-01-31"
+              timezone_id: 67
+              currency_id: "USD"
+              columns:
+                - column: "offer"
+              query:
+                filters: []
+            schema:
+              type: object
+              required:
+                - from
+                - to
+                - timezone_id
+                - currency_id
+                - columns
+              properties:
+                from:
+                  type: string
+                  description: Start date for the reporting period. Format `YYYY-MM-DD`.
+                to:
+                  type: string
+                  description: End date for the reporting period. Format `YYYY-MM-DD`.
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the request.
+                currency_id:
+                  type: string
+                  description: Currency code for monetary values (e.g. "USD").
+                columns:
+                  type: array
+                  minItems: 1
+                  maxItems: 10
+                  description: >
+                    Columns to group/pivot data by. Minimum 1, maximum 10. Only one
+                    time column (hour, date, week, month, year) is allowed per request.
+                  items:
+                    type: object
+                    required:
+                      - column
+                    properties:
+                      column:
+                        type: string
+                        enum:
+                          - offer
+                          - creative
+                          - coupon_code
+                          - offer_url
+                          - country
+                          - country_code
+                          - region
+                          - city
+                          - dma
+                          - carrier
+                          - platform
+                          - isp
+                          - os_version
+                          - device_type
+                          - device_model
+                          - device_make
+                          - browser
+                          - language
+                          - sub1
+                          - sub2
+                          - sub3
+                          - sub4
+                          - sub5
+                          - source_id
+                          - referer
+                          - event_name
+                          - connection_type
+                          - tracking_domain
+                          - hour
+                          - date
+                          - week
+                          - month
+                          - year
+                        description: >
+                          The dimension to group by. Time columns (hour, date, week,
+                          month, year) are mutually exclusive — only one allowed at a time.
+                query:
+                  type: object
+                  description: Query configuration.
+                  properties:
+                    filters:
+                      type: array
+                      description: >
+                        Filters to narrow results. Same resource_type filters use OR
+                        logic; different resource_type filters use AND logic.
+                      items:
+                        type: object
+                        required:
+                          - filter_id_value
+                          - resource_type
+                        properties:
+                          filter_id_value:
+                            type: string
+                            description: The value to filter on (e.g. offer ID, country name, sub value).
+                          resource_type:
+                            type: string
+                            enum:
+                              - offer
+                              - creative
+                              - country
+                              - country_code
+                              - sub1
+                              - sub2
+                              - sub3
+                              - sub4
+                              - sub5
+                              - carrier
+                              - device_platform
+                              - device_type
+                              - device_make
+                              - browser
+                              - language
+                              - connection_type
+                              - campaign
+                              - source_id
+                              - offer_url
+                              - device_model
+                              - os_version
+                              - coupon_code
+                            description: The resource type / dimension to filter on.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  table:
+                    type: array
+                    description: Array of reporting data rows.
+                    items:
+                      type: object
+                      properties:
+                        columns:
+                          type: array
+                          description: Dimension values for this row.
+                          items:
+                            type: object
+                            properties:
+                              column_type:
+                                type: string
+                                description: The column/dimension type (matches the requested column value).
+                              id:
+                                type: string
+                                description: Dimension value identifier (e.g. offer ID, country name).
+                              label:
+                                type: string
+                                description: Human-readable label for the dimension value.
+                        reporting:
+                          type: object
+                          description: Aggregated metrics for this row.
+                          properties:
+                            imp:
+                              type: integer
+                              description: Impression count.
+                            total_click:
+                              type: integer
+                              description: Total click count.
+                            unique_click:
+                              type: integer
+                              description: Unique click count.
+                            invalid_click:
+                              type: integer
+                              description: Invalid/filtered click count.
+                            duplicate_click:
+                              type: integer
+                              description: Duplicate click count.
+                            ctr:
+                              type: number
+                              description: Click-through rate (impressions to clicks).
+                            cv:
+                              type: integer
+                              description: Conversion count.
+                            view_through_cv:
+                              type: integer
+                              description: View-through conversion count.
+                            event:
+                              type: integer
+                              description: Post-conversion event count.
+                            cvr:
+                              type: number
+                              description: Conversion rate (percentage).
+                            evr:
+                              type: number
+                              description: Event rate.
+                            rpc:
+                              type: number
+                              description: Revenue per click.
+                            rpm:
+                              type: number
+                              description: Revenue per mille (per 1,000 impressions).
+                            revenue:
+                              type: number
+                              description: Total revenue (affiliate payout amount).
+                            redirect_traffic_revenue:
+                              type: number
+                              description: Revenue from redirect/fallback traffic.
+                  incomplete_results:
+                    type: boolean
+                    description: True if results exceeded the 10,000-row limit and were truncated.
+      security:
+        - API Key: []
+components:
+  securitySchemes:
+    API Key:
+      description: >
+        The affiliate's API key generated from the Affiliate Portal.
+        Uses the same X-Eflow-Api-Key header as the Network API, but the key
+        belongs to the affiliate user rather than the network admin.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

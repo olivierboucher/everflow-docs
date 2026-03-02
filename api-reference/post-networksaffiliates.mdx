@@ -1,0 +1,14 @@
+---
+title: Create Affiliate
+openapi: /openapi/affiliates.yaml post /networks/affiliates
+---
+
+Create a new affiliate account. Only `name` is strictly required, but you can include users, billing configuration, contact address, and labels in the same request.
+
+**Key details:**
+- When `is_contact_address_enabled` is true, provide the `contact_address` object
+- Each user's `email` must be unique across the platform
+- If `initial_password` is omitted for a user, they will receive an invite email
+- Passwords must be at least 12 characters
+- The `billing.details` object is required when `billing_frequency` is not `manual` or `other`
+- The `billing.billing` nested object holds payment-method-specific fields (e.g. PayPal email, bank details for wire)

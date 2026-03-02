@@ -280,6 +280,45 @@ paths:
                         type: integer
       security:
         - API Key: []
+  /networks/offers:
+    post:
+      summary: Create Offer
+      description: >
+        Create a new offer with full configuration. The payload is complex —
+        consider using the Copy Offer endpoint with a template instead of
+        building from scratch.
+      tags:
+        - Offers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              network_advertiser_id: 1
+              name: "My New Offer"
+              destination_url: "https://example.com/landing?tid={transaction_id}"
+              currency_id: "USD"
+              offer_status: "active"
+              visibility: "public"
+              conversion_method: "server_postback"
+              payout_revenue:
+                - entry_name: "Base"
+                  payout_type: "cpa"
+                  payout_amount: 5.00
+                  revenue_type: "rpa"
+                  revenue_amount: 8.00
+                  is_default: true
+            schema:
+              $ref: "#/components/schemas/OfferRequestBody"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Offer"
+      security:
+        - API Key: []
   /networks/offers/{offerId}:
     get:
       summary: Get Offer by ID
@@ -483,6 +522,50 @@ paths:
           description: Offer not found.
       security:
         - API Key: []
+    put:
+      summary: Update Offer
+      description: >
+        Update an existing offer. All fields must be specified — omitted fields
+        revert to defaults. Use PATCH bulk-edit for partial updates.
+      tags:
+        - Offers
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: integer
+          description: The unique offer ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              network_advertiser_id: 1
+              name: "My New Offer"
+              destination_url: "https://example.com/landing?tid={transaction_id}"
+              currency_id: "USD"
+              offer_status: "active"
+              visibility: "public"
+              conversion_method: "server_postback"
+              payout_revenue:
+                - entry_name: "Base"
+                  payout_type: "cpa"
+                  payout_amount: 5.00
+                  revenue_type: "rpa"
+                  revenue_amount: 8.00
+                  is_default: true
+            schema:
+              $ref: "#/components/schemas/OfferRequestBody"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Offer"
+      security:
+        - API Key: []
 components:
   securitySchemes:
     API Key:
@@ -490,3 +573,481 @@ components:
       in: header
       name: X-Eflow-Api-Key
       type: apiKey
+  schemas:
+    OfferRequestBody:
+      type: object
+      required:
+        - network_advertiser_id
+        - name
+        - destination_url
+        - currency_id
+      properties:
+        network_advertiser_id:
+          type: integer
+          description: Advertiser that owns this offer.
+        name:
+          type: string
+          description: Offer name.
+        destination_url:
+          type: string
+          description: Destination URL for the offer.
+        currency_id:
+          type: string
+          description: Currency used for this offer.
+        network_offer_group_id:
+          type: integer
+          description: Associated offer group.
+        thumbnail_url:
+          type: string
+          description: Offer thumbnail URL.
+        network_category_id:
+          type: integer
+          description: Category ID.
+        internal_notes:
+          type: string
+          description: Staff-only notes.
+        server_side_url:
+          type: string
+          description: Async server-side URL.
+        preview_url:
+          type: string
+          description: Landing page preview URL.
+        html_description:
+          type: string
+          description: Affiliate-facing HTML description.
+        offer_status:
+          type: string
+          enum:
+            - active
+            - paused
+            - pending
+          description: Offer status.
+        visibility:
+          type: string
+          enum:
+            - public
+            - require_approval
+            - private
+          description: Affiliate visibility.
+        project_id:
+          type: string
+          description: Campaign/IO identifier.
+        date_live_until:
+          type: string
+          description: Expiration date (YYYY-MM-DD).
+        app_identifier:
+          type: string
+          description: Bundle ID for mobile apps.
+        labels:
+          type: array
+          items:
+            type: string
+        caps_timezone_id:
+          type: integer
+        network_tracking_domain_id:
+          type: integer
+        conversion_method:
+          type: string
+          enum:
+            - server_postback
+            - http_image_pixel
+            - https_image_pixel
+            - http_iframe_pixel
+            - https_iframe_pixel
+            - javascript
+            - cookie_based
+          description: How conversions are tracked.
+        redirect_mode:
+          type: string
+          enum:
+            - standard
+            - single_meta_refresh
+            - double_meta_refresh
+        session_definition:
+          type: string
+          enum:
+            - cookie
+            - ip
+            - ip_user_agent
+            - google_ad_id
+            - idfa
+        session_duration:
+          type: integer
+          description: Session duration in hours (default 24).
+        attribution_method:
+          type: string
+          enum:
+            - first_touch
+            - last_touch
+        is_use_secure_link:
+          type: boolean
+        is_seo_friendly:
+          type: boolean
+        is_allow_deep_link:
+          type: boolean
+        is_whitelist_check_enabled:
+          type: boolean
+        is_use_direct_linking:
+          type: boolean
+        is_caps_enabled:
+          type: boolean
+        daily_conversion_cap:
+          type: integer
+        weekly_conversion_cap:
+          type: integer
+        monthly_conversion_cap:
+          type: integer
+        global_conversion_cap:
+          type: integer
+        daily_payout_cap:
+          type: integer
+        weekly_payout_cap:
+          type: integer
+        monthly_payout_cap:
+          type: integer
+        global_payout_cap:
+          type: integer
+        daily_revenue_cap:
+          type: integer
+        weekly_revenue_cap:
+          type: integer
+        monthly_revenue_cap:
+          type: integer
+        global_revenue_cap:
+          type: integer
+        daily_click_cap:
+          type: integer
+        weekly_click_cap:
+          type: integer
+        monthly_click_cap:
+          type: integer
+        global_click_cap:
+          type: integer
+        is_duplicate_filter_enabled:
+          type: boolean
+        duplicate_filter_targeting_action:
+          type: string
+          enum:
+            - block
+            - fail_traffic
+        is_block_already_converted:
+          type: boolean
+        already_converted_action:
+          type: string
+          enum:
+            - block
+            - fail_traffic
+        is_must_approve_conversion:
+          type: boolean
+        is_allow_duplicate_conversion:
+          type: boolean
+        is_use_scrub_rate:
+          type: boolean
+        scrub_rate_status:
+          type: string
+          enum:
+            - rejected
+            - pending
+        scrub_rate_percentage:
+          type: integer
+        is_view_through_enabled:
+          type: boolean
+        view_through_destination_url:
+          type: string
+        is_session_tracking_enabled:
+          type: boolean
+        session_tracking_lifespan_hour:
+          type: integer
+        session_tracking_minimum_lifespan_second:
+          type: integer
+        is_fail_traffic_enabled:
+          type: boolean
+        is_using_explicit_terms_and_conditions:
+          type: boolean
+        terms_and_conditions:
+          type: string
+        is_force_terms_and_conditions:
+          type: boolean
+        payout_revenue:
+          type: array
+          items:
+            type: object
+            properties:
+              entry_name:
+                type: string
+              payout_type:
+                type: string
+                enum:
+                  - cpa
+                  - cpc
+                  - cpm
+                  - cps
+                  - cpa_cps
+                  - prv
+              payout_amount:
+                type: number
+              payout_percentage:
+                type: number
+              revenue_type:
+                type: string
+                enum:
+                  - rpa
+                  - rpc
+                  - rpm
+                  - rps
+                  - rpa_rps
+              revenue_amount:
+                type: number
+              revenue_percentage:
+                type: number
+              is_default:
+                type: boolean
+              is_private:
+                type: boolean
+              is_postback_disabled:
+                type: boolean
+              is_enforce_caps:
+                type: boolean
+              is_must_approve_conversion:
+                type: boolean
+              is_allow_duplicate_conversion:
+                type: boolean
+    Offer:
+      type: object
+      properties:
+        network_offer_id:
+          type: integer
+          description: Unique offer ID.
+        network_id:
+          type: integer
+        network_advertiser_id:
+          type: integer
+          description: Advertiser that owns this offer.
+        network_offer_group_id:
+          type: integer
+          description: Offer group ID.
+        name:
+          type: string
+          description: Offer name.
+        offer_status:
+          type: string
+          enum:
+            - active
+            - paused
+            - pending
+            - deleted
+        thumbnail_url:
+          type: string
+        visibility:
+          type: string
+          enum:
+            - public
+            - require_approval
+            - private
+        currency_id:
+          type: string
+        destination_url:
+          type: string
+          description: Destination URL for the offer.
+        server_side_url:
+          type: string
+          description: Server-side postback URL.
+        preview_url:
+          type: string
+        html_description:
+          type: string
+          description: HTML description of the offer.
+        internal_notes:
+          type: string
+          description: Internal notes (not visible to affiliates).
+        network_category_id:
+          type: integer
+        project_id:
+          type: string
+        date_live_until:
+          type: string
+          description: Offer expiration date (YYYY-MM-DD).
+        conversion_method:
+          type: string
+          enum:
+            - server_postback
+            - http_image_pixel
+            - https_image_pixel
+            - http_iframe_pixel
+            - https_iframe_pixel
+            - javascript
+            - cookie_based
+        redirect_mode:
+          type: string
+          enum:
+            - standard
+            - single_meta_refresh
+            - double_meta_refresh
+        session_definition:
+          type: string
+          enum:
+            - cookie
+            - ip
+            - ip_user_agent
+            - google_ad_id
+            - idfa
+        session_duration:
+          type: integer
+          description: Session duration in hours.
+        attribution_method:
+          type: string
+          enum:
+            - first_touch
+            - last_touch
+        is_caps_enabled:
+          type: boolean
+        daily_conversion_cap:
+          type: integer
+        weekly_conversion_cap:
+          type: integer
+        monthly_conversion_cap:
+          type: integer
+        global_conversion_cap:
+          type: integer
+        daily_payout_cap:
+          type: integer
+        weekly_payout_cap:
+          type: integer
+        monthly_payout_cap:
+          type: integer
+        global_payout_cap:
+          type: integer
+        daily_revenue_cap:
+          type: integer
+        weekly_revenue_cap:
+          type: integer
+        monthly_revenue_cap:
+          type: integer
+        global_revenue_cap:
+          type: integer
+        daily_click_cap:
+          type: integer
+        weekly_click_cap:
+          type: integer
+        monthly_click_cap:
+          type: integer
+        global_click_cap:
+          type: integer
+        is_use_scrub_rate:
+          type: boolean
+        scrub_rate_percentage:
+          type: integer
+        is_duplicate_filter_enabled:
+          type: boolean
+        is_block_already_converted:
+          type: boolean
+        is_use_secure_link:
+          type: boolean
+        is_allow_deep_link:
+          type: boolean
+        is_session_tracking_enabled:
+          type: boolean
+        is_whitelist_check_enabled:
+          type: boolean
+        network_tracking_domain_id:
+          type: integer
+        caps_timezone_id:
+          type: integer
+        app_identifier:
+          type: string
+        labels:
+          type: array
+          items:
+            type: string
+        is_seo_friendly:
+          type: boolean
+        is_use_direct_linking:
+          type: boolean
+        is_view_through_enabled:
+          type: boolean
+        view_through_destination_url:
+          type: string
+        session_tracking_lifespan_hour:
+          type: integer
+        session_tracking_minimum_lifespan_second:
+          type: integer
+        is_fail_traffic_enabled:
+          type: boolean
+        is_using_explicit_terms_and_conditions:
+          type: boolean
+        terms_and_conditions:
+          type: string
+        is_force_terms_and_conditions:
+          type: boolean
+        is_must_approve_conversion:
+          type: boolean
+        is_allow_duplicate_conversion:
+          type: boolean
+        duplicate_filter_targeting_action:
+          type: string
+          enum:
+            - block
+            - fail_traffic
+        already_converted_action:
+          type: string
+          enum:
+            - block
+            - fail_traffic
+        scrub_rate_status:
+          type: string
+          enum:
+            - rejected
+            - pending
+        payout_revenue:
+          type: array
+          items:
+            type: object
+            properties:
+              entry_name:
+                type: string
+              payout_type:
+                type: string
+                enum:
+                  - cpa
+                  - cpc
+                  - cpm
+                  - cps
+                  - cpa_cps
+                  - prv
+              payout_amount:
+                type: number
+              payout_percentage:
+                type: number
+              revenue_type:
+                type: string
+                enum:
+                  - rpa
+                  - rpc
+                  - rpm
+                  - rps
+                  - rpa_rps
+              revenue_amount:
+                type: number
+              revenue_percentage:
+                type: number
+              is_default:
+                type: boolean
+              is_private:
+                type: boolean
+              is_postback_disabled:
+                type: boolean
+              is_enforce_caps:
+                type: boolean
+              is_must_approve_conversion:
+                type: boolean
+              is_allow_duplicate_conversion:
+                type: boolean
+        time_created:
+          type: integer
+          description: Unix timestamp of creation.
+        time_saved:
+          type: integer
+          description: Unix timestamp of last update.
+        relationship:
+          type: object
+          description: Related data (only present when requested via query parameter).

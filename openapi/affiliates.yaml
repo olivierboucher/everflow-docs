@@ -3,7 +3,7 @@ info:
   title: Everflow Network API - Affiliates
   description: >
     Affiliate management endpoints for the Everflow partner marketing platform.
-    Search and retrieve affiliate details.
+    Search, retrieve, create, and update affiliate accounts.
   version: 1.0.0
 servers:
   - description: Production Server
@@ -206,6 +206,278 @@ paths:
                         type: integer
       security:
         - API Key: []
+  /networks/affiliates:
+    post:
+      summary: Create Affiliate
+      description: >
+        Create a new affiliate account. Only `name` is strictly required, but you can
+        include users, billing, contact address, and labels in the same request.
+        When `is_contact_address_enabled` is true, provide the `contact_address` object.
+      tags:
+        - Affiliates
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              name: "Acme Partners"
+              account_status: "active"
+              network_employee_id: 1
+              labels:
+                - "top-performer"
+              users:
+                - first_name: "Jane"
+                  last_name: "Doe"
+                  email: "jane@acme.com"
+                  account_status: "active"
+                  language_id: 1
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  description: The affiliate's display name.
+                account_status:
+                  type: string
+                  enum:
+                    - active
+                    - inactive
+                  description: Initial account status. Defaults to active.
+                network_employee_id:
+                  type: integer
+                  description: ID of the account manager (network employee) assigned to this affiliate.
+                internal_notes:
+                  type: string
+                  description: Private notes visible only to network users.
+                default_currency_id:
+                  type: string
+                  description: ISO currency code for the affiliate's default currency (e.g. "USD").
+                enable_media_cost_tracking_links:
+                  type: boolean
+                  description: Whether to enable media cost tracking on this affiliate's links.
+                referrer_id:
+                  type: integer
+                  description: ID of the referring affiliate, if this affiliate was referred.
+                is_contact_address_enabled:
+                  type: boolean
+                  description: Set to true to store a contact address for this affiliate.
+                network_affiliate_tier_id:
+                  type: integer
+                  description: ID of the affiliate tier to assign.
+                contact_address:
+                  type: object
+                  description: Contact address. Only used when `is_contact_address_enabled` is true.
+                  properties:
+                    address_1:
+                      type: string
+                      description: Street address line 1.
+                    address_2:
+                      type: string
+                      description: Street address line 2.
+                    city:
+                      type: string
+                    region_code:
+                      type: string
+                      description: State or region code (e.g. "CA").
+                    country_code:
+                      type: string
+                      description: Two-letter country code (e.g. "US").
+                    zip_postal_code:
+                      type: string
+                labels:
+                  type: array
+                  items:
+                    type: string
+                  description: Labels to assign to the affiliate.
+                users:
+                  type: array
+                  description: One or more user accounts to create for this affiliate.
+                  items:
+                    type: object
+                    required:
+                      - email
+                    properties:
+                      first_name:
+                        type: string
+                      last_name:
+                        type: string
+                      email:
+                        type: string
+                        description: Must be unique across the platform.
+                      account_status:
+                        type: string
+                        enum:
+                          - active
+                          - inactive
+                        description: User account status.
+                      title:
+                        type: string
+                      work_phone:
+                        type: string
+                      cell_phone:
+                        type: string
+                      instant_messaging_id:
+                        type: integer
+                        description: Messaging platform ID.
+                      instant_messaging_identifier:
+                        type: string
+                        description: Username or handle for the messaging platform.
+                      language_id:
+                        type: integer
+                        description: Language ID (1 = English).
+                      timezone_id:
+                        type: integer
+                        description: Timezone ID from the metadata endpoint.
+                      currency_id:
+                        type: string
+                        description: ISO currency code for this user.
+                      initial_password:
+                        type: string
+                        description: Initial password. Must be at least 12 characters. If omitted, the user receives an invite email.
+                billing:
+                  type: object
+                  description: Billing and payment configuration.
+                  properties:
+                    billing_frequency:
+                      type: string
+                      enum:
+                        - weekly
+                        - bimonthly
+                        - monthly
+                        - two_months
+                        - quarterly
+                        - manual
+                        - other
+                      description: How often the affiliate is paid.
+                    payment_type:
+                      type: string
+                      enum:
+                        - none
+                        - pay
+                        - paypal
+                        - check
+                        - wire
+                        - direct_deposit
+                        - tipalti
+                        - paxum
+                        - veem
+                        - payoneer
+                        - bitcoin
+                        - webmoney
+                        - capitalist
+                        - transferwise
+                        - gift_card
+                        - masspay
+                        - skrill
+                      description: Payment method used to pay the affiliate.
+                    tax_id:
+                      type: string
+                      description: Tax identification number.
+                    is_invoice_creation_auto:
+                      type: boolean
+                      description: Whether invoices are generated automatically.
+                    auto_invoice_start_date:
+                      type: string
+                      description: Date auto-invoicing begins (format YYYY-MM-DD).
+                    default_invoice_is_hidden:
+                      type: boolean
+                      description: Whether invoices are hidden from the affiliate by default.
+                    invoice_generation_days_delay:
+                      type: integer
+                      description: Number of days after the billing period ends before the invoice is generated.
+                    invoice_amount_threshold:
+                      type: number
+                      format: double
+                      description: Minimum amount required before an invoice is generated.
+                    default_payment_terms:
+                      type: integer
+                      description: Default payment terms in days.
+                    details:
+                      type: object
+                      description: >
+                        Frequency-specific schedule details. Required when billing_frequency
+                        is not "manual" or "other".
+                      properties:
+                        day_of_week:
+                          type: integer
+                          description: Day of the week (0=Sunday .. 6=Saturday). Used for weekly frequency.
+                        day_of_month_one:
+                          type: integer
+                          description: First day of the month. Used for bimonthly frequency.
+                        day_of_month_two:
+                          type: integer
+                          description: Second day of the month. Used for bimonthly frequency.
+                        day_of_month:
+                          type: integer
+                          description: Day of the month. Used for monthly, two_months, and quarterly.
+                        starting_month:
+                          type: integer
+                          description: Starting month (1-12). Used for two_months and quarterly.
+                    billing:
+                      type: object
+                      description: >
+                        Payment method details. Structure depends on the payment_type selected.
+                      properties:
+                        paxum_id:
+                          type: string
+                          description: Paxum account ID (for paxum payment type).
+                        paypal_reception_method:
+                          type: string
+                          enum:
+                            - email
+                            - phone
+                            - paypal_account
+                          description: PayPal reception method (for paypal payment type).
+                        reception_identifier:
+                          type: string
+                          description: Identifier matching the reception method.
+                        email:
+                          type: string
+                          description: Payment email address.
+                        is_existing_payee:
+                          type: boolean
+                          description: Whether this is an existing payee in the payment system.
+                        idap:
+                          type: string
+                          description: IDAP identifier (for tipalti payment type).
+                        first_name:
+                          type: string
+                        last_name:
+                          type: string
+                        phone:
+                          type: string
+                        country_iso:
+                          type: string
+                          description: Two-letter country code for the payment account.
+                        bank_name:
+                          type: string
+                          description: Bank name (for wire/direct_deposit payment types).
+                        bank_address:
+                          type: string
+                          description: Bank address.
+                        account_name:
+                          type: string
+                          description: Name on the bank account.
+                        account_number:
+                          type: string
+                          description: Bank account number.
+                        routing_number:
+                          type: string
+                          description: Bank routing number.
+                        swift_code:
+                          type: string
+                          description: SWIFT/BIC code for international wire transfers.
+      responses:
+        "200":
+          description: Affiliate created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Affiliate"
+      security:
+        - API Key: []
   /networks/affiliates/{affiliateId}:
     get:
       summary: Get Affiliate by ID
@@ -309,7 +581,341 @@ paths:
           description: Affiliate not found.
       security:
         - API Key: []
+    put:
+      summary: Update Affiliate
+      description: >
+        Update an existing affiliate. You must specify all fields in the request body;
+        any omitted non-required fields will be reset to their defaults. Use the
+        PATCH bulk-edit endpoint if you only need to change specific fields.
+      tags:
+        - Affiliates
+      parameters:
+        - in: path
+          name: affiliateId
+          required: true
+          schema:
+            type: integer
+          description: The unique affiliate ID to update.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              name: "Acme Partners Updated"
+              account_status: "active"
+              network_employee_id: 1
+              labels:
+                - "top-performer"
+                - "vip"
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  description: The affiliate's display name.
+                account_status:
+                  type: string
+                  enum:
+                    - active
+                    - inactive
+                  description: Account status.
+                network_employee_id:
+                  type: integer
+                  description: ID of the account manager (network employee) assigned to this affiliate.
+                internal_notes:
+                  type: string
+                  description: Private notes visible only to network users.
+                default_currency_id:
+                  type: string
+                  description: ISO currency code for the affiliate's default currency.
+                enable_media_cost_tracking_links:
+                  type: boolean
+                  description: Whether to enable media cost tracking on this affiliate's links.
+                referrer_id:
+                  type: integer
+                  description: ID of the referring affiliate.
+                is_contact_address_enabled:
+                  type: boolean
+                  description: Set to true to store a contact address for this affiliate.
+                network_affiliate_tier_id:
+                  type: integer
+                  description: ID of the affiliate tier to assign.
+                contact_address:
+                  type: object
+                  description: Contact address. Only used when `is_contact_address_enabled` is true.
+                  properties:
+                    address_1:
+                      type: string
+                      description: Street address line 1.
+                    address_2:
+                      type: string
+                      description: Street address line 2.
+                    city:
+                      type: string
+                    region_code:
+                      type: string
+                      description: State or region code (e.g. "CA").
+                    country_code:
+                      type: string
+                      description: Two-letter country code (e.g. "US").
+                    zip_postal_code:
+                      type: string
+                labels:
+                  type: array
+                  items:
+                    type: string
+                  description: Labels to assign to the affiliate.
+                users:
+                  type: array
+                  description: User accounts for this affiliate.
+                  items:
+                    type: object
+                    required:
+                      - email
+                    properties:
+                      first_name:
+                        type: string
+                      last_name:
+                        type: string
+                      email:
+                        type: string
+                        description: Must be unique across the platform.
+                      account_status:
+                        type: string
+                        enum:
+                          - active
+                          - inactive
+                        description: User account status.
+                      title:
+                        type: string
+                      work_phone:
+                        type: string
+                      cell_phone:
+                        type: string
+                      instant_messaging_id:
+                        type: integer
+                        description: Messaging platform ID.
+                      instant_messaging_identifier:
+                        type: string
+                        description: Username or handle for the messaging platform.
+                      language_id:
+                        type: integer
+                        description: Language ID (1 = English).
+                      timezone_id:
+                        type: integer
+                        description: Timezone ID from the metadata endpoint.
+                      currency_id:
+                        type: string
+                        description: ISO currency code for this user.
+                      initial_password:
+                        type: string
+                        description: Initial password. Must be at least 12 characters.
+                billing:
+                  type: object
+                  description: Billing and payment configuration.
+                  properties:
+                    billing_frequency:
+                      type: string
+                      enum:
+                        - weekly
+                        - bimonthly
+                        - monthly
+                        - two_months
+                        - quarterly
+                        - manual
+                        - other
+                      description: How often the affiliate is paid.
+                    payment_type:
+                      type: string
+                      enum:
+                        - none
+                        - pay
+                        - paypal
+                        - check
+                        - wire
+                        - direct_deposit
+                        - tipalti
+                        - paxum
+                        - veem
+                        - payoneer
+                        - bitcoin
+                        - webmoney
+                        - capitalist
+                        - transferwise
+                        - gift_card
+                        - masspay
+                        - skrill
+                      description: Payment method used to pay the affiliate.
+                    tax_id:
+                      type: string
+                      description: Tax identification number.
+                    is_invoice_creation_auto:
+                      type: boolean
+                      description: Whether invoices are generated automatically.
+                    auto_invoice_start_date:
+                      type: string
+                      description: Date auto-invoicing begins (format YYYY-MM-DD).
+                    default_invoice_is_hidden:
+                      type: boolean
+                      description: Whether invoices are hidden from the affiliate by default.
+                    invoice_generation_days_delay:
+                      type: integer
+                      description: Number of days after the billing period ends before the invoice is generated.
+                    invoice_amount_threshold:
+                      type: number
+                      format: double
+                      description: Minimum amount required before an invoice is generated.
+                    default_payment_terms:
+                      type: integer
+                      description: Default payment terms in days.
+                    details:
+                      type: object
+                      description: >
+                        Frequency-specific schedule details. Required when billing_frequency
+                        is not "manual" or "other".
+                      properties:
+                        day_of_week:
+                          type: integer
+                          description: Day of the week (0=Sunday .. 6=Saturday). Used for weekly frequency.
+                        day_of_month_one:
+                          type: integer
+                          description: First day of the month. Used for bimonthly frequency.
+                        day_of_month_two:
+                          type: integer
+                          description: Second day of the month. Used for bimonthly frequency.
+                        day_of_month:
+                          type: integer
+                          description: Day of the month. Used for monthly, two_months, and quarterly.
+                        starting_month:
+                          type: integer
+                          description: Starting month (1-12). Used for two_months and quarterly.
+                    billing:
+                      type: object
+                      description: >
+                        Payment method details. Structure depends on the payment_type selected.
+                      properties:
+                        paxum_id:
+                          type: string
+                          description: Paxum account ID (for paxum payment type).
+                        paypal_reception_method:
+                          type: string
+                          enum:
+                            - email
+                            - phone
+                            - paypal_account
+                          description: PayPal reception method (for paypal payment type).
+                        reception_identifier:
+                          type: string
+                          description: Identifier matching the reception method.
+                        email:
+                          type: string
+                          description: Payment email address.
+                        is_existing_payee:
+                          type: boolean
+                          description: Whether this is an existing payee in the payment system.
+                        idap:
+                          type: string
+                          description: IDAP identifier (for tipalti payment type).
+                        first_name:
+                          type: string
+                        last_name:
+                          type: string
+                        phone:
+                          type: string
+                        country_iso:
+                          type: string
+                          description: Two-letter country code for the payment account.
+                        bank_name:
+                          type: string
+                          description: Bank name (for wire/direct_deposit payment types).
+                        bank_address:
+                          type: string
+                          description: Bank address.
+                        account_name:
+                          type: string
+                          description: Name on the bank account.
+                        account_number:
+                          type: string
+                          description: Bank account number.
+                        routing_number:
+                          type: string
+                          description: Bank routing number.
+                        swift_code:
+                          type: string
+                          description: SWIFT/BIC code for international wire transfers.
+      responses:
+        "200":
+          description: Affiliate updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Affiliate"
+        "404":
+          description: Affiliate not found.
+      security:
+        - API Key: []
 components:
+  schemas:
+    Affiliate:
+      type: object
+      properties:
+        network_affiliate_id:
+          type: integer
+          description: Unique affiliate ID.
+        network_id:
+          type: integer
+        name:
+          type: string
+          description: Affiliate name.
+        account_status:
+          type: string
+          enum:
+            - active
+            - inactive
+            - pending
+            - suspended
+        network_employee_id:
+          type: integer
+          description: Account manager employee ID.
+        internal_notes:
+          type: string
+        default_currency_id:
+          type: string
+        enable_media_cost_tracking_links:
+          type: boolean
+        is_contact_address_enabled:
+          type: boolean
+        network_affiliate_tier_id:
+          type: integer
+        referrer_id:
+          type: integer
+        contact_address:
+          type: object
+          properties:
+            address_1:
+              type: string
+            address_2:
+              type: string
+            city:
+              type: string
+            region_code:
+              type: string
+            country_code:
+              type: string
+            zip_postal_code:
+              type: string
+        labels:
+          type: array
+          items:
+            type: string
+        time_created:
+          type: integer
+          description: Unix timestamp when the affiliate was created.
+        time_saved:
+          type: integer
+          description: Unix timestamp when the affiliate was last updated.
   securitySchemes:
     API Key:
       description: The Everflow API key generated from the Control Center > Security.

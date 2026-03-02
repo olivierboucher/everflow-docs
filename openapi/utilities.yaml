@@ -119,6 +119,68 @@ paths:
                           description: The encoded string representation.
       security:
         - API Key: []
+  /networks/decode:
+    post:
+      summary: Decode IDs
+      description: >
+        Decode encoded ID strings back to their original numeric values.
+        This is the inverse of the Encode IDs endpoint. Encoded values appear
+        in tracking links, smart links, and signup URLs. Values that cannot be
+        decoded return 0 for the decoded field.
+      tags:
+        - Encoding
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              type: "tracking_link_offer"
+              ids: ["2CTPL", "3QQG7", "55M6S"]
+            schema:
+              type: object
+              required:
+                - type
+                - ids
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - tracking_link_affiliate
+                    - tracking_link_offer
+                    - smart_link_affiliate
+                    - smart_link_smart_link
+                    - signup_affiliate_employee
+                    - signup_advertiser_employee
+                    - signup_affiliate_affiliate
+                  description: >
+                    The encoding context. Must match the context used when the IDs
+                    were originally encoded.
+                ids:
+                  type: array
+                  items:
+                    type: string
+                  description: The encoded string values to decode.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  values:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        decoded:
+                          type: integer
+                          description: The original numeric ID. Returns 0 if the value could not be decoded.
+                        encoded:
+                          type: string
+                          description: The encoded string that was submitted.
+      security:
+        - API Key: []
 components:
   securitySchemes:
     API Key:

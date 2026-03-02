@@ -1,0 +1,19 @@
+---
+title: Get Transaction Overview
+openapi: /openapi/reporting.yaml get /networks/reporting/transactions/{transactionId}
+---
+
+Retrieve the complete flowchart of all events tied to a single transaction. Returns the original click, all associated conversions, partner postback delivery attempts, and any on-hold conversions.
+
+This is the most powerful debugging tool in the reporting API — it shows the full lifecycle of a click from initial redirect through conversion and postback delivery.
+
+**Response sections:**
+- `click` — The original click event with full geolocation, device info, and tracking data
+- `conversions` — All conversions attributed to this transaction, with status, payout/revenue, and attribution method
+- `pixels` — Partner postback delivery attempts with success/failure status and debug information
+- `on_hold_conversions` — Any conversions currently on hold pending review
+- `raw_click` — The raw click URL as received by the tracking server
+
+**Key details:**
+- Transaction IDs are 32-character strings (e.g. `a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4`)
+- Raw click data is retained for 3 months; conversion data is retained indefinitely

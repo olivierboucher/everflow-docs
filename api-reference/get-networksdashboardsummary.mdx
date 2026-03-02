@@ -1,0 +1,12 @@
+---
+title: Get Dashboard Summary
+openapi: /openapi/reporting.yaml get /networks/dashboard/summary
+---
+
+Retrieve high-level dashboard statistics with time-period comparisons. Returns today vs. yesterday and current month vs. last month metrics, along with trending percentages.
+
+This endpoint mirrors the summary cards shown on the Everflow dashboard and is useful for building custom dashboards or automated health checks.
+
+**Available metrics:** revenue, payout, profit, margin, clicks (gross, unique, invalid, duplicate), conversions (total, approved, throttled, view-through), events, impressions, gross sales, and computed rates (CVR, EVR, CPC, EPC, RPC, RPM, CPM, CTR).
+
+Each metric includes `today`, `yesterday`, `current_month`, and `last_month` values. Most also include a `trending_percentage` for month-over-month comparison.

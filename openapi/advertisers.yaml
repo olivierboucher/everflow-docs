@@ -8,6 +8,425 @@ servers:
 tags:
   - name: Advertisers
 paths:
+  /networks/advertiserstable:
+    post:
+      summary: Search Advertisers
+      description: >
+        Search and filter advertisers with text search and structured filters.
+        Returns a paginated list of advertisers with account manager names and
+        today's revenue. Use `page` and `page_size` query parameters for pagination.
+      tags:
+        - Advertisers
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number (1-based).
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            default: 50
+            maximum: 2000
+          description: Number of results per page.
+      requestBody:
+        content:
+          application/json:
+            example:
+              search_terms:
+                - search_type: "name"
+                  value: ""
+              filters:
+                account_status: "active"
+            schema:
+              type: object
+              properties:
+                search_terms:
+                  type: array
+                  description: Text search filters.
+                  items:
+                    type: object
+                    properties:
+                      search_type:
+                        type: string
+                        enum:
+                          - name
+                        description: The field to search on. Only "name" is supported.
+                      value:
+                        type: string
+                        description: The search term.
+                filters:
+                  type: object
+                  description: Structured filters to narrow results.
+                  properties:
+                    account_status:
+                      type: string
+                      enum:
+                        - active
+                        - inactive
+                        - suspended
+                      description: Filter by account status.
+                    account_manager_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: Filter by account manager IDs.
+                    labels:
+                      type: array
+                      items:
+                        type: string
+                      description: Filter by label names.
+                    business_unit_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: Filter by business unit IDs.
+                    sales_manager_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: Filter by sales manager IDs.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  advertisers:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        network_advertiser_id:
+                          type: integer
+                          description: Unique advertiser ID.
+                        network_id:
+                          type: integer
+                        name:
+                          type: string
+                          description: Advertiser name.
+                        account_status:
+                          type: string
+                          enum:
+                            - active
+                            - inactive
+                            - suspended
+                        network_employee_id:
+                          type: integer
+                          description: Account manager ID.
+                        sales_manager_id:
+                          type: integer
+                        internal_notes:
+                          type: string
+                        default_currency_id:
+                          type: string
+                        attribution_method:
+                          type: string
+                          enum:
+                            - first_touch
+                            - last_touch
+                        labels:
+                          type: array
+                          items:
+                            type: string
+                        time_created:
+                          type: integer
+                        time_saved:
+                          type: integer
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+      security:
+        - API Key: []
+  /networks/advertisers:
+    post:
+      summary: Create Advertiser
+      description: >
+        Create a new advertiser account. Required fields are `name`, `account_status`,
+        `network_employee_id`, and `default_currency_id`. You can include users (max 1),
+        billing, contact address, labels, and settings in the same request.
+        When `is_contact_address_enabled` is true, provide the `contact_address` object.
+      tags:
+        - Advertisers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              name: "Brand Corp"
+              account_status: "active"
+              network_employee_id: 1
+              default_currency_id: "USD"
+              attribution_method: "last_touch"
+              labels:
+                - "premium"
+              users:
+                - first_name: "John"
+                  last_name: "Smith"
+                  email: "john@brandcorp.com"
+                  account_status: "active"
+                  language_id: 1
+            schema:
+              type: object
+              required:
+                - name
+                - account_status
+                - network_employee_id
+                - default_currency_id
+              properties:
+                name:
+                  type: string
+                  description: The advertiser's display name.
+                account_status:
+                  type: string
+                  enum:
+                    - active
+                    - inactive
+                    - suspended
+                  description: Initial account status.
+                network_employee_id:
+                  type: integer
+                  description: ID of the account manager (network employee) assigned to this advertiser.
+                default_currency_id:
+                  type: string
+                  description: ISO currency code for the advertiser's default currency (e.g. "USD").
+                internal_notes:
+                  type: string
+                  description: Private notes visible only to network users.
+                address_id:
+                  type: integer
+                  description: Address ID if using a pre-existing address record.
+                is_contact_address_enabled:
+                  type: boolean
+                  description: Set to true to store a contact address for this advertiser.
+                sales_manager_id:
+                  type: integer
+                  description: ID of the sales manager assigned to this advertiser.
+                platform_name:
+                  type: string
+                  description: Name of the advertiser's platform.
+                platform_url:
+                  type: string
+                  description: URL of the advertiser's platform.
+                platform_username:
+                  type: string
+                  description: Username on the advertiser's platform.
+                reporting_timezone_id:
+                  type: integer
+                  description: Timezone ID used for this advertiser's reporting.
+                attribution_method:
+                  type: string
+                  enum:
+                    - last_touch
+                    - first_touch
+                  description: Click attribution method. Defaults to last_touch.
+                email_attribution_method:
+                  type: string
+                  enum:
+                    - last_affiliate_attribution
+                    - first_affiliate_attribution
+                  description: Email-based attribution method.
+                attribution_priority:
+                  type: string
+                  enum:
+                    - click
+                    - coupon_code
+                  description: Whether clicks or coupon codes take priority for attribution.
+                accounting_contact_email:
+                  type: string
+                  description: Email address for accounting/billing contact.
+                verification_token:
+                  type: string
+                  maxLength: 50
+                  description: Verification token for postback security (max 50 characters).
+                offer_id_macro:
+                  type: string
+                  description: Macro name for offer ID in tracking URLs. Defaults to "oid".
+                affiliate_id_macro:
+                  type: string
+                  description: Macro name for affiliate ID in tracking URLs. Defaults to "affid".
+                labels:
+                  type: array
+                  items:
+                    type: string
+                  description: Labels to assign to the advertiser.
+                users:
+                  type: array
+                  maxItems: 1
+                  description: >
+                    A single user account to create for this advertiser. Maximum of 1 user
+                    can be created in this request.
+                  items:
+                    type: object
+                    required:
+                      - email
+                    properties:
+                      first_name:
+                        type: string
+                      last_name:
+                        type: string
+                      email:
+                        type: string
+                        description: Must be unique across the platform.
+                      account_status:
+                        type: string
+                        enum:
+                          - active
+                          - inactive
+                        description: User account status.
+                      title:
+                        type: string
+                      work_phone:
+                        type: string
+                      cell_phone:
+                        type: string
+                      instant_messaging_id:
+                        type: integer
+                        description: Messaging platform ID.
+                      instant_messaging_identifier:
+                        type: string
+                        description: Username or handle for the messaging platform.
+                      language_id:
+                        type: integer
+                        description: Language ID (1 = English).
+                      timezone_id:
+                        type: integer
+                        description: Timezone ID from the metadata endpoint.
+                      currency_id:
+                        type: string
+                        description: ISO currency code for this user.
+                      initial_password:
+                        type: string
+                        description: Initial password. Must be at least 12 characters. If omitted, the user receives an invite email.
+                contact_address:
+                  type: object
+                  description: Contact address. Only used when `is_contact_address_enabled` is true.
+                  properties:
+                    address_1:
+                      type: string
+                      description: Street address line 1.
+                    address_2:
+                      type: string
+                      description: Street address line 2.
+                    city:
+                      type: string
+                    region_code:
+                      type: string
+                      description: State or region code (e.g. "CA").
+                    country_code:
+                      type: string
+                      description: Two-letter country code (e.g. "US").
+                    zip_postal_code:
+                      type: string
+                billing:
+                  type: object
+                  description: Billing and invoicing configuration.
+                  properties:
+                    billing_frequency:
+                      type: string
+                      enum:
+                        - weekly
+                        - bimonthly
+                        - monthly
+                        - two_months
+                        - quarterly
+                        - manual
+                        - other
+                      description: How often the advertiser is invoiced.
+                    invoice_amount_threshold:
+                      type: number
+                      format: double
+                      description: Minimum amount required before an invoice is generated.
+                    tax_id:
+                      type: string
+                      description: Tax identification number.
+                    is_invoice_creation_auto:
+                      type: boolean
+                      description: Whether invoices are generated automatically.
+                    auto_invoice_start_date:
+                      type: string
+                      description: Date auto-invoicing begins (format YYYY-MM-DD).
+                    default_invoice_is_hidden:
+                      type: boolean
+                      description: Whether invoices are hidden from the advertiser by default.
+                    invoice_generation_days_delay:
+                      type: integer
+                      description: Number of days after the billing period ends before the invoice is generated.
+                    default_payment_terms:
+                      type: integer
+                      description: Default payment terms in days.
+                    details:
+                      type: object
+                      description: >
+                        Frequency-specific schedule details. Required when billing_frequency
+                        is not "manual" or "other".
+                      properties:
+                        day_of_week:
+                          type: integer
+                          description: Day of the week (0=Sunday .. 6=Saturday). Used for weekly frequency.
+                        day_of_month_one:
+                          type: integer
+                          description: First day of the month. Used for bimonthly frequency.
+                        day_of_month_two:
+                          type: integer
+                          description: Second day of the month. Used for bimonthly frequency.
+                        day_of_month:
+                          type: integer
+                          description: Day of the month. Used for monthly, two_months, and quarterly.
+                        starting_month:
+                          type: integer
+                          description: Starting month (1-12). Used for two_months and quarterly.
+                settings:
+                  type: object
+                  description: Advertiser-specific settings.
+                  properties:
+                    exposed_variables:
+                      type: object
+                      description: Controls which tracking variables are visible to this advertiser in reporting.
+                      properties:
+                        affiliate_id:
+                          type: boolean
+                          description: Expose the affiliate ID.
+                        affiliate:
+                          type: boolean
+                          description: Expose the affiliate name.
+                        sub1:
+                          type: boolean
+                          description: Expose sub-parameter 1.
+                        sub2:
+                          type: boolean
+                          description: Expose sub-parameter 2.
+                        sub3:
+                          type: boolean
+                          description: Expose sub-parameter 3.
+                        sub4:
+                          type: boolean
+                          description: Expose sub-parameter 4.
+                        sub5:
+                          type: boolean
+                          description: Expose sub-parameter 5.
+                        source_id:
+                          type: boolean
+                          description: Expose the source ID.
+      responses:
+        "200":
+          description: Advertiser created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Advertiser"
+      security:
+        - API Key: []
   /networks/advertisers/{advertiserId}:
     get:
       summary: Get Advertiser by ID
@@ -42,96 +461,101 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  network_advertiser_id:
-                    type: integer
-                    description: Unique advertiser ID.
-                  network_id:
-                    type: integer
-                  name:
-                    type: string
-                    description: Advertiser name.
-                  account_status:
-                    type: string
-                    enum:
-                      - active
-                      - inactive
-                      - pending
-                      - suspended
-                  network_employee_id:
-                    type: integer
-                    description: Account manager employee ID.
-                  sales_manager_id:
-                    type: integer
-                  internal_notes:
-                    type: string
-                  default_currency_id:
-                    type: string
-                  platform_name:
-                    type: string
-                  platform_url:
-                    type: string
-                  platform_username:
-                    type: string
-                  reporting_timezone_id:
-                    type: integer
-                  attribution_method:
-                    type: string
-                    enum:
-                      - first_touch
-                      - last_touch
-                  email_attribution_method:
-                    type: string
-                    enum:
-                      - last_affiliate_attribution
-                      - first_affiliate_attribution
-                  attribution_priority:
-                    type: string
-                    enum:
-                      - click
-                      - coupon_code
-                  accounting_contact_email:
-                    type: string
-                  verification_token:
-                    type: string
-                  offer_id_macro:
-                    type: string
-                  affiliate_id_macro:
-                    type: string
-                  is_contact_address_enabled:
-                    type: boolean
-                  contact_address:
-                    type: object
-                    properties:
-                      address_1:
-                        type: string
-                      address_2:
-                        type: string
-                      city:
-                        type: string
-                      region_code:
-                        type: string
-                      country_code:
-                        type: string
-                      zip_postal_code:
-                        type: string
-                  labels:
-                    type: array
-                    items:
-                      type: string
-                  time_created:
-                    type: integer
-                  time_saved:
-                    type: integer
-                  relationship:
-                    type: object
-                    description: Related data (only present when requested via query parameter).
+                $ref: "#/components/schemas/Advertiser"
         "404":
           description: Advertiser not found.
       security:
         - API Key: []
 components:
+  schemas:
+    Advertiser:
+      type: object
+      properties:
+        network_advertiser_id:
+          type: integer
+          description: Unique advertiser ID.
+        network_id:
+          type: integer
+        name:
+          type: string
+          description: Advertiser name.
+        account_status:
+          type: string
+          enum:
+            - active
+            - inactive
+            - pending
+            - suspended
+        network_employee_id:
+          type: integer
+          description: Account manager employee ID.
+        sales_manager_id:
+          type: integer
+        internal_notes:
+          type: string
+        default_currency_id:
+          type: string
+        platform_name:
+          type: string
+        platform_url:
+          type: string
+        platform_username:
+          type: string
+        reporting_timezone_id:
+          type: integer
+        attribution_method:
+          type: string
+          enum:
+            - first_touch
+            - last_touch
+        email_attribution_method:
+          type: string
+          enum:
+            - last_affiliate_attribution
+            - first_affiliate_attribution
+        attribution_priority:
+          type: string
+          enum:
+            - click
+            - coupon_code
+        accounting_contact_email:
+          type: string
+        verification_token:
+          type: string
+        offer_id_macro:
+          type: string
+        affiliate_id_macro:
+          type: string
+        is_contact_address_enabled:
+          type: boolean
+        contact_address:
+          type: object
+          properties:
+            address_1:
+              type: string
+            address_2:
+              type: string
+            city:
+              type: string
+            region_code:
+              type: string
+            country_code:
+              type: string
+            zip_postal_code:
+              type: string
+        labels:
+          type: array
+          items:
+            type: string
+        time_created:
+          type: integer
+          description: Unix timestamp when the advertiser was created.
+        time_saved:
+          type: integer
+          description: Unix timestamp when the advertiser was last updated.
+        relationship:
+          type: object
+          description: Related data (only present when requested via query parameter).
   securitySchemes:
     API Key:
       description: The Everflow API key generated from the Control Center > Security.

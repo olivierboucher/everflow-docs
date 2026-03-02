@@ -1,0 +1,12 @@
+---
+title: Approve or Reject Applications
+openapi: /openapi/applications.yaml patch /networks/applications
+---
+
+Bulk approve or reject offer applications. Use this endpoint to manage the affiliate-offer approval workflow.
+
+**Key details:**
+- Provide an array of `network_application_ids` to update
+- The `patches` array specifies the field to change (`application_status`) and the target value (`approved` or `rejected`)
+- Set `send_email` to `true` to notify the affiliate of the status change via email
+- To find application IDs, use the Search Offer Applications endpoint first

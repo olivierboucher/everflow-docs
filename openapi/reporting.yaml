@@ -4880,6 +4880,9 @@ paths:
                   type: array
                 conversion_status:
                   type: string
+                  enum:
+                    - approved
+                    - rejected
               type: object
       responses:
         "200":
@@ -6665,6 +6668,997 @@ paths:
                             type: string
                         type: object
                     type: object
+                type: object
+          description: OK
+      security:
+        - API Key: []
+  /networks/dashboard/summary:
+    get:
+      summary: Get Dashboard Summary
+      description: >
+        Retrieve dashboard statistics with time-period comparisons (today vs yesterday,
+        current month vs last month). Returns trending percentages for key metrics.
+      tags:
+        - Reporting
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  revenue:
+                    properties:
+                      today:
+                        type: number
+                      yesterday:
+                        type: number
+                      current_month:
+                        type: number
+                      last_month:
+                        type: number
+                      trending_percentage:
+                        type: number
+                    type: object
+                  payout:
+                    properties:
+                      today:
+                        type: number
+                      yesterday:
+                        type: number
+                      current_month:
+                        type: number
+                      last_month:
+                        type: number
+                      trending_percentage:
+                        type: number
+                    type: object
+                  profit:
+                    properties:
+                      today:
+                        type: number
+                      yesterday:
+                        type: number
+                      current_month:
+                        type: number
+                      last_month:
+                        type: number
+                      trending_percentage:
+                        type: number
+                    type: object
+                  click:
+                    properties:
+                      today:
+                        type: number
+                      yesterday:
+                        type: number
+                      current_month:
+                        type: number
+                      last_month:
+                        type: number
+                      trending_percentage:
+                        type: number
+                    type: object
+                  conversion:
+                    properties:
+                      today:
+                        type: number
+                      yesterday:
+                        type: number
+                      current_month:
+                        type: number
+                      last_month:
+                        type: number
+                      trending_percentage:
+                        type: number
+                    type: object
+                  event:
+                    properties:
+                      today:
+                        type: number
+                      yesterday:
+                        type: number
+                      current_month:
+                        type: number
+                      last_month:
+                        type: number
+                      trending_percentage:
+                        type: number
+                    type: object
+                  gross_sales:
+                    properties:
+                      today:
+                        type: number
+                      yesterday:
+                        type: number
+                      current_month:
+                        type: number
+                      last_month:
+                        type: number
+                      trending_percentage:
+                        type: number
+                    type: object
+                  gross_click:
+                    properties:
+                      today:
+                        type: number
+                      yesterday:
+                        type: number
+                      current_month:
+                        type: number
+                      last_month:
+                        type: number
+                      trending_percentage:
+                        type: number
+                    type: object
+                  impression:
+                    properties:
+                      today:
+                        type: number
+                      yesterday:
+                        type: number
+                      current_month:
+                        type: number
+                      last_month:
+                        type: number
+                      trending_percentage:
+                        type: number
+                    type: object
+                  invalid_click:
+                    properties:
+                      today:
+                        type: number
+                      yesterday:
+                        type: number
+                      current_month:
+                        type: number
+                      last_month:
+                        type: number
+                      trending_percentage:
+                        type: number
+                    type: object
+                  duplicate_click:
+                    properties:
+                      today:
+                        type: number
+                      yesterday:
+                        type: number
+                      current_month:
+                        type: number
+                      last_month:
+                        type: number
+                      trending_percentage:
+                        type: number
+                    type: object
+                  unique_click:
+                    properties:
+                      today:
+                        type: number
+                      yesterday:
+                        type: number
+                      current_month:
+                        type: number
+                      last_month:
+                        type: number
+                      trending_percentage:
+                        type: number
+                    type: object
+                  view_through_conversion:
+                    properties:
+                      today:
+                        type: number
+                      yesterday:
+                        type: number
+                      current_month:
+                        type: number
+                      last_month:
+                        type: number
+                      trending_percentage:
+                        type: number
+                    type: object
+                  approved_conversion:
+                    properties:
+                      today:
+                        type: number
+                      yesterday:
+                        type: number
+                      current_month:
+                        type: number
+                      last_month:
+                        type: number
+                      trending_percentage:
+                        type: number
+                    type: object
+                  throttled_conversion:
+                    properties:
+                      today:
+                        type: number
+                      yesterday:
+                        type: number
+                      current_month:
+                        type: number
+                      last_month:
+                        type: number
+                      trending_percentage:
+                        type: number
+                    type: object
+                  margin:
+                    properties:
+                      today:
+                        type: number
+                      yesterday:
+                        type: number
+                      current_month:
+                        type: number
+                      last_month:
+                        type: number
+                    type: object
+                  cvr:
+                    properties:
+                      today:
+                        type: number
+                      yesterday:
+                        type: number
+                      current_month:
+                        type: number
+                      last_month:
+                        type: number
+                    type: object
+                  evr:
+                    properties:
+                      today:
+                        type: number
+                      yesterday:
+                        type: number
+                      current_month:
+                        type: number
+                      last_month:
+                        type: number
+                    type: object
+                  cpc:
+                    properties:
+                      today:
+                        type: number
+                      yesterday:
+                        type: number
+                      current_month:
+                        type: number
+                      last_month:
+                        type: number
+                    type: object
+                  epc:
+                    properties:
+                      today:
+                        type: number
+                      yesterday:
+                        type: number
+                      current_month:
+                        type: number
+                      last_month:
+                        type: number
+                    type: object
+                  rpc:
+                    properties:
+                      today:
+                        type: number
+                      yesterday:
+                        type: number
+                      current_month:
+                        type: number
+                      last_month:
+                        type: number
+                    type: object
+                  rpm:
+                    properties:
+                      today:
+                        type: number
+                      yesterday:
+                        type: number
+                      current_month:
+                        type: number
+                      last_month:
+                        type: number
+                    type: object
+                  cpm:
+                    properties:
+                      today:
+                        type: number
+                      yesterday:
+                        type: number
+                      current_month:
+                        type: number
+                      last_month:
+                        type: number
+                    type: object
+                  ctr:
+                    properties:
+                      today:
+                        type: number
+                      yesterday:
+                        type: number
+                      current_month:
+                        type: number
+                      last_month:
+                        type: number
+                    type: object
+                type: object
+          description: OK
+      security:
+        - API Key: []
+  /networks/reporting/impressions/stream:
+    post:
+      summary: Get Impressions Report
+      description: >
+        Extract raw impressions. Max 10,000 per request, 14-day date range limit.
+        Requires Impressions package. Raw data retained 3 months.
+      tags:
+        - Reporting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - from
+                - to
+                - timezone_id
+              properties:
+                from:
+                  type: string
+                  description: Start date in YYYY-MM-DD HH:MM:SS format.
+                to:
+                  type: string
+                  description: End date in YYYY-MM-DD HH:MM:SS format.
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier.
+                query:
+                  properties:
+                    filters:
+                      items:
+                        properties:
+                          filter_id_value:
+                            type: string
+                          resource_type:
+                            type: string
+                            enum:
+                              - offer
+                              - affiliate
+                              - advertiser
+                              - creative
+                              - offer_group
+                              - country
+                              - region
+                              - city
+                              - device_platform
+                              - device_type
+                              - browser
+                              - campaign
+                              - source_id
+                              - channel
+                        type: object
+                      type: array
+                  type: object
+              type: object
+            example:
+              from: "2024-01-01 00:00:00"
+              to: "2024-01-14 23:59:59"
+              timezone_id: 67
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  properties:
+                    transaction_id:
+                      type: string
+                    unix_timestamp:
+                      type: integer
+                    tracking_url:
+                      type: string
+                    source_id:
+                      type: string
+                    sub1:
+                      type: string
+                    sub2:
+                      type: string
+                    sub3:
+                      type: string
+                    sub4:
+                      type: string
+                    sub5:
+                      type: string
+                    user_ip:
+                      type: string
+                    referer:
+                      type: string
+                    currency_id:
+                      type: string
+                    relationship:
+                      properties:
+                        offer:
+                          properties:
+                            network_offer_id:
+                              type: integer
+                            name:
+                              type: string
+                          type: object
+                        affiliate:
+                          properties:
+                            network_affiliate_id:
+                              type: integer
+                            name:
+                              type: string
+                          type: object
+                        advertiser:
+                          properties:
+                            network_advertiser_id:
+                              type: integer
+                            name:
+                              type: string
+                          type: object
+                        geolocation:
+                          properties:
+                            country_code:
+                              type: string
+                            region_name:
+                              type: string
+                            city_name:
+                              type: string
+                          type: object
+                        device_information:
+                          properties:
+                            platform_name:
+                              type: string
+                            browser_name:
+                              type: string
+                            device_type:
+                              type: string
+                          type: object
+                      type: object
+                  type: object
+                type: array
+          description: OK
+      security:
+        - API Key: []
+  /networks/reporting/invalidclicks:
+    post:
+      summary: Get Invalid Clicks Report
+      description: >
+        Retrieve rejected/flagged clicks with error codes. Max 1,000 per request.
+        Raw data retained 3 months (conversion-related indefinitely).
+      tags:
+        - Reporting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - from
+                - to
+                - timezone_id
+              properties:
+                from:
+                  type: string
+                  description: Start date in YYYY-MM-DD HH:MM:SS format.
+                to:
+                  type: string
+                  description: End date in YYYY-MM-DD HH:MM:SS format.
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier.
+                query:
+                  properties:
+                    filters:
+                      items:
+                        properties:
+                          filter_id_value:
+                            type: string
+                          resource_type:
+                            type: string
+                            enum:
+                              - offer
+                              - affiliate_id
+                              - advertiser
+                              - creative
+                              - offer_group
+                              - campaign
+                              - transaction_id
+                              - error_code
+                        type: object
+                      type: array
+                  type: object
+              type: object
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  properties:
+                    transaction_id:
+                      type: string
+                    is_unique:
+                      type: integer
+                    unix_timestamp:
+                      type: integer
+                    tracking_url:
+                      type: string
+                    source_id:
+                      type: string
+                    sub1:
+                      type: string
+                    sub2:
+                      type: string
+                    sub3:
+                      type: string
+                    sub4:
+                      type: string
+                    sub5:
+                      type: string
+                    payout:
+                      type: number
+                    revenue:
+                      type: number
+                    referer:
+                      type: string
+                    error_code:
+                      type: integer
+                    error_message:
+                      type: string
+                    user_ip:
+                      type: string
+                    is_view_through:
+                      type: boolean
+                    is_test_mode:
+                      type: boolean
+                    has_conversion:
+                      type: boolean
+                    creative_id:
+                      type: integer
+                    currency_id:
+                      type: string
+                    coupon_code:
+                      type: string
+                    idfa:
+                      type: string
+                    google_ad_id:
+                      type: string
+                    android_id:
+                      type: string
+                    relationship:
+                      properties:
+                        offer:
+                          properties:
+                            network_offer_id:
+                              type: integer
+                            name:
+                              type: string
+                          type: object
+                        affiliate:
+                          properties:
+                            network_affiliate_id:
+                              type: integer
+                            name:
+                              type: string
+                          type: object
+                        advertiser:
+                          properties:
+                            network_advertiser_id:
+                              type: integer
+                            name:
+                              type: string
+                          type: object
+                        geolocation:
+                          properties:
+                            country_code:
+                              type: string
+                            region_name:
+                              type: string
+                            city_name:
+                              type: string
+                          type: object
+                        device_information:
+                          properties:
+                            platform_name:
+                              type: string
+                            browser_name:
+                              type: string
+                            device_type:
+                              type: string
+                          type: object
+                        http_user_agent:
+                          type: string
+                      type: object
+                  type: object
+                type: array
+          description: OK
+      security:
+        - API Key: []
+  /networks/reporting/transactions/{transactionId}:
+    get:
+      summary: Get Transaction Overview
+      description: >
+        Full flowchart of all events for a transaction. Shows the click, conversions,
+        postback delivery, and on-hold conversions.
+      tags:
+        - Reporting
+      parameters:
+        - in: path
+          name: transactionId
+          required: true
+          schema:
+            type: string
+          description: 32-character transaction ID.
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  click:
+                    properties:
+                      transaction_id:
+                        type: string
+                      is_unique:
+                        type: integer
+                      unix_timestamp:
+                        type: integer
+                      tracking_url:
+                        type: string
+                      source_id:
+                        type: string
+                      sub1:
+                        type: string
+                      sub2:
+                        type: string
+                      sub3:
+                        type: string
+                      sub4:
+                        type: string
+                      sub5:
+                        type: string
+                      payout_type:
+                        type: string
+                      revenue_type:
+                        type: string
+                      payout:
+                        type: number
+                      revenue:
+                        type: number
+                      referer:
+                        type: string
+                      error_code:
+                        type: integer
+                      error_message:
+                        type: string
+                      user_ip:
+                        type: string
+                      url:
+                        type: string
+                      is_view_through:
+                        type: boolean
+                      is_test_mode:
+                        type: boolean
+                      has_conversion:
+                        type: boolean
+                      idfa:
+                        type: string
+                      google_ad_id:
+                        type: string
+                      android_id:
+                        type: string
+                      creative_id:
+                        type: integer
+                      coupon_code:
+                        type: string
+                      redirect_method:
+                        type: string
+                      relationship:
+                        properties:
+                          offer:
+                            properties:
+                              network_offer_id:
+                                type: integer
+                              name:
+                                type: string
+                            type: object
+                          advertiser:
+                            properties:
+                              network_advertiser_id:
+                                type: integer
+                              name:
+                                type: string
+                            type: object
+                          affiliate:
+                            properties:
+                              network_affiliate_id:
+                                type: integer
+                              name:
+                                type: string
+                            type: object
+                          account_manager:
+                            properties:
+                              network_employee_id:
+                                type: integer
+                              first_name:
+                                type: string
+                              last_name:
+                                type: string
+                            type: object
+                          geolocation:
+                            properties:
+                              country_code:
+                                type: string
+                              region_name:
+                                type: string
+                              city_name:
+                                type: string
+                            type: object
+                          device_information:
+                            properties:
+                              platform_name:
+                                type: string
+                              browser_name:
+                                type: string
+                              device_type:
+                                type: string
+                            type: object
+                        type: object
+                    type: object
+                  conversions:
+                    properties:
+                      total:
+                        type: integer
+                      entries:
+                        items:
+                          properties:
+                            conversion_id:
+                              type: string
+                            conversion_unix_timestamp:
+                              type: integer
+                            status:
+                              type: string
+                              enum:
+                                - approved
+                                - rejected
+                                - pending
+                                - invalid
+                            payout_type:
+                              type: string
+                            revenue_type:
+                              type: string
+                            payout:
+                              type: number
+                            revenue:
+                              type: number
+                            sale_amount:
+                              type: number
+                            sub1:
+                              type: string
+                            sub2:
+                              type: string
+                            sub3:
+                              type: string
+                            sub4:
+                              type: string
+                            sub5:
+                              type: string
+                            source_id:
+                              type: string
+                            session_user_ip:
+                              type: string
+                            conversion_user_ip:
+                              type: string
+                            is_event:
+                              type: boolean
+                            event:
+                              type: string
+                            transaction_id:
+                              type: string
+                            currency_id:
+                              type: string
+                            email:
+                              type: string
+                            is_view_through:
+                              type: boolean
+                            error_code:
+                              type: integer
+                            error_message:
+                              type: string
+                            relationship:
+                              properties:
+                                offer:
+                                  properties:
+                                    network_offer_id:
+                                      type: integer
+                                    name:
+                                      type: string
+                                  type: object
+                                advertiser:
+                                  properties:
+                                    network_advertiser_id:
+                                      type: integer
+                                    name:
+                                      type: string
+                                  type: object
+                                affiliate:
+                                  properties:
+                                    network_affiliate_id:
+                                      type: integer
+                                    name:
+                                      type: string
+                                  type: object
+                              type: object
+                          type: object
+                        type: array
+                    type: object
+                  pixels:
+                    properties:
+                      total:
+                        type: integer
+                      entries:
+                        items:
+                          properties:
+                            pixel_id:
+                              type: integer
+                            conversion_id:
+                              type: string
+                            transaction_id:
+                              type: string
+                            timestamp:
+                              type: integer
+                            delivery_method:
+                              type: string
+                            pixel_status:
+                              type: string
+                            pixel_type:
+                              type: string
+                            payload:
+                              type: string
+                            is_success:
+                              type: boolean
+                            debug_information:
+                              type: string
+                            failed_attempts:
+                              type: integer
+                          type: object
+                        type: array
+                    type: object
+                  raw_click:
+                    type: string
+                  on_hold_conversions:
+                    properties:
+                      total:
+                        type: integer
+                      entries:
+                        items:
+                          properties:
+                            conversion_id:
+                              type: string
+                            conversion_unix_timestamp:
+                              type: integer
+                            status:
+                              type: string
+                              enum:
+                                - approved
+                                - rejected
+                                - pending
+                                - invalid
+                            payout_type:
+                              type: string
+                            revenue_type:
+                              type: string
+                            payout:
+                              type: number
+                            revenue:
+                              type: number
+                            sale_amount:
+                              type: number
+                            sub1:
+                              type: string
+                            sub2:
+                              type: string
+                            sub3:
+                              type: string
+                            sub4:
+                              type: string
+                            sub5:
+                              type: string
+                            source_id:
+                              type: string
+                            session_user_ip:
+                              type: string
+                            conversion_user_ip:
+                              type: string
+                            is_event:
+                              type: boolean
+                            event:
+                              type: string
+                            transaction_id:
+                              type: string
+                            currency_id:
+                              type: string
+                            email:
+                              type: string
+                            is_view_through:
+                              type: boolean
+                            error_code:
+                              type: integer
+                            error_message:
+                              type: string
+                            relationship:
+                              properties:
+                                offer:
+                                  properties:
+                                    network_offer_id:
+                                      type: integer
+                                    name:
+                                      type: string
+                                  type: object
+                                advertiser:
+                                  properties:
+                                    network_advertiser_id:
+                                      type: integer
+                                    name:
+                                      type: string
+                                  type: object
+                                affiliate:
+                                  properties:
+                                    network_affiliate_id:
+                                      type: integer
+                                    name:
+                                      type: string
+                                  type: object
+                              type: object
+                          type: object
+                        type: array
+                    type: object
+                type: object
+          description: OK
+      security:
+        - API Key: []
+  /networks/reporting/conversions/{conversionId}/payoutrevenue:
+    put:
+      summary: Update Conversion Payout and Revenue
+      description: >
+        Update payout and revenue for an approved conversion. Amounts must be
+        absolute values, not percentages.
+      tags:
+        - Reporting
+      parameters:
+        - in: path
+          name: conversionId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - payout
+                - revenue
+              properties:
+                payout:
+                  type: number
+                revenue:
+                  type: number
+              type: object
+            example:
+              payout: 10.50
+              revenue: 15.00
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  result:
+                    type: boolean
+                    description: Whether the operation was accepted.
                 type: object
           description: OK
       security:

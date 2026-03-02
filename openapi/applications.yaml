@@ -1,0 +1,282 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Offer Applications
+  description: >
+    Endpoints for managing offer applications in the Everflow platform.
+    Affiliates submit applications to run offers that require approval.
+    Network managers can search, approve, or reject these applications.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Offer Applications
+    description: Endpoints for searching and managing offer applications.
+paths:
+  /networks/applicationstable:
+    post:
+      summary: Search Offer Applications
+      description: >
+        Search and filter offer applications with text search and structured filters.
+        Returns a paginated list of applications with related affiliate, offer,
+        advertiser, and employee data.
+      tags:
+        - Offer Applications
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number (1-based).
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            default: 50
+            maximum: 2000
+          description: Number of results per page.
+      requestBody:
+        content:
+          application/json:
+            example:
+              search_terms:
+                - search_type: "name"
+                  value: ""
+              filters:
+                application_status: "pending"
+            schema:
+              type: object
+              properties:
+                search_terms:
+                  type: array
+                  description: Text search filters. Searches both offer ID and offer name.
+                  items:
+                    type: object
+                    properties:
+                      search_type:
+                        type: string
+                        enum:
+                          - name
+                        description: The field to search on. Only "name" is supported.
+                      value:
+                        type: string
+                        description: The search term.
+                filters:
+                  type: object
+                  description: Structured filters to narrow results.
+                  properties:
+                    network_affiliate_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: Filter by affiliate IDs.
+                    network_advertiser_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: Filter by advertiser IDs. Returns applications on offers owned by these advertisers.
+                    network_offer_group_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: Filter by offer group IDs.
+                    network_offer_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: Filter by offer IDs.
+                    account_manager_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: Filter by account manager IDs.
+                    application_status:
+                      type: string
+                      enum:
+                        - approved
+                        - pending
+                        - rejected
+                      description: Filter by application status.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  applications:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Application"
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+      security:
+        - API Key: []
+  /networks/applications:
+    patch:
+      summary: Approve or Reject Applications
+      description: >
+        Bulk approve or reject offer applications. Provide an array of application
+        IDs and a patches array specifying the target status. Optionally send an
+        email notification to the affiliate.
+      tags:
+        - Offer Applications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              network_application_ids: [148, 170]
+              patches:
+                - field_name: "application_status"
+                  field_value: "approved"
+              send_email: false
+            schema:
+              type: object
+              required:
+                - network_application_ids
+                - patches
+              properties:
+                network_application_ids:
+                  type: array
+                  items:
+                    type: integer
+                  description: List of application IDs to update.
+                patches:
+                  type: array
+                  description: Array of patch operations to apply.
+                  items:
+                    type: object
+                    required:
+                      - field_name
+                      - field_value
+                    properties:
+                      field_name:
+                        type: string
+                        enum:
+                          - application_status
+                        description: The field to update. Only "application_status" is supported.
+                      field_value:
+                        type: string
+                        enum:
+                          - approved
+                          - rejected
+                        description: The target status value.
+                send_email:
+                  type: boolean
+                  description: Whether to send an email notification to the affiliate about the status change.
+      responses:
+        "200":
+          description: Applications updated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    description: Whether the operation was accepted.
+      security:
+        - API Key: []
+components:
+  schemas:
+    Application:
+      type: object
+      properties:
+        network_application_id:
+          type: integer
+          description: Unique application ID.
+        network_id:
+          type: integer
+        network_affiliate_id:
+          type: integer
+          description: Affiliate who submitted the application.
+        network_employee_id:
+          type: integer
+          description: Account manager assigned to this application.
+        network_offer_id:
+          type: integer
+          description: Offer the application is for.
+        network_affiliate_user_id:
+          type: integer
+          description: Affiliate user who submitted the application.
+        application_status:
+          type: string
+          enum:
+            - approved
+            - pending
+            - rejected
+          description: Current status of the application.
+        time_created:
+          type: integer
+          description: Unix timestamp when the application was created.
+        time_saved:
+          type: integer
+          description: Unix timestamp when the application was last updated.
+        relationship:
+          type: object
+          description: Related entities loaded with the application.
+          properties:
+            affiliate:
+              type: object
+              properties:
+                network_affiliate_id:
+                  type: integer
+                network_id:
+                  type: integer
+                name:
+                  type: string
+                account_status:
+                  type: string
+            offer:
+              type: object
+              properties:
+                network_offer_id:
+                  type: integer
+                network_id:
+                  type: integer
+                name:
+                  type: string
+                offer_status:
+                  type: string
+            advertiser:
+              type: object
+              properties:
+                network_advertiser_id:
+                  type: integer
+                network_id:
+                  type: integer
+                name:
+                  type: string
+                account_status:
+                  type: string
+            employee:
+              type: object
+              properties:
+                network_employee_id:
+                  type: integer
+                network_id:
+                  type: integer
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                full_name:
+                  type: string
+                account_status:
+                  type: string
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

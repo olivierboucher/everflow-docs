@@ -33,56 +33,112 @@
         ]
       },
       {
-        "tab": "API Reference",
+        "tab": "Network API",
         "groups": [
           {
-            "group": "Offers",
+            "group": "Network API",
             "pages": [
-              "api-reference/post-networksofferstable",
-              "api-reference/get-networksoffer"
+              {
+                "group": "Advertisers",
+                "expanded": false,
+                "pages": [
+                  "api-reference/post-networksadvertisers",
+                  "api-reference/get-networksadvertiser",
+                  "api-reference/post-networksadvertiserstable"
+                ]
+              },
+              {
+                "group": "Affiliates",
+                "expanded": false,
+                "pages": [
+                  "api-reference/post-networksaffiliates",
+                  "api-reference/get-networksaffiliate",
+                  "api-reference/post-networksaffiliatestable",
+                  "api-reference/put-networksaffiliate"
+                ]
+              },
+              {
+                "group": "Channels",
+                "expanded": false,
+                "pages": [
+                  "api-reference/post-networkschannels",
+                  "api-reference/get-networkschannels"
+                ]
+              },
+              {
+                "group": "Conversion Management",
+                "expanded": false,
+                "pages": [
+                  "api-reference/put-networksreportingconversionspayoutrevenue",
+                  "api-reference/patch-networksreportingconversions"
+                ]
+              },
+              {
+                "group": "Encoding & Labels",
+                "expanded": false,
+                "pages": [
+                  "api-reference/post-networksdecode",
+                  "api-reference/post-networksencode",
+                  "api-reference/get-networkslabels"
+                ]
+              },
+              {
+                "group": "Offer Applications",
+                "expanded": false,
+                "pages": [
+                  "api-reference/patch-networksapplications",
+                  "api-reference/post-networksapplicationstable"
+                ]
+              },
+              {
+                "group": "Offers",
+                "expanded": false,
+                "pages": [
+                  "api-reference/post-networksoffers",
+                  "api-reference/get-networksoffer",
+                  "api-reference/post-networksofferstable",
+                  "api-reference/put-networksoffer"
+                ]
+              },
+              {
+                "group": "Reporting",
+                "expanded": false,
+                "pages": [
+                  "api-reference/post-networksreportingentitytable",
+                  "api-reference/get-networksreportingclicks",
+                  "api-reference/post-networksreportingclicksstream",
+                  "api-reference/get-networksreportingconversions",
+                  "api-reference/post-networksreportingconversions",
+                  "api-reference/get-networksdashboardsummary",
+                  "api-reference/post-networksreportingimpressionsstream",
+                  "api-reference/post-networksreportinginvalidclicks",
+                  "api-reference/get-networksreportingtransactions"
+                ]
+              },
+              {
+                "group": "Tracking Links",
+                "expanded": false,
+                "pages": [
+                  "api-reference/post-networkstrackingoffersclicks"
+                ]
+              }
             ]
-          },
+          }
+        ]
+      },
+      {
+        "tab": "Affiliate API",
+        "groups": [
           {
-            "group": "Affiliates",
+            "group": "Affiliate API",
             "pages": [
-              "api-reference/post-networksaffiliatestable",
-              "api-reference/get-networksaffiliate"
-            ]
-          },
-          {
-            "group": "Advertisers",
-            "pages": [
-              "api-reference/get-networksadvertiser"
-            ]
-          },
-          {
-            "group": "Tracking Links",
-            "pages": [
-              "api-reference/post-networkstrackingoffersclicks"
-            ]
-          },
-          {
-            "group": "Channels",
-            "pages": [
-              "api-reference/get-networkschannels",
-              "api-reference/post-networkschannels"
-            ]
-          },
-          {
-            "group": "Labels & Encoding",
-            "pages": [
-              "api-reference/get-networkslabels",
-              "api-reference/post-networksencode"
-            ]
-          },
-          {
-            "group": "Reporting",
-            "pages": [
-              "api-reference/post-networksreportingentitytable",
-              "api-reference/post-networksreportingconversions",
-              "api-reference/post-networksreportingclicksstream",
-              "api-reference/get-networksreportingclicks",
-              "api-reference/get-networksreportingconversions"
+              {
+                "group": "Reporting",
+                "expanded": false,
+                "pages": [
+                  "api-reference/post-affiliatesreportingentitytable"
+                ]
+              }
             ]
           }
         ]

@@ -1,0 +1,17 @@
+---
+title: Create Advertiser
+openapi: /openapi/advertisers.yaml post /networks/advertisers
+---
+
+Create a new advertiser account. The fields `name`, `account_status`, `network_employee_id`, and `default_currency_id` are all required.
+
+**Key details:**
+- You can create at most 1 user in the same request via the `users` array
+- Each user's `email` must be unique across the platform
+- If `initial_password` is omitted for a user, they will receive an invite email
+- Passwords must be at least 12 characters
+- When `is_contact_address_enabled` is true, provide the `contact_address` object
+- The `billing.details` object is required when `billing_frequency` is not `manual` or `other`
+- Use the `settings.exposed_variables` object to control which tracking variables the advertiser can see in reporting
+- `verification_token` is limited to 50 characters and is used for postback security
+- `offer_id_macro` and `affiliate_id_macro` default to `"oid"` and `"affid"` respectively

@@ -1,0 +1,12 @@
+---
+title: Update Conversion Payout & Revenue
+openapi: /openapi/reporting.yaml put /networks/reporting/conversions/{conversionId}/payoutrevenue
+---
+
+Update the payout and revenue amounts for a specific conversion. Use this endpoint to adjust financial values after a conversion has been recorded.
+
+**Key details:**
+- Only `approved` conversions are eligible for payout/revenue updates
+- Both `payout` and `revenue` must be absolute values, not percentages
+- Updating payout/revenue does **not** affect the conversion's sale amount — use `PUT /v1/networks/reporting/conversions/{conversionId}/saleamount` for that
+- Changes are reflected in reporting after a short processing delay
