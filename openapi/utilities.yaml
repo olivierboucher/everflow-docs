@@ -58,6 +58,134 @@ paths:
                       description: Offer group IDs this label is applied to.
       security:
         - API Key: []
+    post:
+      summary: Create Label
+      description: >
+        Create a new label. Labels can be applied to offers, affiliates,
+        advertisers, campaigns, and offer groups to organize and filter
+        resources.
+      tags:
+        - Labels
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              label: "premium"
+            schema:
+              type: object
+              required:
+                - label
+              properties:
+                label:
+                  type: string
+                  description: The label name to create.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  label:
+                    type: string
+                    description: The created label name.
+      security:
+        - API Key: []
+  /networks/labels/{labelId}:
+    get:
+      summary: Get Label
+      description: >
+        Retrieve a single label by its ID. Returns the label name and
+        the IDs of resources it is applied to.
+      tags:
+        - Labels
+      parameters:
+        - in: path
+          name: labelId
+          required: true
+          schema:
+            type: integer
+          description: The unique label ID.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  label:
+                    type: string
+                    description: The label name.
+                  advertiser_ids:
+                    type: array
+                    items:
+                      type: integer
+                  affiliate_ids:
+                    type: array
+                    items:
+                      type: integer
+                  campaign_ids:
+                    type: array
+                    items:
+                      type: integer
+                  offer_ids:
+                    type: array
+                    items:
+                      type: integer
+                  offer_group_ids:
+                    type: array
+                    items:
+                      type: integer
+        "404":
+          description: Label not found.
+      security:
+        - API Key: []
+    put:
+      summary: Update Label
+      description: >
+        Update an existing label. Allows renaming the label while
+        preserving its associations with resources.
+      tags:
+        - Labels
+      parameters:
+        - in: path
+          name: labelId
+          required: true
+          schema:
+            type: integer
+          description: The unique label ID to update.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              label: "premium-v2"
+            schema:
+              type: object
+              required:
+                - label
+              properties:
+                label:
+                  type: string
+                  description: The new label name.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  label:
+                    type: string
+                    description: The updated label name.
+        "404":
+          description: Label not found.
+      security:
+        - API Key: []
   /networks/encode:
     post:
       summary: Encode IDs

@@ -1,0 +1,160 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Affiliates (Additional Endpoints)
+  description: Additional affiliate management endpoints for the Everflow network.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Affiliates
+    description: Additional affiliate management endpoints.
+paths:
+  /networks/affiliates/patch/submit:
+    post:
+      summary: Submit Affiliate Patch
+      description: >
+        Submit a batch of affiliate changes for asynchronous processing.
+        Queues the changes for background processing, suitable for
+        large-scale updates across many affiliates.
+      tags:
+        - Affiliates
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                affiliate_ids:
+                  type: array
+                  items:
+                    type: integer
+                  description: Array of affiliate IDs to update.
+                changes:
+                  type: object
+                  description: Fields and values to apply to all specified affiliates.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    description: Whether the submission was accepted.
+      security:
+        - API Key: []
+
+  /networks/offers/runnable/affiliate/ids:
+    get:
+      summary: Get Runnable Offer IDs for Affiliate
+      description: >
+        Retrieve the list of offer IDs that a specific affiliate is approved
+        to run. Returns only the offer IDs, not full offer objects.
+      tags:
+        - Affiliates
+      parameters:
+        - in: query
+          name: network_affiliate_id
+          required: true
+          schema:
+            type: integer
+          description: The affiliate ID.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  offer_ids:
+                    type: array
+                    items:
+                      type: integer
+                    description: Array of offer IDs the affiliate can run.
+      security:
+        - API Key: []
+
+  /networks/affiliates/{affiliateId}/trackingurls:
+    get:
+      summary: Get Affiliate Tracking URLs
+      description: >
+        Retrieve all tracking URLs associated with a specific affiliate.
+        Returns the list of tracking URLs the affiliate has generated
+        across all their approved offers.
+      tags:
+        - Affiliates
+      parameters:
+        - in: path
+          name: affiliateId
+          required: true
+          schema:
+            type: integer
+          description: The affiliate ID.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tracking_urls:
+                    type: array
+                    items:
+                      type: object
+                      description: Tracking URL record.
+      security:
+        - API Key: []
+
+  /networks/affiliates/{affiliateId}/referrals:
+    post:
+      summary: Create Affiliate Referral
+      description: >
+        Create a referral relationship for an affiliate. Records that the
+        specified affiliate was referred by another affiliate, enabling
+        referral commission tracking.
+      tags:
+        - Affiliates
+      parameters:
+        - in: path
+          name: affiliateId
+          required: true
+          schema:
+            type: integer
+          description: The affiliate ID being referred.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                referring_affiliate_id:
+                  type: integer
+                  description: The ID of the affiliate who made the referral.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    description: Whether the referral was created successfully.
+      security:
+        - API Key: []
+
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

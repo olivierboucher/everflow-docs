@@ -1,0 +1,55 @@
+openapi: 3.0.3
+info:
+  title: Everflow Affiliate API - Channels
+  description: >
+    Channel endpoints for the Everflow Affiliate API. These endpoints allow
+    affiliates to retrieve their configured traffic channels.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Affiliate Channels
+    description: Endpoints for retrieving traffic channels as an affiliate.
+paths:
+  /affiliates/channels:
+    get:
+      summary: List Channels
+      description: >
+        Returns all traffic channels configured for the authenticated affiliate.
+        Channels represent different traffic sources or methods used for promotion,
+        such as email, social media, search, or display advertising.
+      tags:
+        - Affiliate Channels
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: Array of traffic channels.
+                items:
+                  type: object
+                  properties:
+                    network_affiliate_channel_id:
+                      type: integer
+                      description: Unique identifier for the channel.
+                    name:
+                      type: string
+                      description: Display name of the channel.
+                    status:
+                      type: string
+                      description: Current status of the channel.
+      security:
+        - API Key: []
+
+components:
+  securitySchemes:
+    API Key:
+      description: >
+        The affiliate's API key generated from the Affiliate Portal.
+        Uses the X-Eflow-Api-Key header.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

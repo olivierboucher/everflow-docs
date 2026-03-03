@@ -1,0 +1,73 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Smart Links (Additional Endpoints)
+  description: Additional smart link endpoints for the Everflow network.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Smart Links
+    description: Additional smart link endpoints.
+paths:
+  /networks/campaigns/{campaignId}/tracking:
+    post:
+      summary: Generate Smart Link Tracking URL
+      description: >
+        Generate a tracking URL for a specific smart link (campaign). Creates
+        a trackable URL that routes traffic through the smart link's
+        configured offer rotation and targeting rules.
+      tags:
+        - Smart Links
+      parameters:
+        - in: path
+          name: campaignId
+          required: true
+          schema:
+            type: integer
+          description: The smart link (campaign) ID.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                network_affiliate_id:
+                  type: integer
+                  description: Affiliate ID for the tracking URL.
+                sub1:
+                  type: string
+                  description: Sub-parameter 1.
+                sub2:
+                  type: string
+                  description: Sub-parameter 2.
+                sub3:
+                  type: string
+                  description: Sub-parameter 3.
+                sub4:
+                  type: string
+                  description: Sub-parameter 4.
+                sub5:
+                  type: string
+                  description: Sub-parameter 5.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tracking_url:
+                    type: string
+                    description: The generated smart link tracking URL.
+      security:
+        - API Key: []
+
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

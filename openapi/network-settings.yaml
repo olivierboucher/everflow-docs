@@ -1,0 +1,79 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Network Settings
+  description: Endpoints for retrieving network configuration and portal settings.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Network Settings
+    description: Endpoints for retrieving network settings.
+paths:
+  /networks/settings:
+    get:
+      summary: Get Network Settings
+      description: >
+        Retrieve the current network-level settings. Returns configuration
+        options such as default currency, timezone, tracking domain,
+        and other platform-wide preferences.
+      tags:
+        - Network Settings
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Network settings configuration.
+      security:
+        - API Key: []
+
+  /networks/settings/affiliateportal:
+    get:
+      summary: Get Affiliate Portal Settings
+      description: >
+        Retrieve the affiliate portal configuration. Returns settings that
+        control the affiliate-facing portal experience, including branding,
+        available features, and access controls.
+      tags:
+        - Network Settings
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Affiliate portal settings configuration.
+      security:
+        - API Key: []
+
+  /networks/settings/advertiserportal:
+    get:
+      summary: Get Advertiser Portal Settings
+      description: >
+        Retrieve the advertiser portal configuration. Returns settings that
+        control the advertiser-facing portal experience, including branding,
+        available features, and access controls.
+      tags:
+        - Network Settings
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Advertiser portal settings configuration.
+      security:
+        - API Key: []
+
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

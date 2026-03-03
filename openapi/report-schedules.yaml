@@ -1,0 +1,78 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Report Schedules
+  description: Endpoints for managing scheduled reports in the Everflow network.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Report Schedules
+    description: Endpoints for managing report schedules.
+paths:
+  /networks/reportschedules/{scheduleId}:
+    get:
+      summary: Get Report Schedule
+      description: >
+        Retrieve a single report schedule by its ID. Returns the schedule
+        configuration including the report type, filters, recipients,
+        frequency, and delivery settings.
+      tags:
+        - Report Schedules
+      parameters:
+        - in: path
+          name: scheduleId
+          required: true
+          schema:
+            type: integer
+          description: The report schedule ID.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Report schedule configuration.
+      security:
+        - API Key: []
+    put:
+      summary: Update Report Schedule
+      description: >
+        Update an existing report schedule. All fields must be included in
+        the request body. Retrieve the current schedule first, modify the
+        needed fields, and send the full object back.
+      tags:
+        - Report Schedules
+      parameters:
+        - in: path
+          name: scheduleId
+          required: true
+          schema:
+            type: integer
+          description: The report schedule ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: The full report schedule configuration to set.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Updated report schedule configuration.
+      security:
+        - API Key: []
+
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

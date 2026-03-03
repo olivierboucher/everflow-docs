@@ -1,0 +1,8 @@
+---
+title: Bulk Edit Offers
+openapi: /openapi/offers-extras.yaml patch /networks/offers/patch
+---
+
+Apply bulk changes to multiple offers at once. Allows you to update specific fields across many offers without sending the full offer object for each one.
+
+Provide an array of `offer_ids` and a `changes` object containing the fields and values to update.

@@ -14,10 +14,10 @@ tags:
 paths:
   /networks/offerstable:
     post:
-      summary: Search Offers
+      summary: List Offers
       description: >
-        Search and filter offers with text search and structured filters.
-        Returns a paginated list of offers matching the criteria.
+        Retrieve a paginated list of offers. Supports search filters, sorting,
+        and pagination to help you find and browse offers programmatically.
         Use query parameters `page` and `page_size` to control pagination.
         Supports the `relationship` query parameter with values: visibility, ruleset, tracking_domain, urls, affiliate_tier, account_manager, sales_manager, dmo.
       tags:

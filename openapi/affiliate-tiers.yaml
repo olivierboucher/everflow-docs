@@ -1,0 +1,260 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Affiliate Tiers
+  description: Endpoints for managing affiliate tiers in the Everflow network.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Affiliate Tiers
+paths:
+  /networks/affiliatetiers:
+    get:
+      summary: List Affiliate Tiers
+      description: >
+        Retrieve all affiliate tiers for the network. Tiers allow you to
+        group affiliates and apply different payout margins based on
+        their tier assignment.
+      tags:
+        - Affiliate Tiers
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AffiliateTier"
+      security:
+        - API Key: []
+    post:
+      summary: Create Affiliate Tier
+      description: >
+        Create a new affiliate tier. Tiers allow you to group affiliates
+        and apply different payout margins based on performance or
+        relationship level.
+      tags:
+        - Affiliate Tiers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              name: "Gold Partners"
+              status: "active"
+              description: "Top-performing affiliates"
+              payout_margin: 10
+              is_default_tier: false
+              network_affiliate_ids: []
+            schema:
+              type: object
+              required:
+                - name
+                - status
+              properties:
+                name:
+                  type: string
+                  description: Tier name.
+                status:
+                  type: string
+                  enum:
+                    - active
+                    - paused
+                    - deleted
+                  description: Tier status.
+                description:
+                  type: string
+                  description: Description of the tier.
+                network_affiliate_ids:
+                  type: array
+                  items:
+                    type: integer
+                  description: Array of affiliate IDs assigned to this tier.
+                payout_margin:
+                  type: number
+                  format: double
+                  description: Payout margin percentage applied to affiliates in this tier.
+                is_default_tier:
+                  type: boolean
+                  description: Whether this is the default tier for new affiliates.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AffiliateTier"
+      security:
+        - API Key: []
+  /networks/affiliatetiers/{tierId}:
+    get:
+      summary: Get Affiliate Tier
+      description: >
+        Retrieve a single affiliate tier by its ID.
+      tags:
+        - Affiliate Tiers
+      parameters:
+        - in: path
+          name: tierId
+          required: true
+          schema:
+            type: integer
+          description: The unique affiliate tier ID.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AffiliateTier"
+        "404":
+          description: Affiliate tier not found.
+      security:
+        - API Key: []
+    put:
+      summary: Update Affiliate Tier
+      description: >
+        Update an existing affiliate tier. This is a full object replacement;
+        all fields must be provided in the request body.
+      tags:
+        - Affiliate Tiers
+      parameters:
+        - in: path
+          name: tierId
+          required: true
+          schema:
+            type: integer
+          description: The unique affiliate tier ID to update.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              name: "Gold Partners"
+              status: "active"
+              description: "Top-performing affiliates with premium payouts"
+              payout_margin: 15
+              is_default_tier: false
+              network_affiliate_ids: [1, 2, 3]
+            schema:
+              type: object
+              required:
+                - name
+                - status
+              properties:
+                name:
+                  type: string
+                  description: Tier name.
+                status:
+                  type: string
+                  enum:
+                    - active
+                    - paused
+                    - deleted
+                  description: Tier status.
+                description:
+                  type: string
+                  description: Description of the tier.
+                network_affiliate_ids:
+                  type: array
+                  items:
+                    type: integer
+                  description: Array of affiliate IDs assigned to this tier.
+                payout_margin:
+                  type: number
+                  format: double
+                  description: Payout margin percentage applied to affiliates in this tier.
+                is_default_tier:
+                  type: boolean
+                  description: Whether this is the default tier for new affiliates.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AffiliateTier"
+        "404":
+          description: Affiliate tier not found.
+      security:
+        - API Key: []
+  /networks/affiliatetiers/bulk:
+    patch:
+      summary: Bulk Update Affiliate Tiers
+      description: >
+        Update tier assignments for multiple affiliates at once. Allows
+        batch reassignment of affiliates to different tiers.
+      tags:
+        - Affiliate Tiers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              assignments:
+                - network_affiliate_id: 1
+                  network_affiliate_tier_id: 5
+                - network_affiliate_id: 2
+                  network_affiliate_tier_id: 5
+            schema:
+              type: object
+              properties:
+                assignments:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      network_affiliate_id:
+                        type: integer
+                        description: The affiliate ID to update.
+                      network_affiliate_tier_id:
+                        type: integer
+                        description: The tier ID to assign.
+      responses:
+        "200":
+          description: Tier assignments updated successfully.
+      security:
+        - API Key: []
+components:
+  schemas:
+    AffiliateTier:
+      type: object
+      properties:
+        network_affiliate_tier_id:
+          type: integer
+          description: Unique affiliate tier ID.
+        network_id:
+          type: integer
+          description: Network ID this tier belongs to.
+        name:
+          type: string
+          description: Tier name.
+        status:
+          type: string
+          enum:
+            - active
+            - paused
+            - deleted
+          description: Tier status.
+        description:
+          type: string
+          description: Tier description.
+        network_affiliate_ids:
+          type: array
+          items:
+            type: integer
+          description: Affiliate IDs assigned to this tier.
+        payout_margin:
+          type: number
+          format: double
+          description: Payout margin percentage.
+        is_default_tier:
+          type: boolean
+          description: Whether this is the default tier for new affiliates.
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

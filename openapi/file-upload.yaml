@@ -1,0 +1,56 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - File Upload
+  description: Endpoint for uploading temporary files to the Everflow platform.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: File Upload
+paths:
+  /networks/upload:
+    post:
+      summary: Upload Temp File
+      description: >
+        Upload a temporary file (CSV, image, etc.) for use with other
+        endpoints such as conversion imports or creative uploads. Returns
+        a temporary URL that can be referenced in subsequent API calls.
+      tags:
+        - File Upload
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The file to upload.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    description: Temporary URL for the uploaded file.
+                  filename:
+                    type: string
+                    description: Original filename.
+                  size:
+                    type: integer
+                    description: File size in bytes.
+      security:
+        - API Key: []
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

@@ -1,0 +1,8 @@
+---
+title: Update Report Schedule
+openapi: /openapi/report-schedules.yaml put /networks/reportschedules/{scheduleId}
+---
+
+Update an existing report schedule. All fields must be included in the request body — any omitted fields will be reset to defaults.
+
+Retrieve the current schedule first with the GET endpoint, modify the needed fields, and send the full object back.

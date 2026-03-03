@@ -1,0 +1,104 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - API Keys
+  description: Endpoints for managing API keys in the Everflow network.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: API Keys
+paths:
+  /networks/apikeys:
+    post:
+      summary: Create API Key
+      description: >
+        Generate a new API key for the network. API keys can be scoped to
+        network, affiliate, or advertiser level. The key value is only
+        returned once upon creation.
+      tags:
+        - API Keys
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              name: "Integration Key"
+              type: "network"
+            schema:
+              type: object
+              required:
+                - name
+                - type
+              properties:
+                name:
+                  type: string
+                  description: A descriptive name for the API key.
+                type:
+                  type: string
+                  enum:
+                    - network
+                    - affiliate
+                    - advertiser
+                  description: The scope of the API key.
+                scoped_entity_id:
+                  type: integer
+                  description: >
+                    The ID of the entity this key is scoped to. Required when type
+                    is "affiliate" or "advertiser". Not used for "network" type keys.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  api_key_id:
+                    type: integer
+                    description: Unique API key ID.
+                  name:
+                    type: string
+                    description: API key name.
+                  type:
+                    type: string
+                    description: API key scope type.
+                  key:
+                    type: string
+                    description: The API key value. Only returned on creation.
+                  scoped_entity_id:
+                    type: integer
+                    description: The scoped entity ID (if applicable).
+                  time_created:
+                    type: integer
+                    description: Unix timestamp of creation.
+      security:
+        - API Key: []
+  /networks/apikeys/{keyId}:
+    delete:
+      summary: Revoke API Key
+      description: >
+        Revoke an existing API key. Once revoked, the key can no longer
+        be used for authentication. This action is permanent.
+      tags:
+        - API Keys
+      parameters:
+        - in: path
+          name: keyId
+          required: true
+          schema:
+            type: integer
+          description: The unique API key ID to revoke.
+      responses:
+        "200":
+          description: API key revoked successfully.
+        "404":
+          description: API key not found.
+      security:
+        - API Key: []
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

@@ -1,0 +1,64 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Network Info
+  description: Endpoint for retrieving network configuration information.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Network Info
+paths:
+  /networks:
+    get:
+      summary: Get Network Info
+      description: >
+        Returns the current network's configuration including name, settings,
+        default currency, timezone, and feature flags. This is one of the
+        most frequently called endpoints, used to retrieve the baseline
+        configuration for the authenticated network.
+      tags:
+        - Network Info
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  network_id:
+                    type: integer
+                    description: Unique network ID.
+                  name:
+                    type: string
+                    description: Network name.
+                  status:
+                    type: string
+                    description: Network status.
+                  default_currency_id:
+                    type: string
+                    description: ISO currency code for the network's default currency.
+                  reporting_timezone_id:
+                    type: integer
+                    description: Timezone ID used for network reporting.
+                  settings:
+                    type: object
+                    description: Network-level settings and preferences.
+                  feature_flags:
+                    type: object
+                    description: Feature flags indicating which features are enabled for this network.
+                  time_created:
+                    type: integer
+                    description: Unix timestamp of creation.
+                  time_saved:
+                    type: integer
+                    description: Unix timestamp of last update.
+      security:
+        - API Key: []
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

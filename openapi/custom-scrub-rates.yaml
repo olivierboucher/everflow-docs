@@ -10,12 +10,12 @@ tags:
 paths:
   /networks/custom/scrubratetable:
     post:
-      summary: Search Custom Scrub Rates
+      summary: List Custom Scrub Rates
       description: >
-        Search and filter custom scrub rate settings. Returns a paginated
-        list of scrub rate configurations matching the specified criteria.
-        Scrub rates define the percentage of conversions to reject for
-        specific affiliate/offer combinations.
+        Retrieve a paginated list of custom scrub rate settings. Supports search
+        filters, sorting, and pagination to help you find and browse scrub rate
+        configurations programmatically. Scrub rates define the percentage of
+        conversions to reject for specific affiliate/offer combinations.
       tags:
         - Custom Scrub Rates
       requestBody:

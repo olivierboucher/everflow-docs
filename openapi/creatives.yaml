@@ -10,11 +10,11 @@ tags:
 paths:
   /networks/creativestable:
     post:
-      summary: Search Creatives
+      summary: List Creatives
       description: >
-        Search and retrieve creatives with pagination. Use search terms to
-        filter by name, creative status, creative type, offer name, or
-        offer ID. Returns a paginated list of creatives.
+        Retrieve a paginated list of creatives. Supports search filters, sorting,
+        and pagination to help you find and browse creatives programmatically.
+        Filter by name, creative status, creative type, offer name, or offer ID.
       tags:
         - Creatives
       parameters:

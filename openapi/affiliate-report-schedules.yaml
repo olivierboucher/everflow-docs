@@ -1,0 +1,64 @@
+openapi: 3.0.3
+info:
+  title: Everflow Affiliate API - Report Schedules
+  description: >
+    Report schedule endpoints for the Everflow Affiliate API. These endpoints
+    allow affiliates to retrieve their configured report schedules.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Affiliate Report Schedules
+    description: Endpoints for managing report schedules as an affiliate.
+paths:
+  /affiliates/reportschedules:
+    get:
+      summary: Get Report Schedules
+      description: >
+        Returns all report schedules configured for the authenticated affiliate.
+        Report schedules define automated recurring reports that are generated
+        and delivered on a set cadence.
+      tags:
+        - Affiliate Report Schedules
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: Array of report schedules.
+                items:
+                  type: object
+                  properties:
+                    report_schedule_id:
+                      type: integer
+                      description: Unique identifier for the report schedule.
+                    name:
+                      type: string
+                      description: Name of the report schedule.
+                    schedule_type:
+                      type: string
+                      description: Schedule frequency (e.g. daily, weekly, monthly).
+                    status:
+                      type: string
+                      description: Current status of the schedule (active, paused).
+                    report_type:
+                      type: string
+                      description: Type of report being generated.
+                    delivery_method:
+                      type: string
+                      description: How the report is delivered (e.g. email, API).
+      security:
+        - API Key: []
+
+components:
+  securitySchemes:
+    API Key:
+      description: >
+        The affiliate's API key generated from the Affiliate Portal.
+        Uses the X-Eflow-Api-Key header.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

@@ -1,0 +1,44 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Integrations
+  description: Endpoints for managing integrations in the Everflow network.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Integrations
+    description: Endpoints for managing integrations.
+paths:
+  /networks/integrations:
+    get:
+      summary: List Integrations
+      description: >
+        Retrieve all configured integrations for the network. Returns a list
+        of third-party integrations and their connection status, including
+        analytics platforms, CRMs, and other connected services.
+      tags:
+        - Integrations
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  integrations:
+                    type: array
+                    items:
+                      type: object
+                      description: Integration configuration record.
+      security:
+        - API Key: []
+
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

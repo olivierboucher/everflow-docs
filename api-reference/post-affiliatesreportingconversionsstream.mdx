@@ -1,0 +1,6 @@
+---
+title: Stream Conversions
+openapi: /openapi/affiliate-reporting.yaml post /affiliates/reporting/conversions/stream
+---
+
+Streaming variant of the conversion report for large datasets. Returns individual conversion records incrementally rather than as a single paginated response. Use this when expecting a large number of conversions to avoid timeout issues.

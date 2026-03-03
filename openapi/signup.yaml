@@ -1,0 +1,238 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Signup
+  description: Endpoints for managing affiliate and advertiser signup configuration and submissions.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Signup
+paths:
+  /networks/signup/affiliate:
+    get:
+      summary: Get Affiliate Signup Config
+      description: >
+        Retrieve the affiliate signup page configuration. Returns the
+        current settings for the affiliate self-registration page including
+        required fields, custom questions, and branding options.
+      tags:
+        - Signup
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Affiliate signup page configuration.
+      security:
+        - API Key: []
+    put:
+      summary: Update Affiliate Signup Config
+      description: >
+        Update the affiliate signup page configuration. Allows customization
+        of required fields, custom questions, terms and conditions, and
+        branding for the affiliate self-registration page.
+      tags:
+        - Signup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: The full affiliate signup configuration object.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Updated affiliate signup configuration.
+      security:
+        - API Key: []
+    post:
+      summary: Submit Affiliate Signup
+      description: >
+        Submit an affiliate self-registration. This is the public endpoint
+        used when affiliates sign up through the registration page. Creates
+        a new affiliate account with the provided information.
+      tags:
+        - Signup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              company_name: "Partner LLC"
+              first_name: "Jane"
+              last_name: "Doe"
+              email: "jane@partner.com"
+            schema:
+              type: object
+              required:
+                - company_name
+                - email
+              properties:
+                company_name:
+                  type: string
+                  description: The affiliate's company name.
+                first_name:
+                  type: string
+                  description: Contact first name.
+                last_name:
+                  type: string
+                  description: Contact last name.
+                email:
+                  type: string
+                  description: Contact email address.
+                password:
+                  type: string
+                  description: Account password. Must be at least 12 characters.
+                phone:
+                  type: string
+                  description: Contact phone number.
+                website:
+                  type: string
+                  description: Affiliate's website URL.
+                custom_fields:
+                  type: object
+                  description: Responses to custom signup questions.
+      responses:
+        "200":
+          description: Affiliate signup submitted successfully.
+      security:
+        - API Key: []
+  /networks/signup/affiliate/login:
+    post:
+      summary: Submit Affiliate Signup and Login
+      description: >
+        Submit an affiliate self-registration and immediately log in.
+        Combines the signup and authentication steps into a single request,
+        returning session credentials upon successful registration.
+      tags:
+        - Signup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              company_name: "Partner LLC"
+              first_name: "Jane"
+              last_name: "Doe"
+              email: "jane@partner.com"
+              password: "securepassword123"
+            schema:
+              type: object
+              required:
+                - company_name
+                - email
+                - password
+              properties:
+                company_name:
+                  type: string
+                  description: The affiliate's company name.
+                first_name:
+                  type: string
+                  description: Contact first name.
+                last_name:
+                  type: string
+                  description: Contact last name.
+                email:
+                  type: string
+                  description: Contact email address.
+                password:
+                  type: string
+                  description: Account password. Must be at least 12 characters.
+                phone:
+                  type: string
+                  description: Contact phone number.
+                website:
+                  type: string
+                  description: Affiliate's website URL.
+                custom_fields:
+                  type: object
+                  description: Responses to custom signup questions.
+      responses:
+        "200":
+          description: Affiliate registered and logged in successfully.
+      security:
+        - API Key: []
+  /networks/signup/advertiser:
+    get:
+      summary: Get Advertiser Signup Info
+      description: >
+        Retrieve the advertiser signup page configuration. Returns the
+        current settings for the advertiser self-registration page.
+      tags:
+        - Signup
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Advertiser signup page configuration.
+      security:
+        - API Key: []
+    post:
+      summary: Submit Advertiser Signup
+      description: >
+        Submit an advertiser self-registration. Creates a new advertiser
+        account with the provided information through the public
+        registration endpoint.
+      tags:
+        - Signup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              company_name: "Brand Corp"
+              first_name: "John"
+              last_name: "Smith"
+              email: "john@brand.com"
+            schema:
+              type: object
+              required:
+                - company_name
+                - email
+              properties:
+                company_name:
+                  type: string
+                  description: The advertiser's company name.
+                first_name:
+                  type: string
+                  description: Contact first name.
+                last_name:
+                  type: string
+                  description: Contact last name.
+                email:
+                  type: string
+                  description: Contact email address.
+                password:
+                  type: string
+                  description: Account password. Must be at least 12 characters.
+                phone:
+                  type: string
+                  description: Contact phone number.
+                website:
+                  type: string
+                  description: Advertiser's website URL.
+                custom_fields:
+                  type: object
+                  description: Responses to custom signup questions.
+      responses:
+        "200":
+          description: Advertiser signup submitted successfully.
+      security:
+        - API Key: []
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

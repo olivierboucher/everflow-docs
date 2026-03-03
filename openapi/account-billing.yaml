@@ -1,0 +1,87 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Account Billing
+  description: Endpoints for managing account billing and invoices in the Everflow network.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Account Billing
+    description: Endpoints for account billing.
+paths:
+  /networks/billings/account/invoices:
+    get:
+      summary: List Account Billing Invoices
+      description: >
+        Retrieve account billing invoices for the network. Returns a list of
+        invoices with details such as billing period, amount, status, and
+        payment information.
+      tags:
+        - Account Billing
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number (1-based).
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            default: 50
+          description: Number of results per page.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  invoices:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        invoice_id:
+                          type: integer
+                          description: Unique invoice ID.
+                        network_id:
+                          type: integer
+                          description: Network ID.
+                        billing_period_start:
+                          type: string
+                          description: Start of billing period.
+                        billing_period_end:
+                          type: string
+                          description: End of billing period.
+                        amount:
+                          type: number
+                          description: Invoice amount.
+                        status:
+                          type: string
+                          description: Invoice status (paid, pending, overdue).
+                        time_created:
+                          type: integer
+                          description: Unix timestamp of creation.
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+      security:
+        - API Key: []
+
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

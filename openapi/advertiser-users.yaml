@@ -1,0 +1,258 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Advertiser Users
+  description: Endpoints for managing advertiser user accounts from the network level.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Advertiser Users
+paths:
+  /networks/advertisers/users:
+    get:
+      summary: List All Advertiser Users
+      description: >
+        Retrieve all advertiser users across all advertisers in the network.
+        Returns the complete list of advertiser user accounts.
+      tags:
+        - Advertiser Users
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AdvertiserUser"
+      security:
+        - API Key: []
+  /networks/advertisers/{advertiserId}/users:
+    get:
+      summary: List Advertiser Users by Advertiser
+      description: >
+        Retrieve all users for a specific advertiser. Returns user details
+        including contact information and account status.
+      tags:
+        - Advertiser Users
+      parameters:
+        - in: path
+          name: advertiserId
+          required: true
+          schema:
+            type: integer
+          description: The unique advertiser ID.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AdvertiserUser"
+      security:
+        - API Key: []
+    post:
+      summary: Create Advertiser User
+      description: >
+        Create a new user account for a specific advertiser. The user will
+        receive an invite email unless an initial password is provided.
+      tags:
+        - Advertiser Users
+      parameters:
+        - in: path
+          name: advertiserId
+          required: true
+          schema:
+            type: integer
+          description: The unique advertiser ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              first_name: "John"
+              last_name: "Smith"
+              email: "john@brand.com"
+              account_status: "active"
+              language_id: 1
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                first_name:
+                  type: string
+                  description: User's first name.
+                last_name:
+                  type: string
+                  description: User's last name.
+                email:
+                  type: string
+                  description: User's email address. Must be unique across the platform.
+                account_status:
+                  type: string
+                  enum:
+                    - active
+                    - inactive
+                  description: User account status.
+                title:
+                  type: string
+                  description: User's job title.
+                work_phone:
+                  type: string
+                  description: User's work phone number.
+                cell_phone:
+                  type: string
+                  description: User's cell phone number.
+                language_id:
+                  type: integer
+                  description: Language ID (1 = English).
+                timezone_id:
+                  type: integer
+                  description: Timezone ID from the metadata endpoint.
+                currency_id:
+                  type: string
+                  description: ISO currency code for this user.
+                initial_password:
+                  type: string
+                  description: Initial password. Must be at least 12 characters. If omitted, the user receives an invite email.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdvertiserUser"
+      security:
+        - API Key: []
+  /networks/advertisers/users/{userId}:
+    put:
+      summary: Update Advertiser User
+      description: >
+        Update an existing advertiser user. This is a full object replacement;
+        all fields must be provided in the request body.
+      tags:
+        - Advertiser Users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+          description: The unique advertiser user ID to update.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              first_name: "John"
+              last_name: "Smith"
+              email: "john@brand.com"
+              account_status: "active"
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                first_name:
+                  type: string
+                  description: User's first name.
+                last_name:
+                  type: string
+                  description: User's last name.
+                email:
+                  type: string
+                  description: User's email address. Must be unique across the platform.
+                account_status:
+                  type: string
+                  enum:
+                    - active
+                    - inactive
+                  description: User account status.
+                title:
+                  type: string
+                  description: User's job title.
+                work_phone:
+                  type: string
+                  description: User's work phone number.
+                cell_phone:
+                  type: string
+                  description: User's cell phone number.
+                language_id:
+                  type: integer
+                  description: Language ID (1 = English).
+                timezone_id:
+                  type: integer
+                  description: Timezone ID from the metadata endpoint.
+                currency_id:
+                  type: string
+                  description: ISO currency code for this user.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdvertiserUser"
+        "404":
+          description: Advertiser user not found.
+      security:
+        - API Key: []
+components:
+  schemas:
+    AdvertiserUser:
+      type: object
+      properties:
+        network_advertiser_user_id:
+          type: integer
+          description: Unique advertiser user ID.
+        network_advertiser_id:
+          type: integer
+          description: The advertiser ID this user belongs to.
+        first_name:
+          type: string
+          description: User's first name.
+        last_name:
+          type: string
+          description: User's last name.
+        email:
+          type: string
+          description: User's email address.
+        title:
+          type: string
+          description: User's job title.
+        account_status:
+          type: string
+          enum:
+            - active
+            - inactive
+          description: User account status.
+        work_phone:
+          type: string
+          description: User's work phone number.
+        cell_phone:
+          type: string
+          description: User's cell phone number.
+        language_id:
+          type: integer
+          description: Language ID.
+        timezone_id:
+          type: integer
+          description: Timezone ID.
+        currency_id:
+          type: string
+          description: ISO currency code.
+        time_created:
+          type: integer
+          description: Unix timestamp of creation.
+        time_saved:
+          type: integer
+          description: Unix timestamp of last update.
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

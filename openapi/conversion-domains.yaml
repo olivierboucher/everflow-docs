@@ -1,0 +1,59 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Conversion Domains
+  description: Endpoint for listing conversion domains in the Everflow network.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Conversion Domains
+paths:
+  /networks/conversiondomains:
+    get:
+      summary: List Conversion Domains
+      description: >
+        Retrieve all conversion domains configured for the network.
+        Conversion domains are used for postback URLs and server-to-server
+        conversion tracking.
+      tags:
+        - Conversion Domains
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    conversion_domain_id:
+                      type: integer
+                      description: Unique conversion domain ID.
+                    network_id:
+                      type: integer
+                      description: Network ID.
+                    domain:
+                      type: string
+                      description: The conversion domain URL.
+                    status:
+                      type: string
+                      description: Domain status.
+                    is_default:
+                      type: boolean
+                      description: Whether this is the default conversion domain.
+                    time_created:
+                      type: integer
+                      description: Unix timestamp of creation.
+                    time_saved:
+                      type: integer
+                      description: Unix timestamp of last update.
+      security:
+        - API Key: []
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

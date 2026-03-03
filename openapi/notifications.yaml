@@ -1,0 +1,59 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Notifications
+  description: Endpoint for listing notifications in the Everflow network.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Notifications
+paths:
+  /networks/notifications:
+    get:
+      summary: List Notifications
+      description: >
+        Retrieve all notifications for the network. Returns system
+        notifications, alerts, and messages relevant to the authenticated
+        network user.
+      tags:
+        - Notifications
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    notification_id:
+                      type: integer
+                      description: Unique notification ID.
+                    network_id:
+                      type: integer
+                      description: Network ID.
+                    title:
+                      type: string
+                      description: Notification title.
+                    message:
+                      type: string
+                      description: Notification message body.
+                    type:
+                      type: string
+                      description: Notification type.
+                    is_read:
+                      type: boolean
+                      description: Whether the notification has been read.
+                    time_created:
+                      type: integer
+                      description: Unix timestamp of creation.
+      security:
+        - API Key: []
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

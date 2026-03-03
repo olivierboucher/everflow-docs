@@ -1,0 +1,71 @@
+openapi: 3.0.3
+info:
+  title: Everflow Affiliate API - Creatives Archive
+  description: >
+    Archived creatives endpoints for the Everflow Affiliate API. These endpoints
+    allow affiliates to retrieve historical creative assets that have been archived.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Affiliate Creatives Archive
+    description: Endpoints for retrieving archived creative assets as an affiliate.
+paths:
+  /affiliates/creatives/archive:
+    get:
+      summary: List Archived Creatives
+      description: >
+        Returns archived creative assets across offers. These are creatives that
+        were previously active but have since been archived. Useful for historical
+        reference or auditing past promotional materials.
+      tags:
+        - Affiliate Creatives Archive
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: Array of archived creative assets.
+                items:
+                  type: object
+                  properties:
+                    network_offer_creative_id:
+                      type: integer
+                      description: Unique identifier for the creative.
+                    name:
+                      type: string
+                      description: Name of the creative.
+                    creative_type:
+                      type: string
+                      description: Type of the creative (e.g. banner, text, email).
+                    status:
+                      type: string
+                      description: Status of the creative.
+                    relationship:
+                      type: object
+                      description: Related entity data.
+                      properties:
+                        offer:
+                          type: object
+                          properties:
+                            network_offer_id:
+                              type: integer
+                              description: ID of the offer this creative belongs to.
+                            name:
+                              type: string
+                              description: Name of the offer.
+      security:
+        - API Key: []
+
+components:
+  securitySchemes:
+    API Key:
+      description: >
+        The affiliate's API key generated from the Affiliate Portal.
+        Uses the X-Eflow-Api-Key header.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

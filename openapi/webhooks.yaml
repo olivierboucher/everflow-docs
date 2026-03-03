@@ -1,0 +1,106 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Webhooks
+  description: Endpoints for managing webhook configurations in the Everflow network.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Webhooks
+    description: Endpoints for managing webhooks.
+paths:
+  /networks/webhooks/{webhookId}:
+    get:
+      summary: Get Webhook Config
+      description: >
+        Retrieve a single webhook configuration by its ID. Returns the
+        webhook URL, event types, status, and other configuration details.
+      tags:
+        - Webhooks
+      parameters:
+        - in: path
+          name: webhookId
+          required: true
+          schema:
+            type: integer
+          description: The webhook ID.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  webhook_id:
+                    type: integer
+                    description: Unique webhook ID.
+                  network_id:
+                    type: integer
+                    description: Network ID.
+                  url:
+                    type: string
+                    description: The webhook endpoint URL.
+                  status:
+                    type: string
+                    description: Webhook status.
+                  event_types:
+                    type: array
+                    items:
+                      type: string
+                    description: Event types that trigger this webhook.
+                  time_created:
+                    type: integer
+                    description: Unix timestamp of creation.
+                  time_saved:
+                    type: integer
+                    description: Unix timestamp of last update.
+      security:
+        - API Key: []
+
+  /networks/webhooks:
+    post:
+      summary: Create Webhook
+      description: >
+        Create a new webhook configuration. Webhooks allow you to receive
+        real-time HTTP notifications when specific events occur in your
+        Everflow network, such as new conversions or status changes.
+      tags:
+        - Webhooks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  description: The webhook endpoint URL.
+                status:
+                  type: string
+                  description: Webhook status (active/paused).
+                event_types:
+                  type: array
+                  items:
+                    type: string
+                  description: Event types that should trigger this webhook.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: The created webhook configuration.
+      security:
+        - API Key: []
+
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

@@ -1,0 +1,56 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Business Units
+  description: Endpoint for listing business units in the Everflow network.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Business Units
+paths:
+  /networks/businessunits:
+    get:
+      summary: List Business Units
+      description: >
+        Retrieve all business units for the network. Business units allow
+        you to segment your network into distinct operational divisions
+        for reporting and access control purposes.
+      tags:
+        - Business Units
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    business_unit_id:
+                      type: integer
+                      description: Unique business unit ID.
+                    network_id:
+                      type: integer
+                      description: Network ID.
+                    name:
+                      type: string
+                      description: Business unit name.
+                    status:
+                      type: string
+                      description: Business unit status.
+                    time_created:
+                      type: integer
+                      description: Unix timestamp of creation.
+                    time_saved:
+                      type: integer
+                      description: Unix timestamp of last update.
+      security:
+        - API Key: []
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

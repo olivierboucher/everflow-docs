@@ -1,0 +1,309 @@
+openapi: 3.0.3
+info:
+  title: Everflow Marketplace API - Reporting
+  description: >
+    Reporting endpoints for the Everflow marketplace partner API. These endpoints
+    allow marketplace partners to retrieve conversion and chargeback data across
+    their marketplace connections.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Marketplace Reporting
+    description: Reporting endpoints for marketplace partners.
+paths:
+  /partners/reporting/conversions:
+    post:
+      summary: Search Conversions
+      description: >
+        Search raw conversion data across all marketplace connections. Filter by
+        network, offer, date range, and conversion type. Each conversion includes
+        revenue details and associated offer/network information.
+
+
+        Each request must contain `from` and `to` dates, a `timezone_id`, and boolean
+        flags for `show_conversions` and `show_events`.
+      tags:
+        - Marketplace Reporting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              from: "2024-01-01"
+              to: "2024-01-31"
+              timezone_id: 67
+              currency_id: "USD"
+              show_conversions: true
+              show_events: false
+              query:
+                filters: []
+            schema:
+              type: object
+              required:
+                - from
+                - to
+                - timezone_id
+                - currency_id
+                - show_conversions
+                - show_events
+              properties:
+                from:
+                  type: string
+                  description: Start date for the reporting period. Format `YYYY-MM-DD`.
+                to:
+                  type: string
+                  description: End date for the reporting period. Format `YYYY-MM-DD`.
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the request.
+                currency_id:
+                  type: string
+                  description: Currency code for monetary values (e.g. "USD").
+                show_conversions:
+                  type: boolean
+                  description: Whether to include base conversions in the results.
+                show_events:
+                  type: boolean
+                  description: Whether to include post-conversion events in the results.
+                query:
+                  type: object
+                  description: Query configuration for filtering.
+                  properties:
+                    filters:
+                      type: array
+                      description: Filters to narrow results.
+                      items:
+                        type: object
+                        properties:
+                          filter_id_value:
+                            type: string
+                            description: The value to filter on (e.g. network ID, offer ID).
+                          resource_type:
+                            type: string
+                            enum:
+                              - network
+                              - offer
+                            description: The resource type to filter on.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conversions:
+                    type: array
+                    description: Array of conversion objects.
+                    items:
+                      type: object
+                      properties:
+                        conversion_id:
+                          type: integer
+                          description: Unique conversion ID.
+                        conversion_unix_timestamp:
+                          type: integer
+                          description: Unix timestamp of when the conversion occurred.
+                        amount:
+                          type: number
+                          description: Conversion amount.
+                        revenue:
+                          type: number
+                          description: Revenue earned from this conversion.
+                        sale_amount:
+                          type: number
+                          description: Sale amount associated with this conversion.
+                        is_event:
+                          type: boolean
+                          description: Whether this is a post-conversion event.
+                        event_name:
+                          type: string
+                          description: Name of the post-conversion event (if is_event is true).
+                        is_view_through:
+                          type: boolean
+                          description: Whether this is a view-through conversion.
+                        transaction_id:
+                          type: string
+                          description: Click transaction ID associated with this conversion.
+                        country:
+                          type: string
+                          description: Country of the converting user.
+                        country_code:
+                          type: string
+                          description: ISO country code.
+                        time_created:
+                          type: integer
+                          description: Unix timestamp of when the conversion record was created.
+                        relationship:
+                          type: object
+                          description: Related entities for this conversion.
+                          properties:
+                            offer:
+                              type: object
+                              description: The offer associated with this conversion.
+                              properties:
+                                network_offer_id:
+                                  type: integer
+                                  description: Offer ID.
+                                name:
+                                  type: string
+                                  description: Offer name.
+                            network:
+                              type: object
+                              description: The network associated with this conversion.
+                              properties:
+                                network_id:
+                                  type: integer
+                                  description: Network ID.
+                                name:
+                                  type: string
+                                  description: Network name.
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                        description: Current page number.
+                      page_size:
+                        type: integer
+                        description: Number of results per page.
+                      total_count:
+                        type: integer
+                        description: Total number of matching conversions.
+      security:
+        - API Key: []
+  /partners/reporting/conversions/chargebacks:
+    post:
+      summary: Search Chargebacks
+      description: >
+        Search chargeback and refund records across marketplace connections. Returns
+        disputed or reversed conversions with their status and amounts.
+
+
+        Each request must contain `from` and `to` dates and a `timezone_id`.
+      tags:
+        - Marketplace Reporting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              from: "2024-01-01"
+              to: "2024-01-31"
+              timezone_id: 67
+              query:
+                filters: []
+            schema:
+              type: object
+              required:
+                - from
+                - to
+                - timezone_id
+              properties:
+                from:
+                  type: string
+                  description: Start date for the reporting period. Format `YYYY-MM-DD`.
+                to:
+                  type: string
+                  description: End date for the reporting period. Format `YYYY-MM-DD`.
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the request.
+                query:
+                  type: object
+                  description: Query configuration for filtering.
+                  properties:
+                    filters:
+                      type: array
+                      description: Filters to narrow results.
+                      items:
+                        type: object
+                        properties:
+                          filter_id_value:
+                            type: string
+                            description: The value to filter on.
+                          resource_type:
+                            type: string
+                            description: The resource type to filter on.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chargebacks:
+                    type: array
+                    description: Array of chargeback objects.
+                    items:
+                      type: object
+                      properties:
+                        chargeback_id:
+                          type: integer
+                          description: Unique chargeback ID.
+                        conversion_id:
+                          type: integer
+                          description: The original conversion ID that was charged back.
+                        amount:
+                          type: number
+                          description: Chargeback amount.
+                        revenue:
+                          type: number
+                          description: Revenue adjustment from this chargeback.
+                        status:
+                          type: string
+                          description: Current status of the chargeback.
+                        chargeback_unix_timestamp:
+                          type: integer
+                          description: Unix timestamp of when the chargeback occurred.
+                        transaction_id:
+                          type: string
+                          description: Transaction ID associated with this chargeback.
+                        relationship:
+                          type: object
+                          description: Related entities for this chargeback.
+                          properties:
+                            offer:
+                              type: object
+                              properties:
+                                network_offer_id:
+                                  type: integer
+                                  description: Offer ID.
+                                name:
+                                  type: string
+                                  description: Offer name.
+                            network:
+                              type: object
+                              properties:
+                                network_id:
+                                  type: integer
+                                  description: Network ID.
+                                name:
+                                  type: string
+                                  description: Network name.
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                        description: Current page number.
+                      page_size:
+                        type: integer
+                        description: Number of results per page.
+                      total_count:
+                        type: integer
+                        description: Total number of matching chargebacks.
+      security:
+        - API Key: []
+components:
+  securitySchemes:
+    API Key:
+      description: >
+        The marketplace partner's API key. Uses the X-Eflow-Api-Key header.
+        The key belongs to the marketplace partner user.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

@@ -14,10 +14,10 @@ tags:
 paths:
   /networks/affiliatestable:
     post:
-      summary: Search Affiliates
+      summary: List Affiliates
       description: >
-        Search and filter affiliates with text search and structured filters.
-        Returns a paginated list of affiliates.
+        Retrieve a paginated list of affiliates. Supports search filters, sorting,
+        and pagination to help you find and browse affiliates programmatically.
         Supports the `relationship` query parameter with values: signup, users.
       tags:
         - Affiliates
@@ -207,6 +207,25 @@ paths:
       security:
         - API Key: []
   /networks/affiliates:
+    get:
+      summary: List All Affiliates
+      description: >
+        Retrieve all affiliates for the network without table search.
+        Returns the complete list of affiliate accounts. For filtered
+        and paginated results, use the Search Affiliates endpoint instead.
+      tags:
+        - Affiliates
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Affiliate"
+      security:
+        - API Key: []
     post:
       summary: Create Affiliate
       description: >
@@ -854,6 +873,94 @@ paths:
                 $ref: "#/components/schemas/Affiliate"
         "404":
           description: Affiliate not found.
+      security:
+        - API Key: []
+  /networks/affiliates/patch:
+    patch:
+      summary: Bulk Edit Affiliates
+      description: >
+        Bulk edit multiple affiliates at once. Allows updating specific
+        fields across multiple affiliates without replacing the entire
+        object. Only the fields provided will be updated.
+      tags:
+        - Affiliates
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              network_affiliate_ids: [1, 2, 3]
+              account_status: "active"
+              network_employee_id: 5
+            schema:
+              type: object
+              required:
+                - network_affiliate_ids
+              properties:
+                network_affiliate_ids:
+                  type: array
+                  items:
+                    type: integer
+                  description: Array of affiliate IDs to update.
+                account_status:
+                  type: string
+                  enum:
+                    - active
+                    - inactive
+                    - suspended
+                  description: New account status to apply.
+                network_employee_id:
+                  type: integer
+                  description: New account manager ID to assign.
+                labels:
+                  type: array
+                  items:
+                    type: string
+                  description: Labels to assign.
+                network_affiliate_tier_id:
+                  type: integer
+                  description: Tier ID to assign.
+      responses:
+        "200":
+          description: Affiliates updated successfully.
+      security:
+        - API Key: []
+  /networks/affiliates/pending:
+    patch:
+      summary: Process Pending Affiliates
+      description: >
+        Process pending affiliate applications. Allows approving or
+        rejecting affiliates that have submitted signup applications
+        and are awaiting review.
+      tags:
+        - Affiliates
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              network_affiliate_ids: [10, 11]
+              action: "approve"
+            schema:
+              type: object
+              required:
+                - network_affiliate_ids
+                - action
+              properties:
+                network_affiliate_ids:
+                  type: array
+                  items:
+                    type: integer
+                  description: Array of pending affiliate IDs to process.
+                action:
+                  type: string
+                  enum:
+                    - approve
+                    - reject
+                  description: The action to take on the pending affiliates.
+      responses:
+        "200":
+          description: Pending affiliates processed successfully.
       security:
         - API Key: []
 components:

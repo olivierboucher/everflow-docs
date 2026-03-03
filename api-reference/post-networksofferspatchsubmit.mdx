@@ -1,0 +1,8 @@
+---
+title: Submit Offer Patch
+openapi: /openapi/offers-extras.yaml post /networks/offers/patch/submit
+---
+
+Submit a batch of offer changes for asynchronous processing. Unlike the direct PATCH endpoint, this queues the changes for background processing, which is more suitable for large-scale updates across many offers.
+
+Provide an array of `offer_ids` and a `changes` object with the fields and values to apply.

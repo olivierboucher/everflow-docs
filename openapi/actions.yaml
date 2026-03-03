@@ -1,0 +1,194 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Actions
+  description: Endpoints for managing actions (events) in the Everflow network.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Actions
+    description: Endpoints for managing actions and post-conversion events.
+paths:
+  /networks/actionstable:
+    post:
+      summary: List Actions
+      description: >
+        Retrieve a paginated list of actions (post-conversion event types).
+        Supports search filters, sorting, and pagination to help you find
+        and browse actions programmatically. Actions define the types of
+        events that can be tracked after a conversion.
+      tags:
+        - Actions
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number (1-based).
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            default: 50
+          description: Number of results per page.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                search_terms:
+                  type: array
+                  items:
+                    type: object
+                  description: Text search filters.
+                filters:
+                  type: object
+                  description: Structured filters to narrow results.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  actions:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Action"
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+      security:
+        - API Key: []
+
+  /networks/actions:
+    post:
+      summary: Create Action
+      description: >
+        Create a new action (post-conversion event type). Actions define the
+        types of events that can be tracked after a conversion, such as
+        upsells, renewals, or custom milestone events.
+      tags:
+        - Actions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Name of the action.
+                status:
+                  type: string
+                  enum:
+                    - active
+                    - paused
+                  description: Status of the action.
+                payout_type:
+                  type: string
+                  description: Payout type for this action.
+                payout_amount:
+                  type: number
+                  description: Payout amount for this action.
+                revenue_type:
+                  type: string
+                  description: Revenue type for this action.
+                revenue_amount:
+                  type: number
+                  description: Revenue amount for this action.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Action"
+      security:
+        - API Key: []
+
+  /networks/actions/{actionId}:
+    delete:
+      summary: Delete Action
+      description: >
+        Delete an action by its ID. This action is permanent and cannot be
+        undone. Any offers referencing this action will no longer track it.
+      tags:
+        - Actions
+      parameters:
+        - in: path
+          name: actionId
+          required: true
+          schema:
+            type: integer
+          description: The action ID.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    description: Whether the deletion was successful.
+      security:
+        - API Key: []
+
+components:
+  schemas:
+    Action:
+      type: object
+      properties:
+        network_action_id:
+          type: integer
+          description: Unique action ID.
+        network_id:
+          type: integer
+          description: Network ID.
+        name:
+          type: string
+          description: Name of the action.
+        status:
+          type: string
+          enum:
+            - active
+            - paused
+          description: Status of the action.
+        payout_type:
+          type: string
+          description: Payout type for this action.
+        payout_amount:
+          type: number
+          description: Payout amount.
+        revenue_type:
+          type: string
+          description: Revenue type for this action.
+        revenue_amount:
+          type: number
+          description: Revenue amount.
+        time_created:
+          type: integer
+          description: Unix timestamp of creation.
+        time_saved:
+          type: integer
+          description: Unix timestamp of last update.
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

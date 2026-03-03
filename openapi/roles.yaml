@@ -1,0 +1,61 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Roles
+  description: Endpoint for listing roles in the Everflow network.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Roles
+paths:
+  /networks/roles:
+    get:
+      summary: List Roles
+      description: >
+        Retrieve all roles configured for the network. Roles define
+        permission sets that can be assigned to employees, affiliates,
+        and advertiser users to control access to features and data.
+      tags:
+        - Roles
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    role_id:
+                      type: integer
+                      description: Unique role ID.
+                    network_id:
+                      type: integer
+                      description: Network ID.
+                    name:
+                      type: string
+                      description: Role name.
+                    description:
+                      type: string
+                      description: Role description.
+                    permissions:
+                      type: array
+                      items:
+                        type: string
+                      description: Array of permission identifiers assigned to this role.
+                    time_created:
+                      type: integer
+                      description: Unix timestamp of creation.
+                    time_saved:
+                      type: integer
+                      description: Unix timestamp of last update.
+      security:
+        - API Key: []
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

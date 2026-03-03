@@ -1,11 +1,11 @@
 ---
-title: Search Offers
+title: List Offers
 openapi: /openapi/offers.yaml post /networks/offerstable
 ---
 
-The primary endpoint for finding offers. Supports text search by offer name, encoded value, or advertiser name, along with structured filters for status, visibility, labels, and more.
+Retrieve a paginated list of offers. Supports search filters, sorting, and pagination to help you find and browse offers programmatically.
 
-Returns a paginated list of offers. Use `page` and `page_size` query parameters to control pagination. Include the `relationship` query parameter to fetch related data like visibility settings, rulesets, or URLs alongside each offer.
+Use `page` and `page_size` query parameters to control pagination. Include the `relationship` query parameter to fetch related data like visibility settings, rulesets, or URLs alongside each offer.
 
 **Common use cases:**
 - List all active offers: set `filters.offer_status` to `active`

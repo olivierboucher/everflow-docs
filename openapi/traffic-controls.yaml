@@ -1,0 +1,230 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Traffic Controls
+  description: Endpoints for managing network-level traffic controls.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Traffic Controls
+paths:
+  /networks/trafficcontrols:
+    get:
+      summary: List Traffic Controls
+      description: >
+        Retrieve all network-level traffic controls. Traffic controls allow
+        you to set rules for blocking or filtering traffic based on various
+        criteria such as geographic location, device type, or custom variables.
+      tags:
+        - Traffic Controls
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TrafficControl"
+      security:
+        - API Key: []
+    post:
+      summary: Create Traffic Control
+      description: >
+        Create a new network-level traffic control rule. Traffic controls
+        define rules for blocking or filtering traffic based on specified
+        criteria and comparison methods.
+      tags:
+        - Traffic Controls
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              status: "active"
+              control_type: "block"
+              is_apply_all_offers: true
+              comparison_method: "contains"
+              variables: []
+            schema:
+              type: object
+              required:
+                - status
+                - control_type
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - active
+                    - inactive
+                  description: Traffic control status.
+                control_type:
+                  type: string
+                  description: The type of traffic control (e.g. block, redirect).
+                is_apply_all_offers:
+                  type: boolean
+                  description: Whether this control applies to all offers.
+                comparison_method:
+                  type: string
+                  description: How variables are compared (e.g. contains, equals, regex).
+                variables:
+                  type: array
+                  items:
+                    type: object
+                  description: Variables and values used for traffic matching.
+                date_valid_from:
+                  type: string
+                  description: Start date for the control's validity period (YYYY-MM-DD).
+                date_valid_to:
+                  type: string
+                  description: End date for the control's validity period (YYYY-MM-DD).
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrafficControl"
+      security:
+        - API Key: []
+  /networks/trafficcontrols/{controlId}:
+    get:
+      summary: Get Traffic Control
+      description: >
+        Retrieve a single traffic control by its ID.
+      tags:
+        - Traffic Controls
+      parameters:
+        - in: path
+          name: controlId
+          required: true
+          schema:
+            type: integer
+          description: The unique traffic control ID.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrafficControl"
+        "404":
+          description: Traffic control not found.
+      security:
+        - API Key: []
+    put:
+      summary: Update Traffic Control
+      description: >
+        Update an existing traffic control. This is a full object replacement;
+        all fields must be provided in the request body.
+      tags:
+        - Traffic Controls
+      parameters:
+        - in: path
+          name: controlId
+          required: true
+          schema:
+            type: integer
+          description: The unique traffic control ID to update.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              status: "active"
+              control_type: "block"
+              is_apply_all_offers: true
+              comparison_method: "contains"
+              variables: []
+            schema:
+              type: object
+              required:
+                - status
+                - control_type
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - active
+                    - inactive
+                  description: Traffic control status.
+                control_type:
+                  type: string
+                  description: The type of traffic control.
+                is_apply_all_offers:
+                  type: boolean
+                  description: Whether this control applies to all offers.
+                comparison_method:
+                  type: string
+                  description: How variables are compared.
+                variables:
+                  type: array
+                  items:
+                    type: object
+                  description: Variables and values used for traffic matching.
+                date_valid_from:
+                  type: string
+                  description: Start date for the control's validity period (YYYY-MM-DD).
+                date_valid_to:
+                  type: string
+                  description: End date for the control's validity period (YYYY-MM-DD).
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrafficControl"
+        "404":
+          description: Traffic control not found.
+      security:
+        - API Key: []
+components:
+  schemas:
+    TrafficControl:
+      type: object
+      properties:
+        network_traffic_control_id:
+          type: integer
+          description: Unique traffic control ID.
+        network_id:
+          type: integer
+          description: Network ID.
+        status:
+          type: string
+          enum:
+            - active
+            - inactive
+          description: Traffic control status.
+        control_type:
+          type: string
+          description: The type of traffic control.
+        is_apply_all_offers:
+          type: boolean
+          description: Whether this control applies to all offers.
+        comparison_method:
+          type: string
+          description: How variables are compared.
+        variables:
+          type: array
+          items:
+            type: object
+          description: Variables and values used for traffic matching.
+        date_valid_from:
+          type: string
+          description: Start date for the control's validity period.
+        date_valid_to:
+          type: string
+          description: End date for the control's validity period.
+        time_created:
+          type: integer
+          description: Unix timestamp of creation.
+        time_saved:
+          type: integer
+          description: Unix timestamp of last update.
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

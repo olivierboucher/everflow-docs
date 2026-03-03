@@ -1,0 +1,6 @@
+---
+title: Stream Reporting Data
+openapi: /openapi/reporting-extras.yaml post /networks/reporting/entity/stream
+---
+
+Returns reporting entity data as a streaming response, designed for large datasets. Uses the same request format as the entity/table endpoint but streams the response, making it more suitable when the result set exceeds the 10,000-row limit of the standard table endpoint.

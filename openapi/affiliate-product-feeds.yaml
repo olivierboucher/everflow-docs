@@ -1,0 +1,152 @@
+openapi: 3.0.3
+info:
+  title: Everflow Affiliate API - Product Feeds
+  description: >
+    Product feed endpoints for the Everflow Affiliate API. These endpoints allow
+    affiliates to retrieve product feed data for offers and search across feeds.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Affiliate Product Feeds
+    description: Endpoints for retrieving product feed data as an affiliate.
+paths:
+  /affiliates/offers/{offerId}/productfeeds:
+    get:
+      summary: Get Offer Product Feeds
+      description: >
+        Returns product feed URLs and configurations for a specific offer.
+        Product feeds provide structured product data that affiliates can use
+        for dynamic ad creation or product listing pages.
+      tags:
+        - Affiliate Product Feeds
+      parameters:
+        - name: offerId
+          in: path
+          required: true
+          description: The numeric ID of the offer.
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: Array of product feeds for the offer.
+                items:
+                  type: object
+                  properties:
+                    network_product_feed_id:
+                      type: integer
+                      description: Unique identifier for the product feed.
+                    name:
+                      type: string
+                      description: Name of the product feed.
+                    feed_url:
+                      type: string
+                      description: URL of the product feed.
+                    format:
+                      type: string
+                      description: Feed format (e.g. CSV, XML, JSON).
+                    status:
+                      type: string
+                      description: Status of the product feed.
+        "404":
+          description: Offer not found or not visible to the affiliate.
+      security:
+        - API Key: []
+
+  /affiliates/productfeeds/table:
+    post:
+      summary: List Product Feeds
+      description: >
+        Retrieve a paginated list of product feeds available to the authenticated
+        affiliate. Supports search filters, sorting, and pagination to help you
+        discover and browse product feeds programmatically.
+      tags:
+        - Affiliate Product Feeds
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filters:
+                  type: array
+                  description: Filters to narrow results.
+                  items:
+                    type: object
+                    properties:
+                      filter_id_value:
+                        type: string
+                      resource_type:
+                        type: string
+                page:
+                  type: integer
+                  description: Page number for pagination.
+                  default: 1
+                page_size:
+                  type: integer
+                  description: Number of results per page.
+                  default: 50
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  product_feeds:
+                    type: array
+                    description: Array of product feeds.
+                    items:
+                      type: object
+                      properties:
+                        network_product_feed_id:
+                          type: integer
+                          description: Unique identifier for the product feed.
+                        name:
+                          type: string
+                          description: Name of the product feed.
+                        feed_url:
+                          type: string
+                          description: URL of the product feed.
+                        format:
+                          type: string
+                          description: Feed format.
+                        relationship:
+                          type: object
+                          properties:
+                            offer:
+                              type: object
+                              properties:
+                                network_offer_id:
+                                  type: integer
+                                name:
+                                  type: string
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+      security:
+        - API Key: []
+
+components:
+  securitySchemes:
+    API Key:
+      description: >
+        The affiliate's API key generated from the Affiliate Portal.
+        Uses the X-Eflow-Api-Key header.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

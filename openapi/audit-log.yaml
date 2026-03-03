@@ -1,0 +1,114 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Audit Log
+  description: Endpoint for searching audit operations in the Everflow network.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Audit Log
+paths:
+  /networks/auditoperations:
+    post:
+      summary: Search Audit Operations
+      description: >
+        Search the audit trail of changes made in the platform. Returns
+        a list of operations including who made the change, what was changed,
+        and when. Supports filtering by user, resource type, and operation type.
+      tags:
+        - Audit Log
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              from: "2024-01-01"
+              to: "2024-01-31"
+              timezone_id: 67
+              query:
+                resource_type: "offer"
+                operation_type: "update"
+            schema:
+              type: object
+              required:
+                - from
+                - to
+              properties:
+                from:
+                  type: string
+                  description: Start date for the audit search (YYYY-MM-DD).
+                to:
+                  type: string
+                  description: End date for the audit search (YYYY-MM-DD).
+                timezone_id:
+                  type: integer
+                  description: Timezone ID for interpreting the date range.
+                query:
+                  type: object
+                  description: Filters for narrowing the audit results.
+                  properties:
+                    user:
+                      type: string
+                      description: Filter by user name or email.
+                    resource_type:
+                      type: string
+                      description: Filter by resource type (e.g. offer, affiliate, advertiser).
+                    operation_type:
+                      type: string
+                      enum:
+                        - create
+                        - update
+                        - delete
+                      description: Filter by operation type.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  operations:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        audit_operation_id:
+                          type: integer
+                          description: Unique audit operation ID.
+                        user:
+                          type: object
+                          description: The user who performed the operation.
+                          properties:
+                            name:
+                              type: string
+                            email:
+                              type: string
+                        operation_type:
+                          type: string
+                          enum:
+                            - create
+                            - update
+                            - delete
+                          description: The type of operation performed.
+                        resource_type:
+                          type: string
+                          description: The type of resource that was modified.
+                        resource_id:
+                          type: integer
+                          description: The ID of the resource that was modified.
+                        changes:
+                          type: object
+                          description: Details of the changes made.
+                        timestamp:
+                          type: integer
+                          description: Unix timestamp of when the operation occurred.
+      security:
+        - API Key: []
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

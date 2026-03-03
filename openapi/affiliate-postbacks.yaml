@@ -167,10 +167,11 @@ paths:
 
   /affiliates/pixelstable:
     post:
-      summary: Search Postbacks
+      summary: List Postbacks
       description: >
-        Advanced search endpoint for postbacks. Supports search terms, filtering,
-        and pagination. Returns results in a paginated table format.
+        Retrieve a paginated list of postbacks. Supports search filters, sorting,
+        and pagination to help you find and browse postback configurations
+        programmatically.
       tags:
         - Affiliate Postbacks
       requestBody:

@@ -3,7 +3,7 @@ title: Get Aggregated Reporting Data
 openapi: /openapi/affiliate-reporting.yaml post /affiliates/reporting/entity/table
 ---
 
-The main reporting endpoint for affiliates. Pivot your performance data by one or more dimensions over a date range. This is the affiliate-facing equivalent of the Network API's `POST /v1/networks/reporting/entity/table`.
+Retrieve a paginated list of aggregated reporting data for the authenticated affiliate. Supports filters, sorting, and pagination to help you browse performance data programmatically. This is the affiliate-facing equivalent of the Network API's `POST /v1/networks/reporting/entity/table`.
 
 Each request must contain:
 

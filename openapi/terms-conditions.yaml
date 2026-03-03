@@ -1,0 +1,193 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Terms & Conditions
+  description: Endpoints for managing network terms and conditions and affiliate acceptance.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Terms & Conditions
+    description: Endpoints for managing terms and conditions.
+paths:
+  /networks/termsconditions:
+    get:
+      summary: Get Latest Terms & Conditions
+      description: >
+        Retrieve the latest terms and conditions for the network. Returns the
+        current version of the terms that affiliates are required to accept.
+      tags:
+        - Terms & Conditions
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  terms_conditions_id:
+                    type: integer
+                    description: Unique terms and conditions ID.
+                  network_id:
+                    type: integer
+                    description: Network ID.
+                  content:
+                    type: string
+                    description: The terms and conditions content.
+                  version:
+                    type: integer
+                    description: Version number.
+                  time_created:
+                    type: integer
+                    description: Unix timestamp of creation.
+                  time_saved:
+                    type: integer
+                    description: Unix timestamp of last update.
+      security:
+        - API Key: []
+
+  /networks/affiliates/{affiliateId}/termsconditions/acceptance:
+    get:
+      summary: Get T&C Acceptance
+      description: >
+        Retrieve the terms and conditions acceptance status for a specific
+        affiliate. Shows whether the affiliate has accepted the current
+        version of the terms.
+      tags:
+        - Terms & Conditions
+      parameters:
+        - in: path
+          name: affiliateId
+          required: true
+          schema:
+            type: integer
+          description: The affiliate ID.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accepted:
+                    type: boolean
+                    description: Whether the affiliate has accepted the terms.
+                  accepted_version:
+                    type: integer
+                    description: The version of terms the affiliate accepted.
+                  time_accepted:
+                    type: integer
+                    description: Unix timestamp of acceptance.
+      security:
+        - API Key: []
+    put:
+      summary: Update T&C Acceptance
+      description: >
+        Update the terms and conditions acceptance status for a specific
+        affiliate. Use this to record that an affiliate has accepted or
+        needs to re-accept the terms.
+      tags:
+        - Terms & Conditions
+      parameters:
+        - in: path
+          name: affiliateId
+          required: true
+          schema:
+            type: integer
+          description: The affiliate ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accepted:
+                  type: boolean
+                  description: Whether the affiliate has accepted the terms.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    description: Whether the update was successful.
+      security:
+        - API Key: []
+
+  /networks/affiliates/termsconditions/acceptance/table:
+    post:
+      summary: List T&C Acceptances
+      description: >
+        Retrieve a paginated list of terms and conditions acceptance records
+        across affiliates. Supports search filters, sorting, and pagination
+        to help you browse which affiliates have accepted the terms and
+        which have not.
+      tags:
+        - Terms & Conditions
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number (1-based).
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            default: 50
+          description: Number of results per page.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                search_terms:
+                  type: array
+                  items:
+                    type: object
+                  description: Text search filters.
+                filters:
+                  type: object
+                  description: Structured filters to narrow results.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  acceptances:
+                    type: array
+                    items:
+                      type: object
+                      description: Acceptance record for an affiliate.
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+      security:
+        - API Key: []
+
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

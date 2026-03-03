@@ -1,0 +1,55 @@
+openapi: 3.0.3
+info:
+  title: Everflow Affiliate API - Categories
+  description: >
+    Category endpoints for the Everflow Affiliate API. These endpoints allow
+    affiliates to retrieve offer categories visible to their account.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Affiliate Categories
+    description: Endpoints for retrieving offer categories as an affiliate.
+paths:
+  /affiliates/categories:
+    get:
+      summary: List Categories
+      description: >
+        Returns all offer categories visible to the authenticated affiliate.
+        Categories are used to organize offers by vertical or type and can be
+        used to filter offers when browsing the catalog.
+      tags:
+        - Affiliate Categories
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: Array of offer categories.
+                items:
+                  type: object
+                  properties:
+                    network_category_id:
+                      type: integer
+                      description: Unique identifier for the category.
+                    name:
+                      type: string
+                      description: Display name of the category.
+                    status:
+                      type: string
+                      description: Current status of the category (e.g. active, deleted).
+      security:
+        - API Key: []
+
+components:
+  securitySchemes:
+    API Key:
+      description: >
+        The affiliate's API key generated from the Affiliate Portal.
+        Uses the X-Eflow-Api-Key header.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

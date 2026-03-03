@@ -1,0 +1,199 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Employees
+  description: Endpoints for managing network employee accounts.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Employees
+paths:
+  /networks/employees:
+    get:
+      summary: List Employees
+      description: >
+        Retrieve all network employee accounts. Returns employee details
+        including contact information, roles, and status.
+      tags:
+        - Employees
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Employee"
+      security:
+        - API Key: []
+    post:
+      summary: Create Employee
+      description: >
+        Create a new network employee account. Employees are internal users
+        who manage the network, including account managers and administrators.
+      tags:
+        - Employees
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              first_name: "Sarah"
+              last_name: "Johnson"
+              email: "sarah@network.com"
+              title: "Account Manager"
+              status: "active"
+              roles: []
+            schema:
+              type: object
+              required:
+                - first_name
+                - last_name
+                - email
+              properties:
+                first_name:
+                  type: string
+                  description: Employee's first name.
+                last_name:
+                  type: string
+                  description: Employee's last name.
+                email:
+                  type: string
+                  description: Employee's email address. Must be unique across the platform.
+                title:
+                  type: string
+                  description: Employee's job title.
+                status:
+                  type: string
+                  enum:
+                    - active
+                    - inactive
+                  description: Employee account status.
+                roles:
+                  type: array
+                  items:
+                    type: integer
+                  description: Array of role IDs assigned to this employee.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+      security:
+        - API Key: []
+  /networks/employees/{employeeId}:
+    put:
+      summary: Update Employee
+      description: >
+        Update an existing network employee. This is a full object replacement;
+        all fields must be provided in the request body.
+      tags:
+        - Employees
+      parameters:
+        - in: path
+          name: employeeId
+          required: true
+          schema:
+            type: integer
+          description: The unique employee ID to update.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              first_name: "Sarah"
+              last_name: "Johnson"
+              email: "sarah@network.com"
+              title: "Senior Account Manager"
+              status: "active"
+              roles: []
+            schema:
+              type: object
+              required:
+                - first_name
+                - last_name
+                - email
+              properties:
+                first_name:
+                  type: string
+                  description: Employee's first name.
+                last_name:
+                  type: string
+                  description: Employee's last name.
+                email:
+                  type: string
+                  description: Employee's email address.
+                title:
+                  type: string
+                  description: Employee's job title.
+                status:
+                  type: string
+                  enum:
+                    - active
+                    - inactive
+                  description: Employee account status.
+                roles:
+                  type: array
+                  items:
+                    type: integer
+                  description: Array of role IDs assigned to this employee.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+        "404":
+          description: Employee not found.
+      security:
+        - API Key: []
+components:
+  schemas:
+    Employee:
+      type: object
+      properties:
+        employee_id:
+          type: integer
+          description: Unique employee ID.
+        network_id:
+          type: integer
+          description: Network ID this employee belongs to.
+        first_name:
+          type: string
+          description: Employee's first name.
+        last_name:
+          type: string
+          description: Employee's last name.
+        email:
+          type: string
+          description: Employee's email address.
+        title:
+          type: string
+          description: Employee's job title.
+        status:
+          type: string
+          enum:
+            - active
+            - inactive
+          description: Employee account status.
+        roles:
+          type: array
+          items:
+            type: integer
+          description: Array of role IDs assigned to this employee.
+        time_created:
+          type: integer
+          description: Unix timestamp of creation.
+        time_saved:
+          type: integer
+          description: Unix timestamp of last update.
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

@@ -1,0 +1,96 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Partner Postbacks (Additional Endpoints)
+  description: Additional partner postback (pixel) endpoints for the Everflow network.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Partner Postbacks
+    description: Additional partner postback endpoints.
+paths:
+  /networks/pixels/{pixelId}:
+    delete:
+      summary: Delete Partner Postback
+      description: >
+        Delete a partner postback (pixel) by its ID. This action is permanent
+        and cannot be undone. The postback will no longer fire for future
+        conversions.
+      tags:
+        - Partner Postbacks
+      parameters:
+        - in: path
+          name: pixelId
+          required: true
+          schema:
+            type: integer
+          description: The pixel (postback) ID.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    description: Whether the deletion was successful.
+      security:
+        - API Key: []
+
+  /networks/pixels:
+    get:
+      summary: List All Postbacks
+      description: >
+        Retrieve all partner postbacks (pixels) for the network. Returns a
+        simple list without table search functionality. Use the table search
+        endpoint for filtered queries.
+      tags:
+        - Partner Postbacks
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number (1-based).
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            default: 50
+          description: Number of results per page.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pixels:
+                    type: array
+                    items:
+                      type: object
+                      description: Partner postback record.
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+      security:
+        - API Key: []
+
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

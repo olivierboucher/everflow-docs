@@ -1,0 +1,8 @@
+---
+title: Create Conversion
+openapi: /openapi/reporting-extras.yaml post /networks/reporting/conversions
+---
+
+Manually fire a conversion. Use this to create conversions that were not captured through normal tracking, such as offline conversions or manual attribution adjustments.
+
+Provide `network_offer_id` and `network_affiliate_id` at minimum. Optionally include `amount`, `transaction_id`, and sub-parameters (`adv1`-`adv5`, `sub1`-`sub5`).

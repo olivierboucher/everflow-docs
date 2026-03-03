@@ -1,0 +1,222 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Custom Landing Pages
+  description: Endpoints for managing custom landing page settings in the Everflow network.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Custom Landing Pages
+    description: Endpoints for managing custom landing page settings.
+paths:
+  /networks/custom/landingpage/table:
+    post:
+      summary: List Custom Landing Page Settings
+      description: >
+        Retrieve a paginated list of custom landing page settings. Supports search
+        filters, sorting, and pagination to help you find and browse landing page
+        configurations programmatically.
+      tags:
+        - Custom Landing Pages
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number (1-based).
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            default: 50
+          description: Number of results per page.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                search_terms:
+                  type: array
+                  items:
+                    type: object
+                  description: Text search filters.
+                filters:
+                  type: object
+                  description: Structured filters to narrow results.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  landing_pages:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CustomLandingPage"
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+      security:
+        - API Key: []
+
+  /networks/custom/landingpage:
+    get:
+      summary: List Custom Landing Page Settings
+      description: >
+        Retrieve all custom landing page settings for the network. Returns
+        a list of landing page configurations with their associated offer
+        and affiliate details.
+      tags:
+        - Custom Landing Pages
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  landing_pages:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CustomLandingPage"
+      security:
+        - API Key: []
+    post:
+      summary: Create Custom Landing Page Setting
+      description: >
+        Create a new custom landing page setting. Custom landing pages allow
+        you to override the default offer URL for specific affiliates,
+        directing their traffic to a different landing page.
+      tags:
+        - Custom Landing Pages
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                network_offer_id:
+                  type: integer
+                  description: The offer ID for this landing page setting.
+                network_affiliate_id:
+                  type: integer
+                  description: The affiliate ID for this landing page setting.
+                url:
+                  type: string
+                  description: The custom landing page URL.
+                status:
+                  type: string
+                  enum:
+                    - active
+                    - paused
+                  description: Status of the landing page setting.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomLandingPage"
+      security:
+        - API Key: []
+
+  /networks/custom/landingpage/{settingId}:
+    put:
+      summary: Update Custom Landing Page Setting
+      description: >
+        Update an existing custom landing page setting. All fields must be
+        included in the request body. Retrieve the current setting first,
+        modify the needed fields, and send the full object back.
+      tags:
+        - Custom Landing Pages
+      parameters:
+        - in: path
+          name: settingId
+          required: true
+          schema:
+            type: integer
+          description: The custom landing page setting ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                network_offer_id:
+                  type: integer
+                  description: The offer ID for this landing page setting.
+                network_affiliate_id:
+                  type: integer
+                  description: The affiliate ID for this landing page setting.
+                url:
+                  type: string
+                  description: The custom landing page URL.
+                status:
+                  type: string
+                  enum:
+                    - active
+                    - paused
+                  description: Status of the landing page setting.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomLandingPage"
+      security:
+        - API Key: []
+
+components:
+  schemas:
+    CustomLandingPage:
+      type: object
+      properties:
+        custom_landing_page_id:
+          type: integer
+          description: Unique custom landing page setting ID.
+        network_id:
+          type: integer
+          description: Network ID.
+        network_offer_id:
+          type: integer
+          description: The associated offer ID.
+        network_affiliate_id:
+          type: integer
+          description: The associated affiliate ID.
+        url:
+          type: string
+          description: The custom landing page URL.
+        status:
+          type: string
+          enum:
+            - active
+            - paused
+          description: Status of the landing page setting.
+        time_created:
+          type: integer
+          description: Unix timestamp of creation.
+        time_saved:
+          type: integer
+          description: Unix timestamp of last update.
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

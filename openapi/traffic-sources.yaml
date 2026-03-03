@@ -1,0 +1,56 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Traffic Sources
+  description: Endpoint for listing traffic sources in the Everflow network.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Traffic Sources
+paths:
+  /networks/trafficsources:
+    get:
+      summary: List Traffic Sources
+      description: >
+        Retrieve all traffic sources configured for the network. Traffic
+        sources define the channels or mediums through which affiliates
+        drive traffic to offers.
+      tags:
+        - Traffic Sources
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    traffic_source_id:
+                      type: integer
+                      description: Unique traffic source ID.
+                    network_id:
+                      type: integer
+                      description: Network ID.
+                    name:
+                      type: string
+                      description: Traffic source name.
+                    status:
+                      type: string
+                      description: Traffic source status.
+                    time_created:
+                      type: integer
+                      description: Unix timestamp of creation.
+                    time_saved:
+                      type: integer
+                      description: Unix timestamp of last update.
+      security:
+        - API Key: []
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

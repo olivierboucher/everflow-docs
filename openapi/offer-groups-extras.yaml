@@ -1,0 +1,81 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Offer Groups (Additional Endpoints)
+  description: Additional offer group endpoints for the Everflow network.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Offer Groups
+    description: Additional offer group endpoints.
+paths:
+  /networks/offergroupstable:
+    post:
+      summary: List Offer Groups
+      description: >
+        Retrieve a paginated list of offer groups. Supports search filters,
+        sorting, and pagination to help you find and browse offer groups
+        programmatically.
+      tags:
+        - Offer Groups
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number (1-based).
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            default: 50
+          description: Number of results per page.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                search_terms:
+                  type: array
+                  items:
+                    type: object
+                  description: Text search filters.
+                filters:
+                  type: object
+                  description: Structured filters to narrow results.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  offer_groups:
+                    type: array
+                    items:
+                      type: object
+                      description: Offer group record.
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+      security:
+        - API Key: []
+
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

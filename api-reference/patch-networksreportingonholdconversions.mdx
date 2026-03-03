@@ -1,0 +1,8 @@
+---
+title: Update On-Hold Conversion Status
+openapi: /openapi/reporting-extras.yaml patch /networks/reporting/onhold/conversions
+---
+
+Approve or reject on-hold conversions in bulk. Provide an array of `conversion_ids` and the target `status` (either `approved` or `rejected`) to update them.
+
+Processing is asynchronous and updates may take a few seconds to reflect in reporting.

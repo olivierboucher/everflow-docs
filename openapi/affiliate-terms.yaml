@@ -1,0 +1,72 @@
+openapi: 3.0.3
+info:
+  title: Everflow Affiliate API - Terms & Conditions
+  description: >
+    Terms and conditions endpoints for the Everflow Affiliate API. These endpoints
+    allow affiliates to accept offer-specific terms and conditions.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Affiliate Terms
+    description: Endpoints for managing offer terms and conditions as an affiliate.
+paths:
+  /affiliates/offers/{offerId}/termsconditions:
+    put:
+      summary: Accept Offer Terms
+      description: >
+        Accept the terms and conditions for a specific offer. Some offers require
+        affiliates to explicitly accept terms before they can generate traffic.
+        Once accepted, the affiliate's acceptance is recorded and the offer
+        becomes available for promotion.
+      tags:
+        - Affiliate Terms
+      parameters:
+        - name: offerId
+          in: path
+          required: true
+          description: The numeric ID of the offer whose terms to accept.
+          schema:
+            type: integer
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accepted:
+                  type: boolean
+                  description: Whether the terms are being accepted.
+                  default: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Whether the terms were successfully accepted.
+                  network_offer_id:
+                    type: integer
+                    description: The offer ID for which terms were accepted.
+        "400":
+          description: Bad request. Offer does not have terms or terms already accepted.
+        "404":
+          description: Offer not found or not visible to the affiliate.
+      security:
+        - API Key: []
+
+components:
+  securitySchemes:
+    API Key:
+      description: >
+        The affiliate's API key generated from the Affiliate Portal.
+        Uses the X-Eflow-Api-Key header.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

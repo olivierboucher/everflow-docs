@@ -1,0 +1,244 @@
+openapi: 3.0.3
+info:
+  title: Everflow Affiliate API - Session & User Info
+  description: >
+    Session, account, and user management endpoints for the Everflow Affiliate API.
+    These endpoints allow affiliates to retrieve session information, account details,
+    network info, user management, and billing configuration.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Affiliate Session
+    description: Session, account, and user endpoints for affiliate users.
+paths:
+  /affiliates/session:
+    get:
+      summary: Get Current Session
+      description: >
+        Returns the authenticated user's current session information. Includes
+        details about the logged-in user, their permissions, and session metadata.
+      tags:
+        - Affiliate Session
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    description: The authenticated user's details.
+                    properties:
+                      network_affiliate_user_id:
+                        type: integer
+                        description: Unique identifier for the affiliate user.
+                      email:
+                        type: string
+                        description: User's email address.
+                      first_name:
+                        type: string
+                        description: User's first name.
+                      last_name:
+                        type: string
+                        description: User's last name.
+                  network_affiliate_id:
+                    type: integer
+                    description: The affiliate account ID.
+                  network_id:
+                    type: integer
+                    description: The network ID.
+      security:
+        - API Key: []
+
+  /affiliates:
+    get:
+      summary: Get Affiliate Info
+      description: >
+        Returns the authenticated affiliate's account details, including company
+        information, contact details, and account configuration.
+      tags:
+        - Affiliate Session
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  network_affiliate_id:
+                    type: integer
+                    description: Unique identifier for the affiliate account.
+                  name:
+                    type: string
+                    description: Affiliate account name / company name.
+                  account_status:
+                    type: string
+                    description: Current status of the affiliate account.
+                  email:
+                    type: string
+                    description: Primary contact email for the affiliate.
+                  address:
+                    type: object
+                    description: Affiliate address details.
+                  meta:
+                    type: object
+                    description: Additional metadata about the affiliate.
+      security:
+        - API Key: []
+
+  /affiliates/network:
+    get:
+      summary: Get Network Info
+      description: >
+        Returns basic network information visible to the authenticated affiliate.
+        Includes the network name, branding, and other public-facing configuration.
+      tags:
+        - Affiliate Session
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  network_id:
+                    type: integer
+                    description: Unique identifier for the network.
+                  name:
+                    type: string
+                    description: Network name.
+                  logo_url:
+                    type: string
+                    description: URL of the network's logo.
+                  favicon_url:
+                    type: string
+                    description: URL of the network's favicon.
+      security:
+        - API Key: []
+
+  /affiliates/users:
+    get:
+      summary: List Affiliate Users
+      description: >
+        Returns all users under the authenticated affiliate's account. Each user
+        has their own login credentials and may have different permission levels.
+      tags:
+        - Affiliate Session
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                description: Array of affiliate users.
+                items:
+                  type: object
+                  properties:
+                    network_affiliate_user_id:
+                      type: integer
+                      description: Unique identifier for the affiliate user.
+                    email:
+                      type: string
+                      description: User's email address.
+                    first_name:
+                      type: string
+                      description: User's first name.
+                    last_name:
+                      type: string
+                      description: User's last name.
+                    status:
+                      type: string
+                      description: User account status (e.g. active, disabled).
+      security:
+        - API Key: []
+
+  /affiliates/users/{userId}:
+    get:
+      summary: Get Affiliate User by ID
+      description: >
+        Returns details for a specific user under the authenticated affiliate's
+        account by their user ID.
+      tags:
+        - Affiliate Session
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: The numeric ID of the affiliate user.
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  network_affiliate_user_id:
+                    type: integer
+                    description: Unique identifier for the affiliate user.
+                  email:
+                    type: string
+                    description: User's email address.
+                  first_name:
+                    type: string
+                    description: User's first name.
+                  last_name:
+                    type: string
+                    description: User's last name.
+                  status:
+                    type: string
+                    description: User account status.
+        "404":
+          description: User not found.
+      security:
+        - API Key: []
+
+  /affiliates/billing:
+    get:
+      summary: Get Billing Info
+      description: >
+        Returns the billing configuration for the authenticated affiliate's account.
+        Includes payment method, payment terms, and billing cycle details.
+      tags:
+        - Affiliate Session
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  payment_method:
+                    type: string
+                    description: Configured payment method.
+                  payment_terms:
+                    type: string
+                    description: Payment terms (e.g. Net 30, Net 60).
+                  minimum_payout:
+                    type: number
+                    description: Minimum payout threshold.
+                  currency_id:
+                    type: string
+                    description: Currency code for billing.
+      security:
+        - API Key: []
+
+components:
+  securitySchemes:
+    API Key:
+      description: >
+        The affiliate's API key generated from the Affiliate Portal.
+        Uses the X-Eflow-Api-Key header.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

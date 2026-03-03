@@ -1,0 +1,335 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Affiliate Users
+  description: Endpoints for managing affiliate user accounts from the network level.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Affiliate Users
+paths:
+  /networks/affiliates/{affiliateId}/users:
+    get:
+      summary: List Affiliate Users
+      description: >
+        Retrieve all users for a specific affiliate. Returns user details
+        including contact information, roles, and primary user designation.
+      tags:
+        - Affiliate Users
+      parameters:
+        - in: path
+          name: affiliateId
+          required: true
+          schema:
+            type: integer
+          description: The unique affiliate ID.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AffiliateUser"
+      security:
+        - API Key: []
+    post:
+      summary: Create Affiliate User
+      description: >
+        Create a new user account for a specific affiliate. The user will
+        receive an invite email unless an initial password is provided.
+      tags:
+        - Affiliate Users
+      parameters:
+        - in: path
+          name: affiliateId
+          required: true
+          schema:
+            type: integer
+          description: The unique affiliate ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              first_name: "Jane"
+              last_name: "Doe"
+              email: "jane@partner.com"
+              title: "Media Buyer"
+              status: "active"
+              is_primary: false
+            schema:
+              type: object
+              required:
+                - first_name
+                - last_name
+                - email
+              properties:
+                first_name:
+                  type: string
+                  description: User's first name.
+                last_name:
+                  type: string
+                  description: User's last name.
+                email:
+                  type: string
+                  description: User's email address. Must be unique across the platform.
+                password:
+                  type: string
+                  description: Initial password. Must be at least 12 characters. If omitted, the user receives an invite email.
+                title:
+                  type: string
+                  description: User's job title.
+                status:
+                  type: string
+                  enum:
+                    - active
+                    - inactive
+                  description: User account status.
+                cell_phone:
+                  type: string
+                  description: User's cell phone number.
+                work_phone:
+                  type: string
+                  description: User's work phone number.
+                user_roles:
+                  type: array
+                  items:
+                    type: integer
+                  description: Array of role IDs assigned to this user.
+                is_primary:
+                  type: boolean
+                  description: Whether this is the primary contact for the affiliate.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AffiliateUser"
+      security:
+        - API Key: []
+  /networks/affiliates/users/{userId}:
+    get:
+      summary: Get Affiliate User
+      description: >
+        Retrieve a single affiliate user by their user ID.
+      tags:
+        - Affiliate Users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+          description: The unique affiliate user ID.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AffiliateUser"
+        "404":
+          description: Affiliate user not found.
+      security:
+        - API Key: []
+    put:
+      summary: Update Affiliate User
+      description: >
+        Update an existing affiliate user. This is a full object replacement;
+        all fields must be provided in the request body.
+      tags:
+        - Affiliate Users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+          description: The unique affiliate user ID to update.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              first_name: "Jane"
+              last_name: "Doe"
+              email: "jane@partner.com"
+              title: "Senior Media Buyer"
+              status: "active"
+              is_primary: true
+            schema:
+              type: object
+              required:
+                - first_name
+                - last_name
+                - email
+              properties:
+                first_name:
+                  type: string
+                  description: User's first name.
+                last_name:
+                  type: string
+                  description: User's last name.
+                email:
+                  type: string
+                  description: User's email address. Must be unique across the platform.
+                title:
+                  type: string
+                  description: User's job title.
+                status:
+                  type: string
+                  enum:
+                    - active
+                    - inactive
+                  description: User account status.
+                cell_phone:
+                  type: string
+                  description: User's cell phone number.
+                work_phone:
+                  type: string
+                  description: User's work phone number.
+                user_roles:
+                  type: array
+                  items:
+                    type: integer
+                  description: Array of role IDs assigned to this user.
+                is_primary:
+                  type: boolean
+                  description: Whether this is the primary contact for the affiliate.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AffiliateUser"
+        "404":
+          description: Affiliate user not found.
+      security:
+        - API Key: []
+  /networks/affiliates/users/{userId}/resetpassword:
+    post:
+      summary: Reset Affiliate User Password
+      description: >
+        Send a password reset email to the specified affiliate user.
+        The user will receive an email with instructions to set a new password.
+      tags:
+        - Affiliate Users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+          description: The unique affiliate user ID.
+      responses:
+        "200":
+          description: Password reset email sent successfully.
+      security:
+        - API Key: []
+  /networks/affiliates/users:
+    get:
+      summary: List All Affiliate Users
+      description: >
+        Retrieve all affiliate users across all affiliates in the network.
+        Returns the complete list of affiliate user accounts.
+      tags:
+        - Affiliate Users
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AffiliateUser"
+      security:
+        - API Key: []
+  /networks/affiliates/users/emails:
+    get:
+      summary: List Affiliate User Emails
+      description: >
+        Retrieve all affiliate user email addresses across the network.
+        Useful for bulk communication or validation purposes.
+      tags:
+        - Affiliate Users
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      description: The affiliate user's email address.
+                    network_affiliate_user_id:
+                      type: integer
+                      description: The affiliate user's ID.
+                    network_affiliate_id:
+                      type: integer
+                      description: The affiliate ID this user belongs to.
+      security:
+        - API Key: []
+components:
+  schemas:
+    AffiliateUser:
+      type: object
+      properties:
+        network_affiliate_user_id:
+          type: integer
+          description: Unique affiliate user ID.
+        network_affiliate_id:
+          type: integer
+          description: The affiliate ID this user belongs to.
+        first_name:
+          type: string
+          description: User's first name.
+        last_name:
+          type: string
+          description: User's last name.
+        email:
+          type: string
+          description: User's email address.
+        title:
+          type: string
+          description: User's job title.
+        status:
+          type: string
+          enum:
+            - active
+            - inactive
+          description: User account status.
+        is_primary:
+          type: boolean
+          description: Whether this is the primary contact for the affiliate.
+        cell_phone:
+          type: string
+          description: User's cell phone number.
+        work_phone:
+          type: string
+          description: User's work phone number.
+        user_roles:
+          type: array
+          items:
+            type: integer
+          description: Array of role IDs assigned to this user.
+        time_created:
+          type: integer
+          description: Unix timestamp of creation.
+        time_saved:
+          type: integer
+          description: Unix timestamp of last update.
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

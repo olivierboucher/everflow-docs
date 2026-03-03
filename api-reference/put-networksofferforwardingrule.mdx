@@ -1,0 +1,8 @@
+---
+title: Update Offer Forwarding Rule
+openapi: /openapi/offers-extras.yaml put /networks/offers/{offerId}/forwardingrule
+---
+
+Update the forwarding rule for a specific offer. Forwarding rules define how traffic is redirected when an offer's cap is reached or when the offer is paused.
+
+This replaces the entire forwarding rule configuration. Retrieve the current rule first with the GET endpoint, modify the needed fields, and send the full object back.

@@ -1,0 +1,113 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Tracking Domains
+  description: Endpoints for managing tracking domains in the Everflow network.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Tracking Domains
+paths:
+  /networks/trackingdomains:
+    get:
+      summary: List Tracking Domains
+      description: >
+        Retrieve all configured tracking domains for the network. Tracking
+        domains are used to construct tracking links and impression URLs
+        for offers.
+      tags:
+        - Tracking Domains
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TrackingDomain"
+      security:
+        - API Key: []
+  /networks/trackingdomains/{domainId}:
+    get:
+      summary: Get Tracking Domain
+      description: >
+        Retrieve a single tracking domain by its ID.
+      tags:
+        - Tracking Domains
+      parameters:
+        - in: path
+          name: domainId
+          required: true
+          schema:
+            type: integer
+          description: The unique tracking domain ID.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrackingDomain"
+        "404":
+          description: Tracking domain not found.
+      security:
+        - API Key: []
+  /networks/affiliates/{affiliateId}/trackingdomains:
+    get:
+      summary: List Affiliate Tracking Domains
+      description: >
+        Retrieve tracking domains available to a specific affiliate. Returns
+        the list of domains the affiliate can use for constructing tracking links.
+      tags:
+        - Tracking Domains
+      parameters:
+        - in: path
+          name: affiliateId
+          required: true
+          schema:
+            type: integer
+          description: The unique affiliate ID.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TrackingDomain"
+      security:
+        - API Key: []
+components:
+  schemas:
+    TrackingDomain:
+      type: object
+      properties:
+        network_tracking_domain_id:
+          type: integer
+          description: Unique tracking domain ID.
+        network_id:
+          type: integer
+          description: Network ID this domain belongs to.
+        domain:
+          type: string
+          description: The tracking domain URL.
+        status:
+          type: string
+          description: Domain status.
+        is_default:
+          type: boolean
+          description: Whether this is the default tracking domain.
+        time_created:
+          type: integer
+          description: Unix timestamp of creation.
+        time_saved:
+          type: integer
+          description: Unix timestamp of last update.
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

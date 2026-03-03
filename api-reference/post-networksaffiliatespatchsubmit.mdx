@@ -1,0 +1,8 @@
+---
+title: Submit Affiliate Patch
+openapi: /openapi/affiliates-extras.yaml post /networks/affiliates/patch/submit
+---
+
+Submit a batch of affiliate changes for asynchronous processing. Queues the changes for background processing, suitable for large-scale updates across many affiliates.
+
+Provide an array of `affiliate_ids` and a `changes` object with the fields and values to apply.

@@ -1,0 +1,61 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Meta/Search
+  description: Meta and global search endpoints for the Everflow network.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Meta
+    description: Global search and meta endpoints.
+paths:
+  /networks/meta/search:
+    get:
+      summary: Global Search
+      description: >
+        Search across offers, affiliates, and advertisers by keyword. Returns
+        results grouped by entity type, making it useful for building
+        universal search features in dashboards and integrations.
+      tags:
+        - Meta
+      parameters:
+        - in: query
+          name: q
+          required: true
+          schema:
+            type: string
+          description: Search query string.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  offers:
+                    type: array
+                    items:
+                      type: object
+                    description: Matching offers.
+                  affiliates:
+                    type: array
+                    items:
+                      type: object
+                    description: Matching affiliates.
+                  advertisers:
+                    type: array
+                    items:
+                      type: object
+                    description: Matching advertisers.
+      security:
+        - API Key: []
+
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

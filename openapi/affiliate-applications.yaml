@@ -1,0 +1,72 @@
+openapi: 3.0.3
+info:
+  title: Everflow Affiliate API - Applications
+  description: >
+    Application endpoints for the Everflow Affiliate API. These endpoints allow
+    affiliates to submit applications to run offers that require approval.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Affiliate Applications
+    description: Endpoints for managing offer applications as an affiliate.
+paths:
+  /affiliates/applications:
+    post:
+      summary: Apply for Offer
+      description: >
+        Submit an application to run an offer that requires network approval.
+        The offer must have its visibility set to "require_approval" for this
+        endpoint to be applicable. Once submitted, the network admin will review
+        and approve or reject the application.
+      tags:
+        - Affiliate Applications
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              network_offer_id: 123
+            schema:
+              type: object
+              required:
+                - network_offer_id
+              properties:
+                network_offer_id:
+                  type: integer
+                  description: The ID of the offer to apply for.
+                message:
+                  type: string
+                  description: Optional message to include with the application.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  network_offer_application_id:
+                    type: integer
+                    description: Unique identifier for the application.
+                  network_offer_id:
+                    type: integer
+                    description: The offer ID applied for.
+                  status:
+                    type: string
+                    description: Application status (e.g. pending, approved, rejected).
+        "400":
+          description: Bad request. Offer does not require approval or application already exists.
+      security:
+        - API Key: []
+
+components:
+  securitySchemes:
+    API Key:
+      description: >
+        The affiliate's API key generated from the Affiliate Portal.
+        Uses the X-Eflow-Api-Key header.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

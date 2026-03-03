@@ -1,0 +1,483 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Offers (Additional Endpoints)
+  description: >
+    Additional offer management endpoints for the Everflow partner marketing
+    platform. Includes bulk editing, copying, streaming, tracking URL generation,
+    payout/revenue config, forwarding rules, and more.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Offers
+    description: Additional endpoints for managing offers.
+paths:
+  /networks/offers/patch:
+    patch:
+      summary: Bulk Edit Offers
+      description: >
+        Apply bulk changes to multiple offers at once. Allows you to update
+        specific fields across many offers without sending the full offer
+        object for each one.
+      tags:
+        - Offers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                offer_ids:
+                  type: array
+                  items:
+                    type: integer
+                  description: Array of offer IDs to update.
+                changes:
+                  type: object
+                  description: Fields and values to apply to all specified offers.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    description: Whether the bulk edit was successful.
+      security:
+        - API Key: []
+
+  /networks/offers/{offerId}/copy:
+    post:
+      summary: Copy Offer
+      description: >
+        Duplicate an existing offer. Creates a new offer with the same
+        configuration as the source offer, including targeting, caps, and
+        payout settings. The new offer will be created in a paused state.
+      tags:
+        - Offers
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the offer to copy.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: The newly created offer copy.
+      security:
+        - API Key: []
+
+  /networks/offers/stream:
+    post:
+      summary: Stream Offers
+      description: >
+        Stream offer data for large datasets. Returns offer data in a
+        streaming response, suitable for exporting or processing large
+        numbers of offers.
+      tags:
+        - Offers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                search_terms:
+                  type: array
+                  items:
+                    type: object
+                  description: Text search filters.
+                filters:
+                  type: object
+                  description: Structured filters to narrow results.
+      responses:
+        "200":
+          description: OK — streaming response with offer data.
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Streaming response containing offer rows.
+      security:
+        - API Key: []
+
+  /networks/offers:
+    get:
+      summary: List All Offers
+      description: >
+        Simple paginated list of all offers without table search. Returns
+        offers in a lightweight format suitable for dropdowns, selectors,
+        and other UI components that need a full offer list.
+      tags:
+        - Offers
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number (1-based).
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            default: 50
+          description: Number of results per page.
+        - in: query
+          name: relationship
+          schema:
+            type: string
+          description: Include related data in the response.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  offers:
+                    type: array
+                    items:
+                      type: object
+                      description: Offer record.
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+      security:
+        - API Key: []
+
+  /networks/offersbasic:
+    get:
+      summary: List Offers (Basic)
+      description: >
+        Lightweight offer list with minimal fields. Returns only essential
+        offer information such as ID, name, and status. Ideal for fast
+        lookups and autocomplete features.
+      tags:
+        - Offers
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number (1-based).
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            default: 50
+          description: Number of results per page.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  offers:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        network_offer_id:
+                          type: integer
+                          description: Offer ID.
+                        name:
+                          type: string
+                          description: Offer name.
+                        offer_status:
+                          type: string
+                          description: Offer status.
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+      security:
+        - API Key: []
+
+  /networks/offers/{offerId}/tracking/url:
+    post:
+      summary: Generate Tracking URL (POST)
+      description: >
+        POST variant for generating tracking URLs with body parameters.
+        Creates a tracking URL for the specified offer with optional
+        affiliate, sub-parameter, and creative overrides provided in
+        the request body.
+      tags:
+        - Offers
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: integer
+          description: The offer ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                network_affiliate_id:
+                  type: integer
+                  description: Affiliate ID for the tracking URL.
+                sub1:
+                  type: string
+                  description: Sub-parameter 1.
+                sub2:
+                  type: string
+                  description: Sub-parameter 2.
+                sub3:
+                  type: string
+                  description: Sub-parameter 3.
+                sub4:
+                  type: string
+                  description: Sub-parameter 4.
+                sub5:
+                  type: string
+                  description: Sub-parameter 5.
+                creative_id:
+                  type: integer
+                  description: Creative ID to include in the URL.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tracking_url:
+                    type: string
+                    description: The generated tracking URL.
+      security:
+        - API Key: []
+
+  /networks/offers/{offerId}/impressionurl:
+    post:
+      summary: Generate Impression URL (POST)
+      description: >
+        POST variant for generating impression tracking URLs. Creates an
+        impression pixel URL for the specified offer with optional
+        parameters provided in the request body.
+      tags:
+        - Offers
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: integer
+          description: The offer ID.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                network_affiliate_id:
+                  type: integer
+                  description: Affiliate ID for the impression URL.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  impression_url:
+                    type: string
+                    description: The generated impression tracking URL.
+      security:
+        - API Key: []
+
+  /networks/offers/{offerId}/payoutrevenue:
+    get:
+      summary: Get Offer Payout/Revenue Config
+      description: >
+        Retrieve the payout and revenue configuration for a specific offer.
+        Returns the default and any tier-based payout/revenue settings.
+      tags:
+        - Offers
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: integer
+          description: The offer ID.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Payout and revenue configuration for the offer.
+      security:
+        - API Key: []
+    put:
+      summary: Update Offer Payout/Revenue
+      description: >
+        Update the payout and revenue configuration for a specific offer.
+        Replaces the entire payout/revenue configuration — include all
+        settings in the request body.
+      tags:
+        - Offers
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: integer
+          description: The offer ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: The full payout/revenue configuration to set.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Updated payout and revenue configuration.
+      security:
+        - API Key: []
+
+  /networks/offers/{offerId}/forwardingrule:
+    get:
+      summary: Get Offer Forwarding Rule
+      description: >
+        Retrieve the forwarding rule for a specific offer. Forwarding rules
+        define how traffic is redirected when an offer's cap is reached or
+        when the offer is paused.
+      tags:
+        - Offers
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: integer
+          description: The offer ID.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Forwarding rule configuration for the offer.
+      security:
+        - API Key: []
+    put:
+      summary: Update Offer Forwarding Rule
+      description: >
+        Update the forwarding rule for a specific offer. Forwarding rules
+        define how traffic is redirected when an offer's cap is reached
+        or when the offer is paused.
+      tags:
+        - Offers
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: integer
+          description: The offer ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: The forwarding rule configuration to set.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Updated forwarding rule configuration.
+      security:
+        - API Key: []
+
+  /networks/offers/patch/submit:
+    post:
+      summary: Submit Offer Patch
+      description: >
+        Submit a batch of offer changes for processing. Unlike the direct
+        PATCH endpoint, this queues the changes for asynchronous processing,
+        which is more suitable for large-scale updates.
+      tags:
+        - Offers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                offer_ids:
+                  type: array
+                  items:
+                    type: integer
+                  description: Array of offer IDs to update.
+                changes:
+                  type: object
+                  description: Fields and values to apply.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    description: Whether the submission was accepted.
+      security:
+        - API Key: []
+
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

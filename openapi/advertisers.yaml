@@ -10,11 +10,11 @@ tags:
 paths:
   /networks/advertiserstable:
     post:
-      summary: Search Advertisers
+      summary: List Advertisers
       description: >
-        Search and filter advertisers with text search and structured filters.
-        Returns a paginated list of advertisers with account manager names and
-        today's revenue. Use `page` and `page_size` query parameters for pagination.
+        Retrieve a paginated list of advertisers. Supports search filters, sorting,
+        and pagination to help you find and browse advertisers programmatically.
+        Returns advertiser data with account manager names and today's revenue.
       tags:
         - Advertisers
       parameters:
@@ -149,6 +149,25 @@ paths:
       security:
         - API Key: []
   /networks/advertisers:
+    get:
+      summary: List All Advertisers
+      description: >
+        Retrieve all advertisers for the network without table search.
+        Returns the complete list of advertiser accounts. For filtered
+        and paginated results, use the Search Advertisers endpoint instead.
+      tags:
+        - Advertisers
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Advertiser"
+      security:
+        - API Key: []
     post:
       summary: Create Advertiser
       description: >
@@ -427,6 +446,72 @@ paths:
                 $ref: "#/components/schemas/Advertiser"
       security:
         - API Key: []
+  /networks/advertisers/short:
+    get:
+      summary: List Advertisers (Short)
+      description: >
+        Retrieve a shortened list of all advertisers with minimal fields.
+        Useful for populating dropdown menus and selection lists where
+        full advertiser details are not needed.
+      tags:
+        - Advertisers
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    network_advertiser_id:
+                      type: integer
+                      description: Unique advertiser ID.
+                    name:
+                      type: string
+                      description: Advertiser name.
+                    account_status:
+                      type: string
+                      description: Account status.
+      security:
+        - API Key: []
+  /networks/advertisers/globalevents:
+    get:
+      summary: List Global Advertiser Events
+      description: >
+        Retrieve all global advertiser events across the network. Returns
+        event configurations that are shared across multiple advertisers
+        or applied at the network level.
+      tags:
+        - Advertisers
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    event_id:
+                      type: integer
+                      description: Unique event ID.
+                    name:
+                      type: string
+                      description: Event name.
+                    status:
+                      type: string
+                      description: Event status.
+                    time_created:
+                      type: integer
+                      description: Unix timestamp of creation.
+                    time_saved:
+                      type: integer
+                      description: Unix timestamp of last update.
+      security:
+        - API Key: []
   /networks/advertisers/{advertiserId}:
     get:
       summary: Get Advertiser by ID
@@ -464,6 +549,225 @@ paths:
                 $ref: "#/components/schemas/Advertiser"
         "404":
           description: Advertiser not found.
+      security:
+        - API Key: []
+    put:
+      summary: Update Advertiser
+      description: >
+        Update an existing advertiser. This is a full object replacement;
+        all fields must be provided in the request body. Any omitted
+        non-required fields will be reset to their defaults.
+      tags:
+        - Advertisers
+      parameters:
+        - in: path
+          name: advertiserId
+          required: true
+          schema:
+            type: integer
+          description: The unique advertiser ID to update.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              name: "Brand Corp Updated"
+              account_status: "active"
+              network_employee_id: 1
+              default_currency_id: "USD"
+              labels:
+                - "premium"
+            schema:
+              type: object
+              required:
+                - name
+                - account_status
+                - network_employee_id
+                - default_currency_id
+              properties:
+                name:
+                  type: string
+                  description: The advertiser's display name.
+                account_status:
+                  type: string
+                  enum:
+                    - active
+                    - inactive
+                    - suspended
+                  description: Account status.
+                network_employee_id:
+                  type: integer
+                  description: ID of the account manager assigned to this advertiser.
+                default_currency_id:
+                  type: string
+                  description: ISO currency code for the advertiser's default currency.
+                internal_notes:
+                  type: string
+                  description: Private notes visible only to network users.
+                sales_manager_id:
+                  type: integer
+                  description: ID of the sales manager assigned to this advertiser.
+                attribution_method:
+                  type: string
+                  enum:
+                    - last_touch
+                    - first_touch
+                  description: Click attribution method.
+                labels:
+                  type: array
+                  items:
+                    type: string
+                  description: Labels to assign to the advertiser.
+      responses:
+        "200":
+          description: Advertiser updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Advertiser"
+        "404":
+          description: Advertiser not found.
+      security:
+        - API Key: []
+  /networks/advertisers/{advertiserId}/affiliateblacklist:
+    get:
+      summary: Get Advertiser Affiliate Blacklist
+      description: >
+        Retrieve the affiliate blacklist for a specific advertiser. Returns
+        the list of affiliates that are blocked from running this
+        advertiser's offers.
+      tags:
+        - Advertisers
+      parameters:
+        - in: path
+          name: advertiserId
+          required: true
+          schema:
+            type: integer
+          description: The unique advertiser ID.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    network_affiliate_id:
+                      type: integer
+                      description: Blacklisted affiliate ID.
+                    name:
+                      type: string
+                      description: Affiliate name.
+      security:
+        - API Key: []
+  /networks/advertisers/{advertiserId}/events:
+    post:
+      summary: Create Advertiser Event
+      description: >
+        Create a new event for a specific advertiser. Events define
+        conversion types and tracking configurations specific to the
+        advertiser's offers.
+      tags:
+        - Advertisers
+      parameters:
+        - in: path
+          name: advertiserId
+          required: true
+          schema:
+            type: integer
+          description: The unique advertiser ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              name: "Purchase"
+              status: "active"
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  description: Event name.
+                status:
+                  type: string
+                  description: Event status.
+      responses:
+        "200":
+          description: Event created successfully.
+      security:
+        - API Key: []
+  /networks/advertisers/{advertiserId}/productfeeds:
+    post:
+      summary: Create Product Feed
+      description: >
+        Create a new product feed for a specific advertiser. Product feeds
+        allow advertisers to provide structured product data for dynamic
+        creative optimization.
+      tags:
+        - Advertisers
+      parameters:
+        - in: path
+          name: advertiserId
+          required: true
+          schema:
+            type: integer
+          description: The unique advertiser ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              name: "Main Product Feed"
+              url: "https://example.com/feed.xml"
+            schema:
+              type: object
+              required:
+                - name
+                - url
+              properties:
+                name:
+                  type: string
+                  description: Product feed name.
+                url:
+                  type: string
+                  description: URL of the product feed.
+      responses:
+        "200":
+          description: Product feed created successfully.
+      security:
+        - API Key: []
+  /networks/advertisers/{advertiserId}/productfeeds/{feedId}:
+    delete:
+      summary: Delete Product Feed
+      description: >
+        Delete a product feed for a specific advertiser. This permanently
+        removes the product feed configuration.
+      tags:
+        - Advertisers
+      parameters:
+        - in: path
+          name: advertiserId
+          required: true
+          schema:
+            type: integer
+          description: The unique advertiser ID.
+        - in: path
+          name: feedId
+          required: true
+          schema:
+            type: integer
+          description: The unique product feed ID to delete.
+      responses:
+        "200":
+          description: Product feed deleted successfully.
+        "404":
+          description: Product feed not found.
       security:
         - API Key: []
 components:

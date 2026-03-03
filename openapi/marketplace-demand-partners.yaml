@@ -1,0 +1,100 @@
+openapi: 3.0.3
+info:
+  title: Everflow Marketplace API - Demand Partners
+  description: >
+    Demand partner endpoints for the Everflow marketplace partner API. Retrieve
+    information about demand partners available in the Everflow marketplace.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Marketplace Demand Partners
+    description: Endpoints for retrieving marketplace demand partner information.
+paths:
+  /partners/demandpartners:
+    get:
+      summary: List Demand Partners
+      description: >
+        Retrieve all demand partners available in the Everflow marketplace.
+        Demand partners are advertisers or networks offering deals through the
+        marketplace platform. Returns an array of demand partner objects with
+        their profile information and status.
+      tags:
+        - Marketplace Demand Partners
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  demand_partners:
+                    type: array
+                    description: Array of demand partner objects.
+                    items:
+                      $ref: "#/components/schemas/DemandPartner"
+      security:
+        - API Key: []
+  /partners/demandpartners/{partnerId}:
+    get:
+      summary: Get Demand Partner
+      description: >
+        Retrieve a single demand partner by their ID. Returns the full partner
+        profile including status, description, and available connection details.
+      tags:
+        - Marketplace Demand Partners
+      parameters:
+        - in: path
+          name: partnerId
+          required: true
+          schema:
+            type: integer
+          description: The unique demand partner ID.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DemandPartner"
+        "404":
+          description: Demand partner not found.
+      security:
+        - API Key: []
+components:
+  securitySchemes:
+    API Key:
+      description: >
+        The marketplace partner's API key. Uses the X-Eflow-Api-Key header.
+        The key belongs to the marketplace partner user.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey
+  schemas:
+    DemandPartner:
+      type: object
+      description: A marketplace demand partner profile.
+      properties:
+        partner_id:
+          type: integer
+          description: Unique demand partner ID.
+        name:
+          type: string
+          description: Demand partner name.
+        status:
+          type: string
+          description: Current status of the demand partner (e.g. active, inactive).
+        description:
+          type: string
+          description: Description of the demand partner and their offerings.
+        logo_url:
+          type: string
+          description: URL to the demand partner's logo.
+        website:
+          type: string
+          description: Demand partner's website URL.
+        time_created:
+          type: integer
+          description: Unix timestamp of when the demand partner was created.

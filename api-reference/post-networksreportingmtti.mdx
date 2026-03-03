@@ -1,0 +1,8 @@
+---
+title: Get MTTI Report
+openapi: /openapi/reporting-extras.yaml post /networks/reporting/mtti
+---
+
+Returns the Mean Time to Install (MTTI) report. Measures the average time between a click and a conversion (install) for mobile app campaigns. Useful for detecting fraud patterns or optimizing campaign performance.
+
+Each request requires `from`, `to`, and `timezone_id`. Optionally include `currency_id` and query filters.

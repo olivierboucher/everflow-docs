@@ -1,0 +1,72 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Coupon Codes (Additional Endpoints)
+  description: Additional coupon code management endpoints for the Everflow network.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Coupon Codes
+    description: Additional coupon code management endpoints.
+paths:
+  /networks/couponcodes/bulk:
+    post:
+      summary: Bulk Create Coupon Codes
+      description: >
+        Create multiple coupon codes in a single request. Each coupon code
+        entry must specify the offer, affiliate, code value, and status.
+        Useful for mass-generating promotional codes.
+      tags:
+        - Coupon Codes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - coupon_codes
+              properties:
+                coupon_codes:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      network_offer_id:
+                        type: integer
+                        description: The offer ID for this coupon code.
+                      network_affiliate_id:
+                        type: integer
+                        description: The affiliate ID for this coupon code.
+                      coupon_code:
+                        type: string
+                        description: The coupon code value.
+                      coupon_status:
+                        type: string
+                        enum:
+                          - active
+                          - paused
+                        description: Status of the coupon code.
+                  description: Array of coupon codes to create.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    description: Whether the bulk creation was successful.
+      security:
+        - API Key: []
+
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

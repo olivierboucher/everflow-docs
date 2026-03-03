@@ -1,0 +1,83 @@
+openapi: 3.0.3
+info:
+  title: Everflow Affiliate API - Dashboard Extras
+  description: >
+    Additional dashboard endpoints for the Everflow Affiliate API. These endpoints
+    provide supplementary dashboard data such as offer trend information.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Affiliate Dashboard
+    description: Additional dashboard endpoints for affiliate users.
+paths:
+  /affiliates/dashboard/offertrend:
+    post:
+      summary: Get Offer Trend
+      description: >
+        Returns dashboard offer trend data for the authenticated affiliate.
+        Provides trending performance data for offers over a configurable
+        time period, useful for visualizing offer performance on the dashboard.
+      tags:
+        - Affiliate Dashboard
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              timezone_id: 67
+              currency_id: "USD"
+            schema:
+              type: object
+              required:
+                - timezone_id
+              properties:
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the trend calculations.
+                currency_id:
+                  type: string
+                  description: Currency code for monetary values.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  trends:
+                    type: array
+                    description: Array of offer trend data points.
+                    items:
+                      type: object
+                      properties:
+                        offer:
+                          type: object
+                          properties:
+                            network_offer_id:
+                              type: integer
+                            name:
+                              type: string
+                        revenue:
+                          type: number
+                          description: Revenue for the trend period.
+                        conversions:
+                          type: integer
+                          description: Conversion count for the trend period.
+                        clicks:
+                          type: integer
+                          description: Click count for the trend period.
+      security:
+        - API Key: []
+
+components:
+  securitySchemes:
+    API Key:
+      description: >
+        The affiliate's API key generated from the Affiliate Portal.
+        Uses the X-Eflow-Api-Key header.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

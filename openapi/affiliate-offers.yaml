@@ -436,6 +436,249 @@ paths:
       security:
         - API Key: []
 
+  /affiliates/offerstable:
+    post:
+      summary: List Offers
+      description: >
+        Retrieve a paginated list of offers available to the authenticated affiliate.
+        Supports search filters, sorting, and pagination to help you find and browse
+        offers programmatically.
+      tags:
+        - Affiliate Offers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              search_terms: []
+              filters: []
+              page: 1
+              page_size: 50
+            schema:
+              type: object
+              properties:
+                search_terms:
+                  type: array
+                  description: Search terms to match against offer names and IDs.
+                  items:
+                    type: object
+                    properties:
+                      search_type:
+                        type: string
+                        description: The type of search to perform.
+                      value:
+                        type: string
+                        description: The search value.
+                filters:
+                  type: array
+                  description: Filters to narrow results.
+                  items:
+                    type: object
+                    properties:
+                      filter_id_value:
+                        type: string
+                      resource_type:
+                        type: string
+                page:
+                  type: integer
+                  description: Page number for pagination (1-based).
+                  default: 1
+                page_size:
+                  type: integer
+                  description: Number of results per page.
+                  default: 50
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  offers:
+                    type: array
+                    description: Array of matching offers.
+                    items:
+                      type: object
+                      properties:
+                        network_offer_id:
+                          type: integer
+                          description: Unique identifier for the offer.
+                        name:
+                          type: string
+                          description: Offer name.
+                        offer_status:
+                          type: string
+                          description: Current status of the offer.
+                        visibility:
+                          type: string
+                          description: Visibility setting.
+                        relationship:
+                          type: object
+                          description: Affiliate-specific relationship data.
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+      security:
+        - API Key: []
+
+  /affiliates/offers:
+    get:
+      summary: List All Offers
+      description: >
+        Returns a simple list of all offers including those in pending status.
+        Unlike the runnable offers endpoint, this includes offers the affiliate
+        may not yet be approved to run. Useful for browsing the complete offer
+        catalog.
+      tags:
+        - Affiliate Offers
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  offers:
+                    type: array
+                    description: Array of all offers.
+                    items:
+                      type: object
+                      properties:
+                        network_offer_id:
+                          type: integer
+                          description: Unique identifier for the offer.
+                        name:
+                          type: string
+                          description: Offer name.
+                        offer_status:
+                          type: string
+                          description: Current status of the offer.
+                        visibility:
+                          type: string
+                          description: Visibility setting.
+                        currency_id:
+                          type: string
+                          description: Currency code for the offer.
+      security:
+        - API Key: []
+
+  /affiliates/offersrunnable/ids:
+    post:
+      summary: Get Runnable Offer IDs
+      description: >
+        Returns just the IDs of offers the authenticated affiliate is authorized
+        to run. This is a lightweight endpoint that returns only offer IDs without
+        full offer details. Useful for quickly checking which offers are available
+        for traffic generation.
+      tags:
+        - Affiliate Offers
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filters:
+                  type: array
+                  description: Optional filters to narrow results.
+                  items:
+                    type: object
+                    properties:
+                      filter_id_value:
+                        type: string
+                      resource_type:
+                        type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  offer_ids:
+                    type: array
+                    description: Array of runnable offer IDs.
+                    items:
+                      type: integer
+      security:
+        - API Key: []
+
+  /affiliates/offers/{offerId}/trackingurl:
+    post:
+      summary: Generate Tracking URL
+      description: >
+        POST variant for generating tracking URLs with body parameters. Allows
+        specifying additional options such as sub-parameter values and destination
+        URL ID in the request body rather than as query parameters.
+      tags:
+        - Affiliate Offers
+      parameters:
+        - name: offerId
+          in: path
+          required: true
+          description: The numeric ID of the offer.
+          schema:
+            type: integer
+      requestBody:
+        required: false
+        content:
+          application/json:
+            example:
+              url_id: 0
+              sub1: ""
+              sub2: ""
+              sub3: ""
+              sub4: ""
+              sub5: ""
+            schema:
+              type: object
+              properties:
+                url_id:
+                  type: integer
+                  description: >
+                    The destination URL ID. Use 0 for the default offer URL.
+                  default: 0
+                sub1:
+                  type: string
+                  description: Sub-parameter 1 value to append to the tracking URL.
+                sub2:
+                  type: string
+                  description: Sub-parameter 2 value to append to the tracking URL.
+                sub3:
+                  type: string
+                  description: Sub-parameter 3 value to append to the tracking URL.
+                sub4:
+                  type: string
+                  description: Sub-parameter 4 value to append to the tracking URL.
+                sub5:
+                  type: string
+                  description: Sub-parameter 5 value to append to the tracking URL.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tracking_url:
+                    type: string
+                    description: The full tracking link URL for the affiliate to use.
+        "400":
+          description: Affiliate is not authorized to run this offer.
+      security:
+        - API Key: []
+
 components:
   securitySchemes:
     API Key:

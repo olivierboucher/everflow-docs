@@ -10,10 +10,11 @@ tags:
 paths:
   /networks/pixelstable:
     post:
-      summary: Search Partner Postbacks
+      summary: List Partner Postbacks
       description: >
-        Search and filter partner postbacks. Returns a paginated list of
-        postback configurations matching the specified criteria.
+        Retrieve a paginated list of partner postbacks. Supports search filters,
+        sorting, and pagination to help you find and browse postback configurations
+        programmatically.
       tags:
         - Partner Postbacks
       requestBody:

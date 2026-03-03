@@ -1,0 +1,8 @@
+---
+title: Get Advertiser Pixel Log
+openapi: /openapi/reporting-extras.yaml post /networks/reporting/advertiser/pixels/log
+---
+
+Returns advertiser pixel firing log data. Shows when advertiser tracking pixels were fired, their status, and any associated errors. Useful for debugging pixel integration issues with advertisers.
+
+Each request requires `from`, `to`, and `timezone_id`. Optional query filters can narrow results.

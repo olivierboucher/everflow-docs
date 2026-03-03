@@ -823,6 +823,820 @@ paths:
       security:
         - API Key: []
 
+  /affiliates/reporting/entity:
+    post:
+      summary: Get Reporting Entity Summary
+      description: >
+        Returns summarized reporting metrics without row breakdown. Unlike the
+        entity/table endpoint, this returns a single summary object with totals
+        for the specified date range and filters rather than pivoted rows.
+
+
+        Useful for retrieving aggregate totals without needing to group by any
+        specific dimension. Data is automatically scoped to the authenticated
+        affiliate.
+      tags:
+        - Affiliate Reporting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              from: "2024-01-01"
+              to: "2024-01-31"
+              timezone_id: 67
+              currency_id: "USD"
+              columns:
+                - column: "offer"
+              query:
+                filters: []
+            schema:
+              type: object
+              required:
+                - from
+                - to
+                - timezone_id
+                - currency_id
+              properties:
+                from:
+                  type: string
+                  description: Start date for the reporting period. Format `YYYY-MM-DD`.
+                to:
+                  type: string
+                  description: End date for the reporting period. Format `YYYY-MM-DD`.
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the request.
+                currency_id:
+                  type: string
+                  description: Currency code for monetary values (e.g. "USD").
+                columns:
+                  type: array
+                  description: Columns to include in the summary.
+                  items:
+                    type: object
+                    properties:
+                      column:
+                        type: string
+                        description: The dimension to include.
+                query:
+                  type: object
+                  description: Query configuration.
+                  properties:
+                    filters:
+                      type: array
+                      description: Filters to narrow results.
+                      items:
+                        type: object
+                        properties:
+                          filter_id_value:
+                            type: string
+                          resource_type:
+                            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  summary:
+                    type: object
+                    description: Aggregated summary metrics.
+                    properties:
+                      imp:
+                        type: integer
+                        description: Total impression count.
+                      total_click:
+                        type: integer
+                        description: Total click count.
+                      unique_click:
+                        type: integer
+                        description: Unique click count.
+                      cv:
+                        type: integer
+                        description: Total conversion count.
+                      cvr:
+                        type: number
+                        description: Conversion rate.
+                      revenue:
+                        type: number
+                        description: Total revenue.
+                      event:
+                        type: integer
+                        description: Post-conversion event count.
+      security:
+        - API Key: []
+
+  /affiliates/reporting/entity/stream:
+    post:
+      summary: Stream Reporting Data
+      description: >
+        Returns entity reporting data as a streaming response for large datasets.
+        This is the streaming variant of the entity/table endpoint, designed for
+        scenarios where the result set may be very large and would benefit from
+        incremental delivery.
+
+
+        Data is automatically scoped to the authenticated affiliate.
+      tags:
+        - Affiliate Reporting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              from: "2024-01-01"
+              to: "2024-01-31"
+              timezone_id: 67
+              currency_id: "USD"
+              columns:
+                - column: "offer"
+              query:
+                filters: []
+            schema:
+              type: object
+              required:
+                - from
+                - to
+                - timezone_id
+                - currency_id
+                - columns
+              properties:
+                from:
+                  type: string
+                  description: Start date for the reporting period. Format `YYYY-MM-DD`.
+                to:
+                  type: string
+                  description: End date for the reporting period. Format `YYYY-MM-DD`.
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the request.
+                currency_id:
+                  type: string
+                  description: Currency code for monetary values (e.g. "USD").
+                columns:
+                  type: array
+                  description: Columns to group/pivot data by.
+                  items:
+                    type: object
+                    required:
+                      - column
+                    properties:
+                      column:
+                        type: string
+                        description: The dimension to group by.
+                query:
+                  type: object
+                  description: Query configuration.
+                  properties:
+                    filters:
+                      type: array
+                      description: Filters to narrow results.
+                      items:
+                        type: object
+                        properties:
+                          filter_id_value:
+                            type: string
+                          resource_type:
+                            type: string
+      responses:
+        "200":
+          description: OK. Response is streamed incrementally.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  table:
+                    type: array
+                    description: Array of reporting data rows (streamed).
+                    items:
+                      type: object
+                      properties:
+                        columns:
+                          type: array
+                          items:
+                            type: object
+                        reporting:
+                          type: object
+      security:
+        - API Key: []
+
+  /affiliates/reporting/daily:
+    post:
+      summary: Get Daily Report
+      description: >
+        Returns daily aggregated metrics for the authenticated affiliate. Each
+        row in the response represents a single day with its associated performance
+        metrics including clicks, conversions, and revenue.
+      tags:
+        - Affiliate Reporting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              from: "2024-01-01"
+              to: "2024-01-31"
+              timezone_id: 67
+              currency_id: "USD"
+            schema:
+              type: object
+              required:
+                - from
+                - to
+                - timezone_id
+                - currency_id
+              properties:
+                from:
+                  type: string
+                  description: Start date. Format `YYYY-MM-DD`.
+                to:
+                  type: string
+                  description: End date. Format `YYYY-MM-DD`.
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the date range.
+                currency_id:
+                  type: string
+                  description: Currency code for monetary values.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  table:
+                    type: array
+                    description: Array of daily reporting rows.
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          description: The date for this row. Format `YYYY-MM-DD`.
+                        reporting:
+                          type: object
+                          description: Aggregated metrics for this day.
+                          properties:
+                            imp:
+                              type: integer
+                            total_click:
+                              type: integer
+                            unique_click:
+                              type: integer
+                            cv:
+                              type: integer
+                            cvr:
+                              type: number
+                            revenue:
+                              type: number
+                            event:
+                              type: integer
+      security:
+        - API Key: []
+
+  /affiliates/reporting/subid:
+    post:
+      summary: Get Sub-ID Report
+      description: >
+        Pivot reporting data by sub-placement values (sub1 through sub5). This
+        endpoint allows affiliates to analyze performance broken down by their
+        custom sub-parameter values, which are typically used to track traffic
+        sources, placements, or campaigns.
+
+
+        Specify which sub-parameter to pivot on using the `sub_type` field.
+      tags:
+        - Affiliate Reporting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              from: "2024-01-01"
+              to: "2024-01-31"
+              timezone_id: 67
+              currency_id: "USD"
+              sub_type: "sub1"
+              query:
+                filters: []
+            schema:
+              type: object
+              required:
+                - from
+                - to
+                - timezone_id
+                - currency_id
+                - sub_type
+              properties:
+                from:
+                  type: string
+                  description: Start date. Format `YYYY-MM-DD`.
+                to:
+                  type: string
+                  description: End date. Format `YYYY-MM-DD`.
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the date range.
+                currency_id:
+                  type: string
+                  description: Currency code for monetary values.
+                sub_type:
+                  type: string
+                  enum:
+                    - sub1
+                    - sub2
+                    - sub3
+                    - sub4
+                    - sub5
+                  description: Which sub-parameter to pivot the report by.
+                query:
+                  type: object
+                  description: Query configuration.
+                  properties:
+                    filters:
+                      type: array
+                      description: Filters to narrow results.
+                      items:
+                        type: object
+                        properties:
+                          filter_id_value:
+                            type: string
+                          resource_type:
+                            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  table:
+                    type: array
+                    description: Array of sub-ID reporting rows.
+                    items:
+                      type: object
+                      properties:
+                        sub_value:
+                          type: string
+                          description: The sub-parameter value for this row.
+                        reporting:
+                          type: object
+                          description: Aggregated metrics for this sub value.
+                          properties:
+                            total_click:
+                              type: integer
+                            unique_click:
+                              type: integer
+                            cv:
+                              type: integer
+                            cvr:
+                              type: number
+                            revenue:
+                              type: number
+      security:
+        - API Key: []
+
+  /affiliates/reporting/distribution:
+    post:
+      summary: Get Distribution Report
+      description: >
+        Returns geographic and device distribution breakdown for the authenticated
+        affiliate's traffic. Provides insights into where traffic originates from
+        and what devices are being used.
+      tags:
+        - Affiliate Reporting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              from: "2024-01-01"
+              to: "2024-01-31"
+              timezone_id: 67
+              currency_id: "USD"
+            schema:
+              type: object
+              required:
+                - from
+                - to
+                - timezone_id
+                - currency_id
+              properties:
+                from:
+                  type: string
+                  description: Start date. Format `YYYY-MM-DD`.
+                to:
+                  type: string
+                  description: End date. Format `YYYY-MM-DD`.
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the date range.
+                currency_id:
+                  type: string
+                  description: Currency code for monetary values.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  geo:
+                    type: array
+                    description: Geographic distribution data.
+                    items:
+                      type: object
+                      properties:
+                        country:
+                          type: string
+                        percentage:
+                          type: number
+                        count:
+                          type: integer
+                  device:
+                    type: array
+                    description: Device type distribution data.
+                    items:
+                      type: object
+                      properties:
+                        device_type:
+                          type: string
+                        percentage:
+                          type: number
+                        count:
+                          type: integer
+      security:
+        - API Key: []
+
+  /affiliates/reporting/offer:
+    post:
+      summary: Get Offer Report
+      description: >
+        Returns per-offer aggregated metrics for the authenticated affiliate.
+        Each row represents an offer with its associated performance metrics.
+        This is a convenience endpoint for quickly viewing offer-level performance
+        without configuring a full entity/table request.
+      tags:
+        - Affiliate Reporting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              from: "2024-01-01"
+              to: "2024-01-31"
+              timezone_id: 67
+              currency_id: "USD"
+            schema:
+              type: object
+              required:
+                - from
+                - to
+                - timezone_id
+                - currency_id
+              properties:
+                from:
+                  type: string
+                  description: Start date. Format `YYYY-MM-DD`.
+                to:
+                  type: string
+                  description: End date. Format `YYYY-MM-DD`.
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the date range.
+                currency_id:
+                  type: string
+                  description: Currency code for monetary values.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  table:
+                    type: array
+                    description: Array of offer reporting rows.
+                    items:
+                      type: object
+                      properties:
+                        offer:
+                          type: object
+                          properties:
+                            network_offer_id:
+                              type: integer
+                            name:
+                              type: string
+                        reporting:
+                          type: object
+                          description: Aggregated metrics for this offer.
+                          properties:
+                            total_click:
+                              type: integer
+                            unique_click:
+                              type: integer
+                            cv:
+                              type: integer
+                            cvr:
+                              type: number
+                            revenue:
+                              type: number
+                            event:
+                              type: integer
+      security:
+        - API Key: []
+
+  /affiliates/reporting/conversions/stream:
+    post:
+      summary: Stream Conversions
+      description: >
+        Streaming variant of the conversion report for large datasets. Returns
+        individual conversion records incrementally rather than as a single
+        paginated response. Use this when expecting a large number of conversions
+        to avoid timeout issues.
+      tags:
+        - Affiliate Reporting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              from: "2024-01-01"
+              to: "2024-01-31"
+              timezone_id: 67
+              show_conversions: true
+              show_events: true
+              query:
+                filters: []
+            schema:
+              type: object
+              required:
+                - from
+                - to
+                - timezone_id
+              properties:
+                from:
+                  type: string
+                  description: Start date. Format `YYYY-MM-DD`.
+                to:
+                  type: string
+                  description: End date. Format `YYYY-MM-DD`.
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the date range.
+                show_conversions:
+                  type: boolean
+                  description: Include conversion records in the response.
+                  default: true
+                show_events:
+                  type: boolean
+                  description: Include post-conversion event records.
+                  default: false
+                query:
+                  type: object
+                  properties:
+                    filters:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          filter_id_value:
+                            type: string
+                          resource_type:
+                            type: string
+      responses:
+        "200":
+          description: OK. Response is streamed incrementally.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conversions:
+                    type: array
+                    description: Array of conversion records (streamed).
+                    items:
+                      type: object
+                      properties:
+                        network_conversion_id:
+                          type: integer
+                        transaction_id:
+                          type: string
+                        conversion_unix_timestamp:
+                          type: integer
+                        revenue:
+                          type: number
+                        conversion_status:
+                          type: string
+                        sub1:
+                          type: string
+                        sub2:
+                          type: string
+                        sub3:
+                          type: string
+                        sub4:
+                          type: string
+                        sub5:
+                          type: string
+      security:
+        - API Key: []
+
+  /affiliates/reporting/postconversions:
+    post:
+      summary: Search Post-Conversion Events
+      description: >
+        Returns post-conversion event data for the authenticated affiliate.
+        Post-conversion events are additional actions tracked after the initial
+        conversion, such as upsells, registrations, or in-app purchases.
+      tags:
+        - Affiliate Reporting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              from: "2024-01-01"
+              to: "2024-01-31"
+              timezone_id: 67
+              query:
+                filters: []
+            schema:
+              type: object
+              required:
+                - from
+                - to
+                - timezone_id
+              properties:
+                from:
+                  type: string
+                  description: Start date. Format `YYYY-MM-DD`.
+                to:
+                  type: string
+                  description: End date. Format `YYYY-MM-DD`.
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the date range.
+                query:
+                  type: object
+                  properties:
+                    filters:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          filter_id_value:
+                            type: string
+                          resource_type:
+                            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conversions:
+                    type: array
+                    description: Array of post-conversion event records.
+                    items:
+                      type: object
+                      properties:
+                        network_conversion_id:
+                          type: integer
+                          description: Unique conversion identifier.
+                        transaction_id:
+                          type: string
+                          description: Associated click transaction ID.
+                        conversion_unix_timestamp:
+                          type: integer
+                          description: Unix timestamp of the event.
+                        revenue:
+                          type: number
+                          description: Revenue for the event.
+                        event_name:
+                          type: string
+                          description: Name of the post-conversion event.
+                        conversion_status:
+                          type: string
+                          description: Status of the conversion.
+                        relationship:
+                          type: object
+                          properties:
+                            offer:
+                              type: object
+      security:
+        - API Key: []
+
+  /affiliates/reporting/onholdconversions:
+    post:
+      summary: Search On-Hold Conversions
+      description: >
+        Returns conversions currently in on-hold status for the authenticated
+        affiliate. On-hold conversions are pending review or approval before
+        being finalized. Use this to track conversions awaiting advertiser
+        or network approval.
+      tags:
+        - Affiliate Reporting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              from: "2024-01-01"
+              to: "2024-01-31"
+              timezone_id: 67
+              query:
+                filters: []
+            schema:
+              type: object
+              required:
+                - from
+                - to
+                - timezone_id
+              properties:
+                from:
+                  type: string
+                  description: Start date. Format `YYYY-MM-DD`.
+                to:
+                  type: string
+                  description: End date. Format `YYYY-MM-DD`.
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the date range.
+                query:
+                  type: object
+                  properties:
+                    filters:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          filter_id_value:
+                            type: string
+                          resource_type:
+                            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conversions:
+                    type: array
+                    description: Array of on-hold conversion records.
+                    items:
+                      type: object
+                      properties:
+                        network_conversion_id:
+                          type: integer
+                          description: Unique conversion identifier.
+                        transaction_id:
+                          type: string
+                          description: Associated click transaction ID.
+                        conversion_unix_timestamp:
+                          type: integer
+                          description: Unix timestamp of the conversion.
+                        revenue:
+                          type: number
+                          description: Revenue for the conversion.
+                        sale_amount:
+                          type: number
+                          description: Sale amount.
+                        conversion_status:
+                          type: string
+                          description: Status of the conversion (on_hold).
+                        sub1:
+                          type: string
+                        sub2:
+                          type: string
+                        sub3:
+                          type: string
+                        sub4:
+                          type: string
+                        sub5:
+                          type: string
+                        relationship:
+                          type: object
+                          properties:
+                            offer:
+                              type: object
+                            geo:
+                              type: object
+      security:
+        - API Key: []
+
 components:
   schemas:
     DashboardMetric:

@@ -1,0 +1,471 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Billing (Affiliate Invoices)
+  description: Endpoints for managing affiliate/partner invoices and payments.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Billing
+paths:
+  /networks/billings/affiliates/invoicestable:
+    post:
+      summary: List Partner Invoices
+      description: >
+        Retrieve a paginated list of partner (affiliate) invoices. Supports search
+        filters, sorting, and pagination to help you find and browse invoices
+        programmatically. Filter by affiliate IDs, invoice IDs, date ranges,
+        balance ranges, status, and payment terms.
+      tags:
+        - Billing
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number (1-based).
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            default: 50
+          description: Number of results per page.
+      requestBody:
+        content:
+          application/json:
+            example:
+              search_terms: []
+              filters:
+                status: "unpaid"
+            schema:
+              type: object
+              properties:
+                search_terms:
+                  type: array
+                  description: Text search filters.
+                  items:
+                    type: object
+                    properties:
+                      search_type:
+                        type: string
+                        description: The field to search on.
+                      value:
+                        type: string
+                        description: The search term.
+                filters:
+                  type: object
+                  description: Structured filters to narrow results.
+                  properties:
+                    affiliate_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: Filter by affiliate IDs.
+                    invoice_ids:
+                      type: array
+                      items:
+                        type: integer
+                      description: Filter by specific invoice IDs.
+                    date_from:
+                      type: string
+                      description: Start date filter (YYYY-MM-DD).
+                    date_to:
+                      type: string
+                      description: End date filter (YYYY-MM-DD).
+                    balance_from:
+                      type: number
+                      format: double
+                      description: Minimum balance filter.
+                    balance_to:
+                      type: number
+                      format: double
+                      description: Maximum balance filter.
+                    status:
+                      type: string
+                      enum:
+                        - paid
+                        - unpaid
+                        - deleted
+                      description: Filter by invoice status.
+                    payment_terms:
+                      type: integer
+                      description: Filter by payment terms in days.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  invoices:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Invoice"
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+      security:
+        - API Key: []
+  /networks/billings/affiliates/summary:
+    post:
+      summary: Get Invoice Summary
+      description: >
+        Get aggregated summary totals for partner invoices matching the
+        specified filters. Returns counts and totals for balance, billed,
+        and paid amounts. Accepts the same request body as the invoice
+        search endpoint.
+      tags:
+        - Billing
+      requestBody:
+        content:
+          application/json:
+            example:
+              filters:
+                status: "unpaid"
+            schema:
+              type: object
+              properties:
+                search_terms:
+                  type: array
+                  items:
+                    type: object
+                filters:
+                  type: object
+                  properties:
+                    affiliate_ids:
+                      type: array
+                      items:
+                        type: integer
+                    status:
+                      type: string
+                      enum:
+                        - paid
+                        - unpaid
+                        - deleted
+                    date_from:
+                      type: string
+                    date_to:
+                      type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    description: Total number of matching invoices.
+                  balance:
+                    type: number
+                    format: double
+                    description: Total outstanding balance.
+                  billed:
+                    type: number
+                    format: double
+                    description: Total billed amount.
+                  paid:
+                    type: number
+                    format: double
+                    description: Total paid amount.
+      security:
+        - API Key: []
+  /networks/billings/affiliates/invoices/{invoiceId}:
+    get:
+      summary: Get Partner Invoice
+      description: >
+        Retrieve a single partner invoice by its ID. Use the `relationship`
+        query parameter to include line items and other related data.
+      tags:
+        - Billing
+      parameters:
+        - in: path
+          name: invoiceId
+          required: true
+          schema:
+            type: integer
+          description: The unique invoice ID.
+        - in: query
+          name: relationship
+          schema:
+            type: string
+          description: Include related data such as line items.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Invoice"
+        "404":
+          description: Invoice not found.
+      security:
+        - API Key: []
+    put:
+      summary: Update Partner Invoice
+      description: >
+        Update an existing partner invoice. This is a full object replacement;
+        all fields must be provided in the request body.
+      tags:
+        - Billing
+      parameters:
+        - in: path
+          name: invoiceId
+          required: true
+          schema:
+            type: integer
+          description: The unique invoice ID to update.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              network_affiliate_id: 1
+              status: "paid"
+              start_time: "2024-01-01"
+              end_time: "2024-01-31"
+              public_notes: "January payout"
+              internal_notes: ""
+            schema:
+              type: object
+              properties:
+                network_affiliate_id:
+                  type: integer
+                  description: The affiliate ID this invoice belongs to.
+                status:
+                  type: string
+                  enum:
+                    - paid
+                    - unpaid
+                    - deleted
+                  description: Invoice status.
+                start_time:
+                  type: string
+                  description: Invoice period start date (YYYY-MM-DD).
+                end_time:
+                  type: string
+                  description: Invoice period end date (YYYY-MM-DD).
+                public_notes:
+                  type: string
+                  description: Notes visible to the affiliate.
+                internal_notes:
+                  type: string
+                  description: Internal notes visible only to network users.
+                is_hidden_affiliate:
+                  type: boolean
+                  description: Whether the invoice is hidden from the affiliate.
+                payment_terms:
+                  type: integer
+                  description: Payment terms in days.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Invoice"
+        "404":
+          description: Invoice not found.
+      security:
+        - API Key: []
+  /networks/billings/affiliates/invoices:
+    post:
+      summary: Create Partner Invoice
+      description: >
+        Create a new partner invoice. Specify the affiliate, date range,
+        and any notes or payment terms for the invoice.
+      tags:
+        - Billing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              network_affiliate_id: 1
+              status: "unpaid"
+              start_time: "2024-01-01"
+              end_time: "2024-01-31"
+              public_notes: "January earnings"
+              internal_notes: ""
+              is_hidden_affiliate: false
+              payment_terms: 30
+            schema:
+              type: object
+              required:
+                - network_affiliate_id
+                - status
+                - start_time
+                - end_time
+              properties:
+                network_affiliate_id:
+                  type: integer
+                  description: The affiliate ID to create the invoice for.
+                status:
+                  type: string
+                  enum:
+                    - paid
+                    - unpaid
+                  description: Initial invoice status.
+                start_time:
+                  type: string
+                  description: Invoice period start date (YYYY-MM-DD).
+                end_time:
+                  type: string
+                  description: Invoice period end date (YYYY-MM-DD).
+                public_notes:
+                  type: string
+                  description: Notes visible to the affiliate.
+                internal_notes:
+                  type: string
+                  description: Internal notes visible only to network users.
+                is_hidden_affiliate:
+                  type: boolean
+                  description: Whether the invoice is hidden from the affiliate.
+                payment_terms:
+                  type: integer
+                  description: Payment terms in days.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Invoice"
+      security:
+        - API Key: []
+    patch:
+      summary: Batch Update Invoices
+      description: >
+        Update the status for multiple partner invoices at once. Useful for
+        bulk marking invoices as paid or performing other batch status changes.
+      tags:
+        - Billing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              invoice_ids: [1, 2, 3]
+              status: "paid"
+            schema:
+              type: object
+              properties:
+                invoice_ids:
+                  type: array
+                  items:
+                    type: integer
+                  description: Array of invoice IDs to update.
+                status:
+                  type: string
+                  enum:
+                    - paid
+                    - unpaid
+                    - deleted
+                  description: The new status to apply to all specified invoices.
+      responses:
+        "200":
+          description: Invoices updated successfully.
+      security:
+        - API Key: []
+  /networks/billings/affiliates/payments:
+    post:
+      summary: Create Payment Batch
+      description: >
+        Trigger payments for one or more partner invoices. Creates a
+        payment batch that processes the specified invoices.
+      tags:
+        - Billing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              invoice_ids: [1, 2, 3]
+            schema:
+              type: object
+              properties:
+                invoice_ids:
+                  type: array
+                  items:
+                    type: integer
+                  description: Array of invoice IDs to include in the payment batch.
+      responses:
+        "200":
+          description: Payment batch created successfully.
+      security:
+        - API Key: []
+components:
+  schemas:
+    Invoice:
+      type: object
+      properties:
+        network_affiliate_invoice_id:
+          type: integer
+          description: Unique invoice ID.
+        network_id:
+          type: integer
+          description: Network ID.
+        network_affiliate_id:
+          type: integer
+          description: Affiliate ID this invoice belongs to.
+        status:
+          type: string
+          enum:
+            - paid
+            - unpaid
+            - deleted
+          description: Invoice status.
+        start_time:
+          type: string
+          description: Invoice period start date.
+        end_time:
+          type: string
+          description: Invoice period end date.
+        balance:
+          type: number
+          format: double
+          description: Outstanding balance.
+        billed:
+          type: number
+          format: double
+          description: Total billed amount.
+        paid:
+          type: number
+          format: double
+          description: Total paid amount.
+        public_notes:
+          type: string
+          description: Notes visible to the affiliate.
+        internal_notes:
+          type: string
+          description: Internal notes visible only to network users.
+        is_hidden_affiliate:
+          type: boolean
+          description: Whether the invoice is hidden from the affiliate.
+        payment_terms:
+          type: integer
+          description: Payment terms in days.
+        time_created:
+          type: integer
+          description: Unix timestamp of creation.
+        time_saved:
+          type: integer
+          description: Unix timestamp of last update.
+        relationship:
+          type: object
+          description: Related data such as line items (when requested).
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

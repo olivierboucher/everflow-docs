@@ -1,0 +1,163 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Tiered Commissions
+  description: Endpoints for managing tiered commission structures.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Tiered Commissions
+paths:
+  /networks/tieredcommissions/table:
+    post:
+      summary: List Tiered Commissions
+      description: >
+        Retrieve a paginated list of tiered commission configurations. Supports
+        search filters, sorting, and pagination to help you find and browse
+        tiered commission rules and their payout structures programmatically.
+      tags:
+        - Tiered Commissions
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number (1-based).
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            default: 50
+          description: Number of results per page.
+      requestBody:
+        content:
+          application/json:
+            example:
+              search_terms: []
+              filters: {}
+            schema:
+              type: object
+              properties:
+                search_terms:
+                  type: array
+                  items:
+                    type: object
+                  description: Text search filters.
+                filters:
+                  type: object
+                  description: Structured filters to narrow results.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tiered_commissions:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TieredCommission"
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+      security:
+        - API Key: []
+  /networks/tieredcommissions/{commissionId}:
+    get:
+      summary: Get Tiered Commission
+      description: >
+        Retrieve a single tiered commission configuration by its ID.
+      tags:
+        - Tiered Commissions
+      parameters:
+        - in: path
+          name: commissionId
+          required: true
+          schema:
+            type: integer
+          description: The unique tiered commission ID.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TieredCommission"
+        "404":
+          description: Tiered commission not found.
+      security:
+        - API Key: []
+    put:
+      summary: Update Tiered Commission
+      description: >
+        Update an existing tiered commission configuration. This is a full
+        object replacement; all fields must be provided in the request body.
+      tags:
+        - Tiered Commissions
+      parameters:
+        - in: path
+          name: commissionId
+          required: true
+          schema:
+            type: integer
+          description: The unique tiered commission ID to update.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: The full tiered commission object.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TieredCommission"
+        "404":
+          description: Tiered commission not found.
+      security:
+        - API Key: []
+components:
+  schemas:
+    TieredCommission:
+      type: object
+      properties:
+        tiered_commission_id:
+          type: integer
+          description: Unique tiered commission ID.
+        network_id:
+          type: integer
+          description: Network ID.
+        name:
+          type: string
+          description: Commission rule name.
+        status:
+          type: string
+          description: Commission rule status.
+        tiers:
+          type: array
+          items:
+            type: object
+          description: Array of tier thresholds and payout configurations.
+        time_created:
+          type: integer
+          description: Unix timestamp of creation.
+        time_saved:
+          type: integer
+          description: Unix timestamp of last update.
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

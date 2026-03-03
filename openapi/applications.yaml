@@ -15,11 +15,11 @@ tags:
 paths:
   /networks/applicationstable:
     post:
-      summary: Search Offer Applications
+      summary: List Offer Applications
       description: >
-        Search and filter offer applications with text search and structured filters.
-        Returns a paginated list of applications with related affiliate, offer,
-        advertiser, and employee data.
+        Retrieve a paginated list of offer applications. Supports search filters, sorting,
+        and pagination to help you find and browse applications programmatically.
+        Returns applications with related affiliate, offer, advertiser, and employee data.
       tags:
         - Offer Applications
       parameters:

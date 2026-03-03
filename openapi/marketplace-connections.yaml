@@ -147,6 +147,89 @@ paths:
                         description: Total number of matching connections.
       security:
         - API Key: []
+  /partners/connections/active:
+    get:
+      summary: List Active Connections
+      description: >
+        Retrieve only active marketplace connections. A lightweight alternative
+        to the full connections table when you only need currently active brand
+        partnerships. Returns the same connection object structure as the table
+        endpoint but pre-filtered to active status only.
+      tags:
+        - Marketplace Connections
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  connections:
+                    type: array
+                    description: Array of active marketplace connection objects.
+                    items:
+                      type: object
+                      properties:
+                        partner_id:
+                          type: integer
+                          description: Unique partner ID.
+                        network_id:
+                          type: integer
+                          description: Network ID of the connected advertiser.
+                        network_affiliate_id:
+                          type: integer
+                          description: Affiliate ID assigned to this partner within the network.
+                        network_affiliate_user_id:
+                          type: integer
+                          description: Affiliate user ID assigned to this partner within the network.
+                        status:
+                          type: string
+                          description: Connection status (always "active" for this endpoint).
+                        time_created:
+                          type: integer
+                          description: Unix timestamp of when the connection was created.
+                        relationship:
+                          type: object
+                          description: Related data for this connection.
+                          properties:
+                            network:
+                              type: object
+                              description: Network/brand details.
+                              properties:
+                                network_id:
+                                  type: integer
+                                  description: Network ID.
+                                name:
+                                  type: string
+                                  description: Network name.
+                                logo_url:
+                                  type: string
+                                  description: Network logo URL.
+                            demand_partner:
+                              type: object
+                              description: Demand partner information.
+                              properties:
+                                partner_id:
+                                  type: integer
+                                  description: Demand partner ID.
+                                name:
+                                  type: string
+                                  description: Demand partner name.
+                            payment_methods:
+                              type: array
+                              description: Available payment methods for this connection.
+                              items:
+                                type: object
+                                properties:
+                                  payment_type:
+                                    type: string
+                                    description: Payment method type.
+                                  is_enabled:
+                                    type: boolean
+                                    description: Whether this payment method is enabled.
+      security:
+        - API Key: []
 components:
   securitySchemes:
     API Key:

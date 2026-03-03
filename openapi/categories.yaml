@@ -1,0 +1,171 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Categories
+  description: Endpoints for managing offer categories in the Everflow network.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Categories
+paths:
+  /networks/categories:
+    get:
+      summary: List Categories
+      description: >
+        Retrieve all offer categories for the network. Categories are used to
+        organize offers into logical groupings for filtering and reporting.
+      tags:
+        - Categories
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Category"
+      security:
+        - API Key: []
+    post:
+      summary: Create Category
+      description: >
+        Create a new offer category. Provide a name and status to define
+        the category.
+      tags:
+        - Categories
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              name: "Lead Generation"
+              status: "active"
+            schema:
+              type: object
+              required:
+                - name
+                - status
+              properties:
+                name:
+                  type: string
+                  description: Category name.
+                status:
+                  type: string
+                  enum:
+                    - active
+                    - inactive
+                  description: Category status.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+      security:
+        - API Key: []
+  /networks/categories/{categoryId}:
+    get:
+      summary: Get Category
+      description: >
+        Retrieve a single category by its ID.
+      tags:
+        - Categories
+      parameters:
+        - in: path
+          name: categoryId
+          required: true
+          schema:
+            type: integer
+          description: The unique category ID.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+        "404":
+          description: Category not found.
+      security:
+        - API Key: []
+    put:
+      summary: Update Category
+      description: >
+        Update an existing category. This is a full object replacement;
+        all fields must be provided in the request body.
+      tags:
+        - Categories
+      parameters:
+        - in: path
+          name: categoryId
+          required: true
+          schema:
+            type: integer
+          description: The unique category ID to update.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              name: "Lead Generation"
+              status: "active"
+            schema:
+              type: object
+              required:
+                - name
+                - status
+              properties:
+                name:
+                  type: string
+                  description: Category name.
+                status:
+                  type: string
+                  enum:
+                    - active
+                    - inactive
+                  description: Category status.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+        "404":
+          description: Category not found.
+      security:
+        - API Key: []
+components:
+  schemas:
+    Category:
+      type: object
+      properties:
+        network_category_id:
+          type: integer
+          description: Unique category ID.
+        network_id:
+          type: integer
+          description: Network ID this category belongs to.
+        name:
+          type: string
+          description: Category name.
+        status:
+          type: string
+          enum:
+            - active
+            - inactive
+          description: Category status.
+        time_created:
+          type: integer
+          description: Unix timestamp of creation.
+        time_saved:
+          type: integer
+          description: Unix timestamp of last update.
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey
