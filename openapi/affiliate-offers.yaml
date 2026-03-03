@@ -1,0 +1,447 @@
+openapi: 3.0.3
+info:
+  title: Everflow Affiliate API - Offers
+  description: >
+    Offer discovery and tracking URL endpoints for the Everflow Affiliate API.
+    These endpoints allow affiliates to browse visible offers, retrieve details
+    for offers they can run, and generate tracking links.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Affiliate Offers
+    description: Endpoints for discovering and retrieving offer details as an affiliate.
+paths:
+  /affiliates/alloffers:
+    get:
+      summary: Find All Visible Offers
+      description: >
+        Returns a paginated list of all offers visible to the authenticated affiliate.
+        This includes both public offers and offers that require approval. Use this
+        endpoint to browse the full catalog of available offers before applying to run them.
+
+
+        The `relationship.offer_affiliate_status` field indicates whether the affiliate
+        has already been approved, is pending, or has not yet applied for a given offer.
+      tags:
+        - Affiliate Offers
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination (1-based).
+          schema:
+            type: integer
+            default: 1
+        - name: page_size
+          in: query
+          description: Number of results per page.
+          schema:
+            type: integer
+            default: 50
+        - name: search
+          in: query
+          description: Search term to filter offers by name or ID.
+          schema:
+            type: string
+        - name: category_id
+          in: query
+          description: Filter by offer category ID.
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  offers:
+                    type: array
+                    description: Array of visible offers.
+                    items:
+                      type: object
+                      properties:
+                        network_offer_id:
+                          type: integer
+                          description: Unique identifier for the offer.
+                        name:
+                          type: string
+                          description: Offer name.
+                        offer_status:
+                          type: string
+                          description: Current status of the offer (e.g. active, paused, deleted).
+                        currency_id:
+                          type: string
+                          description: Currency code for the offer (e.g. "USD").
+                        visibility:
+                          type: string
+                          description: Visibility setting of the offer (public, require_approval, private).
+                        thumbnail_url:
+                          type: string
+                          description: URL of the offer thumbnail image.
+                        description:
+                          type: string
+                          description: Offer description.
+                        caps:
+                          type: object
+                          description: Offer cap settings.
+                          properties:
+                            conversion_cap:
+                              type: integer
+                              description: Maximum number of conversions allowed.
+                            click_cap:
+                              type: integer
+                              description: Maximum number of clicks allowed.
+                            cap_interval:
+                              type: string
+                              description: Cap reset interval (daily, weekly, monthly, none).
+                        tracking_url:
+                          type: string
+                          description: Base tracking URL for the offer.
+                        relationship:
+                          type: object
+                          description: Relationship data specific to this affiliate.
+                          properties:
+                            offer_affiliate_status:
+                              type: string
+                              description: >
+                                Affiliate's relationship status with this offer.
+                                Values include: approved, pending, not_applied, rejected.
+                  paging:
+                    type: object
+                    description: Pagination metadata.
+                    properties:
+                      page:
+                        type: integer
+                        description: Current page number.
+                      page_size:
+                        type: integer
+                        description: Number of results per page.
+                      total_count:
+                        type: integer
+                        description: Total number of matching offers.
+      security:
+        - API Key: []
+
+  /affiliates/offersrunnable:
+    get:
+      summary: Find All Runnable Offers
+      description: >
+        Returns offers the authenticated affiliate is authorized to run. This includes
+        public offers and offers the affiliate has been approved for. Unlike the
+        `/affiliates/alloffers` endpoint, this only returns offers the affiliate can
+        actively generate traffic for.
+
+
+        The response includes the full relationship object with category, creatives,
+        reporting data, payout details, rulesets, URLs, channels, and remaining caps.
+      tags:
+        - Affiliate Offers
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination (1-based).
+          schema:
+            type: integer
+            default: 1
+        - name: page_size
+          in: query
+          description: Number of results per page.
+          schema:
+            type: integer
+            default: 50
+        - name: search
+          in: query
+          description: Search term to filter offers by name or ID.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  offers:
+                    type: array
+                    description: Array of runnable offers.
+                    items:
+                      type: object
+                      properties:
+                        network_offer_id:
+                          type: integer
+                          description: Unique identifier for the offer.
+                        name:
+                          type: string
+                          description: Offer name.
+                        offer_status:
+                          type: string
+                          description: Current status of the offer.
+                        currency_id:
+                          type: string
+                          description: Currency code for the offer.
+                        visibility:
+                          type: string
+                          description: Visibility setting of the offer.
+                        tracking_url:
+                          type: string
+                          description: Base tracking URL for the offer.
+                        relationship:
+                          type: object
+                          description: Full relationship data for this affiliate and offer.
+                          properties:
+                            category:
+                              type: object
+                              description: Offer category details.
+                              properties:
+                                network_category_id:
+                                  type: integer
+                                name:
+                                  type: string
+                            creatives:
+                              type: array
+                              description: Available creatives for this offer.
+                              items:
+                                type: object
+                                properties:
+                                  network_offer_creative_id:
+                                    type: integer
+                                  name:
+                                    type: string
+                                  creative_type:
+                                    type: string
+                            reporting:
+                              type: object
+                              description: Aggregated reporting data for this offer.
+                            payouts:
+                              type: array
+                              description: Payout configuration for this affiliate.
+                              items:
+                                type: object
+                                properties:
+                                  payout_type:
+                                    type: string
+                                    description: Type of payout (CPA, CPC, CPI, RevShare, etc.).
+                                  payout_amount:
+                                    type: number
+                                    description: Payout amount per conversion or event.
+                            ruleset:
+                              type: object
+                              description: Targeting and rule configuration.
+                            urls:
+                              type: array
+                              description: Offer destination URLs.
+                              items:
+                                type: object
+                                properties:
+                                  network_offer_url_id:
+                                    type: integer
+                                  name:
+                                    type: string
+                                  url:
+                                    type: string
+                            channels:
+                              type: array
+                              description: Available traffic channels.
+                              items:
+                                type: object
+                            remaining_caps:
+                              type: object
+                              description: Remaining cap amounts for the current interval.
+                              properties:
+                                remaining_conversion_cap:
+                                  type: integer
+                                remaining_click_cap:
+                                  type: integer
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+      security:
+        - API Key: []
+
+  /affiliates/offers/{offerId}:
+    get:
+      summary: Find Offer By ID
+      description: >
+        Returns full details for a single offer including integrations, meta information,
+        and product feeds. The offer must be visible to the authenticated affiliate
+        (public, approved, or requiring approval). Returns 404 if the offer does not
+        exist or is not visible to the affiliate.
+      tags:
+        - Affiliate Offers
+      parameters:
+        - name: offerId
+          in: path
+          required: true
+          description: The numeric ID of the offer.
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  network_offer_id:
+                    type: integer
+                    description: Unique identifier for the offer.
+                  name:
+                    type: string
+                    description: Offer name.
+                  offer_status:
+                    type: string
+                    description: Current status of the offer.
+                  currency_id:
+                    type: string
+                    description: Currency code for the offer.
+                  visibility:
+                    type: string
+                    description: Visibility setting of the offer.
+                  description:
+                    type: string
+                    description: Offer description.
+                  preview_url:
+                    type: string
+                    description: Preview URL for the offer landing page.
+                  tracking_url:
+                    type: string
+                    description: Base tracking URL.
+                  caps:
+                    type: object
+                    description: Offer cap configuration.
+                  integrations:
+                    type: object
+                    description: Integration configuration for the offer.
+                  meta:
+                    type: object
+                    description: Additional metadata associated with the offer.
+                  product_feeds:
+                    type: array
+                    description: Product feed configurations for the offer.
+                    items:
+                      type: object
+                  relationship:
+                    type: object
+                    description: Affiliate-specific relationship data.
+                    properties:
+                      offer_affiliate_status:
+                        type: string
+                        description: Affiliate's approval status for this offer.
+                      category:
+                        type: object
+                      creatives:
+                        type: array
+                        items:
+                          type: object
+                      payouts:
+                        type: array
+                        items:
+                          type: object
+                      urls:
+                        type: array
+                        items:
+                          type: object
+        "404":
+          description: Offer not found or not visible to the authenticated affiliate.
+      security:
+        - API Key: []
+
+  /affiliates/offers/{offerId}/url/{urlId}:
+    get:
+      summary: Find Tracking URL
+      description: >
+        Returns the tracking link URL for a specific offer and destination URL combination.
+        Use `urlId=0` if the offer has no extra destination URLs configured. Returns 400 if
+        the affiliate is not authorized to run this offer.
+      tags:
+        - Affiliate Offers
+      parameters:
+        - name: offerId
+          in: path
+          required: true
+          description: The numeric ID of the offer.
+          schema:
+            type: integer
+        - name: urlId
+          in: path
+          required: true
+          description: >
+            The destination URL ID. Use 0 for the default offer URL when no extra
+            destination URLs are configured.
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tracking_url:
+                    type: string
+                    description: The full tracking link URL for the affiliate to use.
+        "400":
+          description: Affiliate is not authorized to run this offer.
+      security:
+        - API Key: []
+
+  /affiliates/offers/{offerId}/impressionurl/{urlId}:
+    get:
+      summary: Find Impression URL
+      description: >
+        Returns the impression tracking URL for a specific offer. Use this URL to track
+        impressions (ad views) separately from clicks. Use `urlId=0` if no extra destination
+        URLs are needed.
+      tags:
+        - Affiliate Offers
+      parameters:
+        - name: offerId
+          in: path
+          required: true
+          description: The numeric ID of the offer.
+          schema:
+            type: integer
+        - name: urlId
+          in: path
+          required: true
+          description: >
+            The destination URL ID. Use 0 for the default URL.
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  impression_url:
+                    type: string
+                    description: The full impression tracking URL.
+        "400":
+          description: Affiliate is not authorized to run this offer.
+      security:
+        - API Key: []
+
+components:
+  securitySchemes:
+    API Key:
+      description: >
+        The affiliate's API key generated from the Affiliate Portal.
+        Uses the X-Eflow-Api-Key header.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

@@ -1,0 +1,72 @@
+---
+title: "Partner Webhooks"
+description: "Webhook events fired when partners are created, updated, sign up, or have their signup reviewed."
+---
+
+Partner webhooks notify your endpoint when changes occur to partner (affiliate) accounts in your network.
+
+## Events
+
+### Partner Created
+
+Fired when a new partner is created at the top level. This event does **not** fire when creating additional users for an existing partner.
+
+**Payload**: Matches the Find Affiliate By ID endpoint response with `users` and `billing` relationships.
+
+### Partner Updated
+
+Fired when the partner record itself is updated.
+
+**Triggers include:**
+- Account manager changes
+- Address updates
+- Billing modifications
+
+**Does NOT trigger for:**
+- Offer visibility grants
+- Postback changes
+- User creation or updates
+
+**Payload**: Same structure as Partner Created.
+
+### Partner Signed Up
+
+Fired when a partner self-registers via the signup form. If email verification is enabled, this event only fires **after** the partner verifies their email.
+
+**Payload**: Includes `users`, `billing`, and `signup` relationships.
+
+**Additional signup fields:**
+- `website_url`, `referral_code`, `advertise_method`, `heard_about_us`
+- `user_ip`, `user_agent`, `phone`, `tax_id`, `legal_type`
+- `mailing_address`, `promotional_information`
+
+### Partner Sign Up Verdict
+
+Fired when a network employee approves or rejects a signup application. Note: The Partner Updated webhook also fires when this event occurs.
+
+**Payload** (minimal):
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `network_id` | integer | Network identifier |
+| `network_affiliate_id` | integer | Partner identifier |
+| `network_affiliate_name` | string | Partner name |
+| `new_status` | string | New status: `active` or `inactive` |
+| `employee_id` | integer | Employee who made the decision |
+| `employee_full_name` | string | Employee name |
+| `timestamp` | integer | Unix timestamp of the decision |
+
+## Common Payload Fields
+
+All partner webhook payloads (except Sign Up Verdict) include:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `network_affiliate_id` | integer | Unique partner identifier |
+| `network_id` | integer | Network identifier |
+| `name` | string | Partner name |
+| `account_status` | string | Account status |
+| `default_currency_id` | string | Default currency |
+| `network_traffic_source_id` | integer | Traffic source |
+| `time_created` | integer | Creation timestamp |
+| `time_saved` | integer | Last update timestamp |

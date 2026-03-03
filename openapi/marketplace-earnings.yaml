@@ -1,0 +1,212 @@
+openapi: 3.0.3
+info:
+  title: Everflow Marketplace API - Earnings
+  description: >
+    Marketplace earnings and payment endpoints for the Everflow partner marketing
+    platform. Retrieve payment history across all marketplace connections.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Marketplace Earnings
+    description: Endpoints for retrieving marketplace payment data.
+paths:
+  /partners/payments:
+    post:
+      summary: Find All Payments
+      description: >
+        Retrieve all payments across marketplace connections with filtering by date
+        range, payment type, status, and provider status. Each payment includes
+        amounts, fees, and timestamps.
+
+
+        Supports pagination via `page` and `page_size` query parameters.
+      tags:
+        - Marketplace Earnings
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number (1-based).
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            default: 50
+          description: Number of results per page.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              timezone_id: 67
+              from: "2024-01-01"
+              to: "2024-01-31"
+              query: {}
+              filter:
+                payment_status:
+                  - "success"
+            schema:
+              type: object
+              required:
+                - timezone_id
+                - from
+                - to
+              properties:
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the request.
+                from:
+                  type: string
+                  description: Start date for the payment search. Format `yyyy-MM-dd`.
+                to:
+                  type: string
+                  description: End date for the payment search. Format `yyyy-MM-dd`.
+                query:
+                  type: object
+                  description: Query configuration for additional filtering.
+                filter:
+                  type: object
+                  description: Structured filters to narrow payment results.
+                  properties:
+                    partner_connection_ids:
+                      type: array
+                      description: Filter by specific partner connection IDs.
+                      items:
+                        type: integer
+                    payment_types:
+                      type: array
+                      description: Filter by payment type.
+                      items:
+                        type: string
+                        enum:
+                          - pay
+                          - veem
+                          - tipalti
+                    network_ids:
+                      type: array
+                      description: Filter by network IDs.
+                      items:
+                        type: integer
+                    payment_status:
+                      type: array
+                      description: Filter by payment status.
+                      items:
+                        type: string
+                        enum:
+                          - pending
+                          - rejected
+                          - success
+                          - scheduled
+                    payment_provider_payment_status:
+                      type: array
+                      description: Filter by the payment provider's processing status.
+                      items:
+                        type: string
+                        enum:
+                          - unpaid
+                          - in_progress
+                          - paid
+                          - rejected
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  payments:
+                    type: array
+                    description: Array of payment objects.
+                    items:
+                      type: object
+                      properties:
+                        partner_payment_id:
+                          type: integer
+                          description: Unique payment ID.
+                        partner_id:
+                          type: integer
+                          description: Partner ID that received the payment.
+                        network_id:
+                          type: integer
+                          description: Network ID that issued the payment.
+                        partner_connection_id:
+                          type: integer
+                          description: Connection ID linking the partner and network.
+                        payment_type:
+                          type: string
+                          enum:
+                            - pay
+                            - veem
+                            - tipalti
+                          description: Payment method type.
+                        payment_status:
+                          type: string
+                          enum:
+                            - pending
+                            - rejected
+                            - success
+                            - scheduled
+                          description: Current status of the payment.
+                        payment_provider_payment_status:
+                          type: string
+                          enum:
+                            - unpaid
+                            - in_progress
+                            - paid
+                            - rejected
+                          description: Status from the payment provider's side.
+                        amount:
+                          type: number
+                          description: Total payment amount.
+                        currency:
+                          type: string
+                          description: Currency code for the payment (e.g. "USD").
+                        payee_amount:
+                          type: number
+                          description: Amount received by the payee after fees.
+                        payee_fee:
+                          type: number
+                          description: Fee charged to the payee.
+                        payer_amount:
+                          type: number
+                          description: Amount charged to the payer.
+                        payer_fee:
+                          type: number
+                          description: Fee charged to the payer.
+                        time_created:
+                          type: integer
+                          description: Unix timestamp of when the payment was created.
+                        time_saved:
+                          type: integer
+                          description: Unix timestamp of the last update to the payment.
+                        time_paid:
+                          type: integer
+                          description: Unix timestamp of when the payment was completed.
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                        description: Current page number.
+                      page_size:
+                        type: integer
+                        description: Number of results per page.
+                      total_count:
+                        type: integer
+                        description: Total number of matching payments.
+      security:
+        - API Key: []
+components:
+  securitySchemes:
+    API Key:
+      description: >
+        The marketplace partner's API key. Uses the X-Eflow-Api-Key header.
+        The key belongs to the marketplace partner user.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

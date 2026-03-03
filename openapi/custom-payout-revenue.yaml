@@ -1,0 +1,346 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Custom Payout/Revenue
+  description: Endpoints for managing custom payout and revenue settings in the Everflow network.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Custom Payout/Revenue
+paths:
+  /networks/custom/payoutrevenue:
+    get:
+      summary: List Custom Payout/Revenue
+      description: >
+        Retrieve all custom payout and revenue settings for the network.
+        Returns a paginated list of custom payout/revenue configurations
+        that override default offer payouts for specific affiliates.
+      tags:
+        - Custom Payout/Revenue
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number (1-based).
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            default: 50
+          description: Number of results per page.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  custom_payout_revenue_settings:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CustomPayoutRevenue"
+                  paging:
+                    $ref: "#/components/schemas/Paging"
+      security:
+        - API Key: []
+    post:
+      summary: Create Custom Payout/Revenue
+      description: >
+        Create a new custom payout/revenue setting. This allows you to
+        override the default offer payout and revenue for a specific
+        affiliate or set of affiliates.
+      tags:
+        - Custom Payout/Revenue
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomPayoutRevenueInput"
+            example:
+              network_offer_id: 100
+              network_affiliate_id: 200
+              custom_setting_status: "active"
+              payout_type: "cpa"
+              payout_amount: 5.00
+              revenue_type: "cpa"
+              revenue_amount: 10.00
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomPayoutRevenue"
+      security:
+        - API Key: []
+    patch:
+      summary: Bulk Update Custom Payout/Revenue
+      description: >
+        Bulk update multiple custom payout/revenue settings at once.
+        Provide a list of setting IDs and the fields to update.
+      tags:
+        - Custom Payout/Revenue
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkUpdateRequest"
+            example:
+              network_custom_payout_revenue_setting_ids: [1, 2, 3]
+              fields:
+                - field_type: "payout_amount"
+                  field_value: 7.50
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+      security:
+        - API Key: []
+  /networks/custom/payoutrevenue/{settingId}:
+    get:
+      summary: Get Custom Payout/Revenue by ID
+      description: >
+        Retrieve a single custom payout/revenue setting by its ID.
+      tags:
+        - Custom Payout/Revenue
+      parameters:
+        - in: path
+          name: settingId
+          required: true
+          schema:
+            type: integer
+          description: The custom payout/revenue setting identifier.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomPayoutRevenue"
+      security:
+        - API Key: []
+    put:
+      summary: Update Custom Payout/Revenue
+      description: >
+        Update an existing custom payout/revenue setting. All fields must
+        be provided in the request body.
+      tags:
+        - Custom Payout/Revenue
+      parameters:
+        - in: path
+          name: settingId
+          required: true
+          schema:
+            type: integer
+          description: The custom payout/revenue setting identifier.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomPayoutRevenueInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomPayoutRevenue"
+      security:
+        - API Key: []
+    delete:
+      summary: Delete Custom Payout/Revenue
+      description: >
+        Delete a custom payout/revenue setting by its ID. This will revert
+        the affiliate to using the default offer payout and revenue.
+      tags:
+        - Custom Payout/Revenue
+      parameters:
+        - in: path
+          name: settingId
+          required: true
+          schema:
+            type: integer
+          description: The custom payout/revenue setting identifier.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+      security:
+        - API Key: []
+components:
+  schemas:
+    CustomPayoutRevenue:
+      type: object
+      properties:
+        network_custom_payout_revenue_setting_id:
+          type: integer
+          description: Unique custom payout/revenue setting ID.
+        network_id:
+          type: integer
+          description: Network ID.
+        network_offer_id:
+          type: integer
+          description: Associated offer ID.
+        network_affiliate_id:
+          type: integer
+          description: Associated affiliate ID.
+        custom_setting_status:
+          type: string
+          enum:
+            - active
+            - inactive
+          description: Setting status.
+        payout_type:
+          type: string
+          enum:
+            - cpa
+            - cpc
+            - cpm
+            - revshare
+          description: Payout pricing model.
+        payout_amount:
+          type: number
+          format: double
+          description: Custom payout amount.
+        revenue_type:
+          type: string
+          enum:
+            - cpa
+            - cpc
+            - cpm
+            - revshare
+          description: Revenue pricing model.
+        revenue_amount:
+          type: number
+          format: double
+          description: Custom revenue amount.
+        payout_percentage:
+          type: number
+          format: double
+          description: Payout percentage (for revshare).
+        revenue_percentage:
+          type: number
+          format: double
+          description: Revenue percentage (for revshare).
+        time_created:
+          type: integer
+          description: Unix timestamp of creation.
+        time_saved:
+          type: integer
+          description: Unix timestamp of last update.
+        relationship:
+          type: object
+          properties:
+            offer:
+              type: object
+              description: Associated offer details.
+            affiliate:
+              type: object
+              description: Associated affiliate details.
+    CustomPayoutRevenueInput:
+      type: object
+      required:
+        - network_offer_id
+        - network_affiliate_id
+        - custom_setting_status
+      properties:
+        network_offer_id:
+          type: integer
+          description: Associated offer ID.
+        network_affiliate_id:
+          type: integer
+          description: Associated affiliate ID.
+        custom_setting_status:
+          type: string
+          enum:
+            - active
+            - inactive
+          description: Setting status.
+        payout_type:
+          type: string
+          enum:
+            - cpa
+            - cpc
+            - cpm
+            - revshare
+          description: Payout pricing model.
+        payout_amount:
+          type: number
+          format: double
+          description: Custom payout amount.
+        revenue_type:
+          type: string
+          enum:
+            - cpa
+            - cpc
+            - cpm
+            - revshare
+          description: Revenue pricing model.
+        revenue_amount:
+          type: number
+          format: double
+          description: Custom revenue amount.
+        payout_percentage:
+          type: number
+          format: double
+          description: Payout percentage (for revshare type).
+        revenue_percentage:
+          type: number
+          format: double
+          description: Revenue percentage (for revshare type).
+    BulkUpdateRequest:
+      type: object
+      required:
+        - network_custom_payout_revenue_setting_ids
+        - fields
+      properties:
+        network_custom_payout_revenue_setting_ids:
+          type: array
+          items:
+            type: integer
+          description: List of custom payout/revenue setting IDs to update.
+        fields:
+          type: array
+          items:
+            type: object
+            properties:
+              field_type:
+                type: string
+                description: >
+                  The field to update (e.g., payout_amount, revenue_amount,
+                  payout_type, revenue_type, custom_setting_status).
+              field_value:
+                description: The new value for the field.
+    Paging:
+      type: object
+      properties:
+        page:
+          type: integer
+        page_size:
+          type: integer
+        total_count:
+          type: integer
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

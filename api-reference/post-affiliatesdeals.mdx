@@ -1,0 +1,8 @@
+---
+title: Search All Deals
+openapi: /openapi/affiliate-deals.yaml post /affiliates/deals
+---
+
+Fetch deals across all offers or filter by specific offer IDs. This is the primary endpoint for retrieving deals in bulk. Results are paginated and include relationship data with associated resources and offers.
+
+Pass an array of `network_offer_ids` to retrieve deals for specific offers, or omit the field to return all deals you have access to. Each deal includes the full deal details along with relationships to the offers it belongs to.

@@ -1,0 +1,8 @@
+---
+title: Update Postback
+openapi: /openapi/affiliate-postbacks.yaml put /affiliates/pixels/{pixelId}
+---
+
+Update an existing postback configuration. This is a full object replacement, so all fields must be provided in the request body, not just the ones being changed. Retrieve the current postback with the **Get Postback** endpoint first, modify the fields you need, and submit the complete object.
+
+The postback must belong to your affiliate account. Returns 404 if the postback does not exist or does not belong to you.

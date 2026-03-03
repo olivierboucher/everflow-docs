@@ -1,0 +1,763 @@
+openapi: 3.0.3
+info:
+  title: Everflow Advertiser API - Reporting
+  description: >
+    Reporting endpoints for the Everflow Advertiser API. These endpoints are
+    accessed by advertiser users using their own API key and return
+    data scoped to the authenticated advertiser's account only.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Advertiser Reporting
+    description: Reporting endpoints available to advertiser users.
+paths:
+  /advertisers/reporting/entity:
+    post:
+      summary: Entity Reporting
+      description: >
+        The main reporting endpoint for advertisers. Pivot your performance data
+        by up to 10 dimensions over a date range. Returns table data, time-series
+        performance, and an aggregated summary.
+
+
+        Data is automatically scoped to the authenticated advertiser — no advertiser
+        filter is needed. The API key determines which advertiser's data is returned.
+
+
+        Maximum reporting interval is one year (365 days). Results are limited to
+        10,000 rows. If the limit is hit, the response includes `incomplete_results: true`.
+      tags:
+        - Advertiser Reporting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              from: "2024-01-01"
+              to: "2024-01-31"
+              timezone_id: 67
+              currency_id: "USD"
+              columns:
+                - column: "offer"
+              query:
+                filters: []
+            schema:
+              type: object
+              required:
+                - from
+                - to
+                - timezone_id
+                - currency_id
+                - columns
+              properties:
+                from:
+                  type: string
+                  description: Start date for the reporting period. Format `YYYY-MM-DD`.
+                to:
+                  type: string
+                  description: End date for the reporting period. Format `YYYY-MM-DD`.
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the request.
+                currency_id:
+                  type: string
+                  description: Currency code for monetary values (e.g. "USD").
+                columns:
+                  type: array
+                  minItems: 1
+                  maxItems: 10
+                  description: >
+                    Columns to group/pivot data by. Minimum 1, maximum 10. Only one
+                    time column (hour, date, week, month, year) is allowed per request.
+                  items:
+                    type: object
+                    required:
+                      - column
+                    properties:
+                      column:
+                        type: string
+                        enum:
+                          - offer
+                          - affiliate
+                          - creative
+                          - coupon_code
+                          - offer_url
+                          - country
+                          - country_code
+                          - region
+                          - city
+                          - dma
+                          - carrier
+                          - platform
+                          - isp
+                          - os_version
+                          - device_type
+                          - device_model
+                          - device_make
+                          - browser
+                          - language
+                          - sub1
+                          - sub2
+                          - sub3
+                          - sub4
+                          - sub5
+                          - source_id
+                          - referer
+                          - event_name
+                          - connection_type
+                          - hour
+                          - date
+                          - week
+                          - month
+                          - year
+                        description: >
+                          The dimension to group by. Time columns (hour, date, week,
+                          month, year) are mutually exclusive — only one allowed at a time.
+                query:
+                  type: object
+                  description: Query configuration for filtering, metric filtering, and exclusions.
+                  properties:
+                    filters:
+                      type: array
+                      description: >
+                        Filters to narrow results. Same resource_type filters use OR
+                        logic; different resource_type filters use AND logic.
+                      items:
+                        type: object
+                        required:
+                          - filter_id_value
+                          - resource_type
+                        properties:
+                          filter_id_value:
+                            type: string
+                            description: The value to filter on (e.g. offer ID, country name).
+                          resource_type:
+                            type: string
+                            enum:
+                              - offer
+                              - affiliate
+                              - creative
+                              - country
+                              - country_code
+                              - sub1
+                              - sub2
+                              - sub3
+                              - sub4
+                              - sub5
+                              - carrier
+                              - device_platform
+                              - device_type
+                              - device_make
+                              - browser
+                              - language
+                              - connection_type
+                              - source_id
+                              - offer_url
+                              - device_model
+                              - os_version
+                              - coupon_code
+                            description: The resource type / dimension to filter on.
+                    metric_filters:
+                      type: array
+                      description: Filters based on metric thresholds (e.g. conversions > 10).
+                      items:
+                        type: object
+                        properties:
+                          column:
+                            type: string
+                            description: The metric column to filter on.
+                          operator:
+                            type: string
+                            enum:
+                              - gt
+                              - gte
+                              - lt
+                              - lte
+                              - eq
+                            description: Comparison operator.
+                          value:
+                            type: number
+                            description: Threshold value.
+                    exclusions:
+                      type: array
+                      description: Exclusion filters to remove specific dimension values from results.
+                      items:
+                        type: object
+                        properties:
+                          filter_id_value:
+                            type: string
+                            description: The value to exclude.
+                          resource_type:
+                            type: string
+                            description: The resource type / dimension to exclude on.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  table:
+                    type: array
+                    description: Array of reporting data rows grouped by the requested columns.
+                    items:
+                      type: object
+                      properties:
+                        columns:
+                          type: array
+                          description: Dimension values for this row.
+                          items:
+                            type: object
+                            properties:
+                              column_type:
+                                type: string
+                                description: The column/dimension type (matches the requested column value).
+                              id:
+                                type: string
+                                description: Dimension value identifier (e.g. offer ID, country name).
+                              label:
+                                type: string
+                                description: Human-readable label for the dimension value.
+                        reporting:
+                          $ref: "#/components/schemas/ReportingMetrics"
+                  performance:
+                    type: array
+                    description: Time-series performance data points.
+                    items:
+                      type: object
+                      properties:
+                        label:
+                          type: string
+                          description: Time period label (e.g. date string).
+                        reporting:
+                          $ref: "#/components/schemas/ReportingMetrics"
+                  summary:
+                    type: object
+                    description: Aggregated summary across all rows.
+                    properties:
+                      reporting:
+                        $ref: "#/components/schemas/ReportingMetrics"
+                  incomplete_results:
+                    type: boolean
+                    description: True if results exceeded the 10,000-row limit and were truncated.
+      security:
+        - API Key: []
+  /advertisers/reporting/conversions:
+    post:
+      summary: Search Conversions
+      description: >
+        Search raw conversion data with flexible filtering. Each conversion is returned
+        as a separate row with full details including geo-location, device info, and
+        advertiser parameters (adv1-adv5).
+
+
+        Each request must contain `from` and `to` dates, a `timezone_id`, and boolean
+        flags for `show_conversions` and `show_events`.
+
+
+        The conversion report is limited to the prior 365 days and a maximum duration
+        of one year. Requests outside of this range will result in an error.
+      tags:
+        - Advertiser Reporting
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number (1-based).
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            default: 50
+          description: Number of results per page.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              show_conversions: true
+              show_events: false
+              show_only_vt: false
+              show_only_ct: false
+              from: "2024-01-01"
+              to: "2024-01-31"
+              timezone_id: 67
+              currency_id: "USD"
+              query:
+                filters: []
+                search_terms: []
+            schema:
+              type: object
+              required:
+                - show_conversions
+                - show_events
+                - from
+                - to
+                - timezone_id
+                - currency_id
+              properties:
+                show_conversions:
+                  type: boolean
+                  description: Whether to include base conversions in the results.
+                show_events:
+                  type: boolean
+                  description: Whether to include post-conversion events in the results.
+                show_only_vt:
+                  type: boolean
+                  description: When true, only return view-through conversions.
+                show_only_ct:
+                  type: boolean
+                  description: When true, only return click-through conversions.
+                from:
+                  type: string
+                  description: Start date. Format `YYYY-MM-DD` or `YYYY-MM-DD hh:mm:ss`.
+                to:
+                  type: string
+                  description: End date. Format `YYYY-MM-DD` or `YYYY-MM-DD hh:mm:ss`.
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the request.
+                currency_id:
+                  type: string
+                  description: Currency code for monetary values (e.g. "USD").
+                query:
+                  type: object
+                  description: Query configuration for filtering.
+                  properties:
+                    filters:
+                      type: array
+                      description: Filters to narrow results.
+                      items:
+                        type: object
+                        properties:
+                          filter_id_value:
+                            type: string
+                            description: The value to filter on.
+                          resource_type:
+                            type: string
+                            description: The resource type to filter on.
+                    search_terms:
+                      type: array
+                      description: Text-based search filters.
+                      items:
+                        type: object
+                        properties:
+                          search_type:
+                            type: string
+                            description: The field to search on.
+                          value:
+                            type: string
+                            description: The search term.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conversions:
+                    type: array
+                    description: Array of conversion objects.
+                    items:
+                      $ref: "#/components/schemas/Conversion"
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                        description: Current page number.
+                      page_size:
+                        type: integer
+                        description: Number of results per page.
+                      total_count:
+                        type: integer
+                        description: Total number of matching conversions.
+      security:
+        - API Key: []
+  /advertisers/reporting/conversions/export:
+    post:
+      summary: Export Conversions
+      description: >
+        Export raw conversion data in CSV or newline-delimited JSON format. Uses the
+        same request structure as the Search Conversions endpoint with an additional
+        `format` parameter to specify the output format.
+
+
+        The conversion export is limited to the prior 365 days and a maximum duration
+        of one year.
+      tags:
+        - Advertiser Reporting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              show_conversions: true
+              show_events: false
+              from: "2024-01-01"
+              to: "2024-01-31"
+              timezone_id: 67
+              currency_id: "USD"
+              format: "csv"
+              query:
+                filters: []
+            schema:
+              type: object
+              required:
+                - show_conversions
+                - show_events
+                - from
+                - to
+                - timezone_id
+                - currency_id
+                - format
+              properties:
+                show_conversions:
+                  type: boolean
+                  description: Whether to include base conversions in the export.
+                show_events:
+                  type: boolean
+                  description: Whether to include post-conversion events in the export.
+                show_only_vt:
+                  type: boolean
+                  description: When true, only export view-through conversions.
+                show_only_ct:
+                  type: boolean
+                  description: When true, only export click-through conversions.
+                from:
+                  type: string
+                  description: Start date. Format `YYYY-MM-DD` or `YYYY-MM-DD hh:mm:ss`.
+                to:
+                  type: string
+                  description: End date. Format `YYYY-MM-DD` or `YYYY-MM-DD hh:mm:ss`.
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the request.
+                currency_id:
+                  type: string
+                  description: Currency code for monetary values (e.g. "USD").
+                format:
+                  type: string
+                  enum:
+                    - csv
+                    - json
+                  description: Export format. `csv` for comma-separated values, `json` for newline-delimited JSON.
+                query:
+                  type: object
+                  description: Query configuration for filtering.
+                  properties:
+                    filters:
+                      type: array
+                      description: Filters to narrow results.
+                      items:
+                        type: object
+                        properties:
+                          filter_id_value:
+                            type: string
+                            description: The value to filter on.
+                          resource_type:
+                            type: string
+                            description: The resource type to filter on.
+      responses:
+        "200":
+          description: OK — Returns the exported data in the requested format.
+          content:
+            text/csv:
+              schema:
+                type: string
+                description: CSV-formatted conversion data.
+            application/json:
+              schema:
+                type: string
+                description: Newline-delimited JSON conversion data.
+      security:
+        - API Key: []
+  /advertisers/reporting/conversions/{conversionId}:
+    get:
+      summary: Get Conversion By ID
+      description: >
+        Retrieve a single conversion by its ID. Returns the full conversion object
+        including cost, geo-location, device information, and related offer/affiliate details.
+      tags:
+        - Advertiser Reporting
+      parameters:
+        - in: path
+          name: conversionId
+          required: true
+          schema:
+            type: integer
+          description: The unique conversion ID.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Conversion"
+        "404":
+          description: Conversion not found.
+      security:
+        - API Key: []
+  /advertisers/dashboard/summary:
+    post:
+      summary: Dashboard Summary
+      description: >
+        Retrieve high-level dashboard metrics comparing current performance against
+        previous periods. Returns clicks, conversions, cost, conversion rate, events,
+        event rate, and impressions — each with today, yesterday, current month, and
+        last month values plus trending percentages.
+      tags:
+        - Advertiser Reporting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              timezone_id: 67
+            schema:
+              type: object
+              required:
+                - timezone_id
+              properties:
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for computing period boundaries.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  click:
+                    $ref: "#/components/schemas/DashboardMetric"
+                  conversion:
+                    $ref: "#/components/schemas/DashboardMetric"
+                  cost:
+                    $ref: "#/components/schemas/DashboardMetric"
+                  cvr:
+                    $ref: "#/components/schemas/DashboardMetric"
+                  events:
+                    $ref: "#/components/schemas/DashboardMetric"
+                  evr:
+                    $ref: "#/components/schemas/DashboardMetric"
+                  imp:
+                    $ref: "#/components/schemas/DashboardMetric"
+      security:
+        - API Key: []
+components:
+  securitySchemes:
+    API Key:
+      description: >
+        The advertiser's API key generated from the Advertiser Portal.
+        Uses the same X-Eflow-Api-Key header as other Everflow APIs, but the key
+        belongs to the advertiser user rather than the network admin.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey
+  schemas:
+    ReportingMetrics:
+      type: object
+      description: Aggregated performance metrics.
+      properties:
+        imp:
+          type: integer
+          description: Impression count.
+        total_click:
+          type: integer
+          description: Total click count.
+        unique_click:
+          type: integer
+          description: Unique click count.
+        invalid_click:
+          type: integer
+          description: Invalid/filtered click count.
+        duplicate_click:
+          type: integer
+          description: Duplicate click count.
+        cv:
+          type: integer
+          description: Conversion count.
+        view_through_cv:
+          type: integer
+          description: View-through conversion count.
+        event:
+          type: integer
+          description: Post-conversion event count.
+        cvr:
+          type: number
+          description: Conversion rate (percentage).
+        evr:
+          type: number
+          description: Event rate.
+        ctr:
+          type: number
+          description: Click-through rate (impressions to clicks).
+        cost:
+          type: number
+          description: Total cost (advertiser spend).
+        cpc:
+          type: number
+          description: Cost per click.
+        cpm:
+          type: number
+          description: Cost per mille (per 1,000 impressions).
+    Conversion:
+      type: object
+      description: A single conversion record with full details.
+      properties:
+        conversion_id:
+          type: integer
+          description: Unique conversion ID.
+        conversion_unix_timestamp:
+          type: integer
+          description: Unix timestamp of when the conversion occurred.
+        cost_type:
+          type: string
+          description: Cost type for this conversion (e.g. cpa, cpc).
+        cost:
+          type: number
+          description: Cost amount for this conversion.
+        sale_amount:
+          type: number
+          description: Sale amount associated with this conversion.
+        ip:
+          type: string
+          description: IP address of the converting user.
+        click_ip:
+          type: string
+          description: IP address at time of the original click.
+        user_agent:
+          type: string
+          description: User agent string of the converting user.
+        country:
+          type: string
+          description: Country of the converting user.
+        country_code:
+          type: string
+          description: ISO country code.
+        region:
+          type: string
+          description: Region/state of the converting user.
+        city:
+          type: string
+          description: City of the converting user.
+        dma:
+          type: integer
+          description: Designated Market Area code.
+        carrier:
+          type: string
+          description: Mobile carrier name.
+        platform:
+          type: string
+          description: Operating system platform.
+        os_version:
+          type: string
+          description: Operating system version.
+        device_type:
+          type: string
+          description: Device type (e.g. desktop, mobile, tablet).
+        device_model:
+          type: string
+          description: Device model name.
+        device_make:
+          type: string
+          description: Device manufacturer.
+        browser:
+          type: string
+          description: Browser name.
+        language:
+          type: string
+          description: Browser language.
+        connection_type:
+          type: string
+          description: Connection type (e.g. wifi, cellular).
+        isp:
+          type: string
+          description: Internet service provider.
+        adv1:
+          type: string
+          description: Advertiser sub-parameter 1.
+        adv2:
+          type: string
+          description: Advertiser sub-parameter 2.
+        adv3:
+          type: string
+          description: Advertiser sub-parameter 3.
+        adv4:
+          type: string
+          description: Advertiser sub-parameter 4.
+        adv5:
+          type: string
+          description: Advertiser sub-parameter 5.
+        transaction_id:
+          type: string
+          description: Click transaction ID associated with this conversion.
+        is_event:
+          type: boolean
+          description: Whether this is a post-conversion event (true) or base conversion (false).
+        event_name:
+          type: string
+          description: Name of the post-conversion event (if is_event is true).
+        is_view_through:
+          type: boolean
+          description: Whether this is a view-through conversion.
+        is_unique:
+          type: boolean
+          description: Whether this conversion is unique.
+        coupon_code:
+          type: string
+          description: Coupon code used for this conversion.
+        time_created:
+          type: integer
+          description: Unix timestamp of when the conversion record was created.
+        relationship:
+          type: object
+          description: Related entities for this conversion.
+          properties:
+            offer:
+              type: object
+              description: The offer associated with this conversion.
+              properties:
+                network_offer_id:
+                  type: integer
+                  description: Offer ID.
+                name:
+                  type: string
+                  description: Offer name.
+            affiliate:
+              type: object
+              description: The affiliate associated with this conversion.
+              properties:
+                network_affiliate_id:
+                  type: integer
+                  description: Affiliate ID.
+                name:
+                  type: string
+                  description: Affiliate name.
+    DashboardMetric:
+      type: object
+      description: A dashboard metric with period comparisons and trending data.
+      properties:
+        current_month:
+          type: number
+          description: Value for the current month to date.
+        last_month:
+          type: number
+          description: Value for the entire previous month.
+        today:
+          type: number
+          description: Value for the current day so far.
+        yesterday:
+          type: number
+          description: Value for the full previous day.
+        trending_percentage:
+          type: number
+          description: Month-over-month trending percentage.

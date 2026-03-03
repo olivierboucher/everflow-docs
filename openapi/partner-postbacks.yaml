@@ -1,0 +1,277 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Partner Postbacks
+  description: Endpoints for managing partner postbacks (pixels) in the Everflow network.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Partner Postbacks
+paths:
+  /networks/pixelstable:
+    post:
+      summary: Search Partner Postbacks
+      description: >
+        Search and filter partner postbacks. Returns a paginated list of
+        postback configurations matching the specified criteria.
+      tags:
+        - Partner Postbacks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SearchRequest"
+            example:
+              filters:
+                network_offer_id:
+                  values: [100]
+                  comparison: "is"
+              paging:
+                page: 1
+                page_size: 50
+              sort:
+                field: "time_created"
+                direction: "desc"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pixels:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PartnerPostback"
+                  paging:
+                    $ref: "#/components/schemas/Paging"
+      security:
+        - API Key: []
+  /networks/pixels/{pixelId}:
+    get:
+      summary: Get Partner Postback by ID
+      description: >
+        Retrieve a single partner postback by its ID, including the
+        postback URL, firing conditions, and associated offer/affiliate.
+      tags:
+        - Partner Postbacks
+      parameters:
+        - in: path
+          name: pixelId
+          required: true
+          schema:
+            type: integer
+          description: The partner postback (pixel) identifier.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PartnerPostback"
+      security:
+        - API Key: []
+    put:
+      summary: Update Partner Postback
+      description: >
+        Update an existing partner postback. All fields must be provided
+        in the request body.
+      tags:
+        - Partner Postbacks
+      parameters:
+        - in: path
+          name: pixelId
+          required: true
+          schema:
+            type: integer
+          description: The partner postback (pixel) identifier.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PartnerPostbackInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PartnerPostback"
+      security:
+        - API Key: []
+  /networks/pixels:
+    post:
+      summary: Create Partner Postback
+      description: >
+        Create a new partner postback. Partner postbacks fire a URL when
+        a specified conversion event occurs, allowing external systems
+        to be notified of conversions.
+      tags:
+        - Partner Postbacks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PartnerPostbackInput"
+            example:
+              network_offer_id: 100
+              network_affiliate_id: 200
+              pixel_status: "active"
+              pixel_type: "postback"
+              pixel_code: "https://example.com/postback?click_id={sub1}"
+              fire_on: "conversion"
+              fire_on_event_id: 0
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PartnerPostback"
+      security:
+        - API Key: []
+components:
+  schemas:
+    PartnerPostback:
+      type: object
+      properties:
+        network_offer_pixel_id:
+          type: integer
+          description: Unique partner postback (pixel) ID.
+        network_id:
+          type: integer
+          description: Network ID.
+        network_offer_id:
+          type: integer
+          description: Associated offer ID.
+        network_affiliate_id:
+          type: integer
+          description: Associated affiliate ID (0 for all affiliates).
+        pixel_status:
+          type: string
+          enum:
+            - active
+            - inactive
+            - deleted
+          description: Postback status.
+        pixel_type:
+          type: string
+          enum:
+            - postback
+            - iframe
+            - image
+            - javascript
+          description: Postback type.
+        pixel_code:
+          type: string
+          description: The postback URL or pixel code.
+        fire_on:
+          type: string
+          enum:
+            - conversion
+            - event
+          description: When to fire the postback.
+        fire_on_event_id:
+          type: integer
+          description: The event ID to fire on (0 for default conversion).
+        time_created:
+          type: integer
+          description: Unix timestamp of creation.
+        time_saved:
+          type: integer
+          description: Unix timestamp of last update.
+        relationship:
+          type: object
+          properties:
+            offer:
+              type: object
+              description: Associated offer details.
+            affiliate:
+              type: object
+              description: Associated affiliate details.
+    PartnerPostbackInput:
+      type: object
+      required:
+        - network_offer_id
+        - pixel_status
+        - pixel_type
+        - pixel_code
+        - fire_on
+      properties:
+        network_offer_id:
+          type: integer
+          description: Associated offer ID.
+        network_affiliate_id:
+          type: integer
+          description: Associated affiliate ID (0 for all affiliates).
+        pixel_status:
+          type: string
+          enum:
+            - active
+            - inactive
+            - deleted
+          description: Postback status.
+        pixel_type:
+          type: string
+          enum:
+            - postback
+            - iframe
+            - image
+            - javascript
+          description: Postback type.
+        pixel_code:
+          type: string
+          description: The postback URL or pixel code.
+        fire_on:
+          type: string
+          enum:
+            - conversion
+            - event
+          description: When to fire the postback.
+        fire_on_event_id:
+          type: integer
+          description: The event ID to fire on (0 for default conversion).
+    SearchRequest:
+      type: object
+      properties:
+        filters:
+          type: object
+          description: Filter criteria for searching postbacks.
+        paging:
+          type: object
+          properties:
+            page:
+              type: integer
+              default: 1
+            page_size:
+              type: integer
+              default: 50
+        sort:
+          type: object
+          properties:
+            field:
+              type: string
+            direction:
+              type: string
+              enum:
+                - asc
+                - desc
+    Paging:
+      type: object
+      properties:
+        page:
+          type: integer
+        page_size:
+          type: integer
+        total_count:
+          type: integer
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

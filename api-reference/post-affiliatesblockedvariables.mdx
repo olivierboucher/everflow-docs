@@ -1,0 +1,8 @@
+---
+title: List Blocked Variables
+openapi: /openapi/affiliate-traffic.yaml post /affiliates/blockedvariables
+---
+
+Retrieve all blocked variables for a specific offer within a date range. Blocked variables are sub-parameter values that have been flagged and prevented from generating valid traffic. The `network_offer_id` is required in the request body.
+
+This endpoint is useful for understanding which specific sub-parameter values (e.g., sub1, sub2, source_id) have been blocked and why, so you can adjust your traffic sources accordingly.

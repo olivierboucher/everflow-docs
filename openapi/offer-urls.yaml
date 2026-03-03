@@ -1,0 +1,429 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Offer URLs
+  description: Endpoints for managing offer URLs in the Everflow network.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Offer URLs
+paths:
+  /networks/offerurls:
+    get:
+      summary: List Offer URLs
+      description: >
+        Retrieve all offer URLs for the network. Returns a paginated list of
+        offer URLs with their configuration and affiliate targeting settings.
+        Supports filtering by offer ID, URL status, and timestamps.
+      tags:
+        - Offer URLs
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number (1-based).
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            default: 50
+            maximum: 2000
+          description: Number of results per page (max 2000).
+        - in: query
+          name: "filter[network_offer_id]"
+          schema:
+            type: integer
+          description: Filter by offer ID.
+        - in: query
+          name: "filter[url_status]"
+          schema:
+            type: string
+            enum:
+              - active
+              - paused
+              - deleted
+          description: Filter by URL status.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  urls:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/OfferUrl"
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+      security:
+        - API Key: []
+    post:
+      summary: Create Offer URL
+      description: >
+        Create a new offer URL. You must specify the associated offer, the
+        destination URL, and the URL status. Optionally configure affiliate
+        targeting to restrict which affiliates can use this URL.
+      tags:
+        - Offer URLs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              network_offer_id: 1
+              name: "Landing Page A"
+              destination_url: "https://example.com/landing"
+              preview_url: "https://example.com/preview"
+              url_status: "active"
+              is_apply_specific_affiliates: false
+              network_affiliate_ids: []
+              is_hidden_affiliate: false
+            schema:
+              type: object
+              required:
+                - network_offer_id
+                - name
+                - destination_url
+                - url_status
+                - is_apply_specific_affiliates
+                - is_hidden_affiliate
+              properties:
+                network_offer_id:
+                  type: integer
+                  description: The ID of the offer this URL belongs to.
+                name:
+                  type: string
+                  description: Descriptive name for this offer URL.
+                destination_url:
+                  type: string
+                  description: The destination URL where traffic is sent.
+                preview_url:
+                  type: string
+                  description: Optional preview URL for the offer landing page.
+                url_status:
+                  type: string
+                  enum:
+                    - active
+                    - paused
+                    - deleted
+                  description: Status of the offer URL.
+                is_apply_specific_affiliates:
+                  type: boolean
+                  description: Whether this URL is restricted to specific affiliates.
+                network_affiliate_ids:
+                  type: array
+                  items:
+                    type: integer
+                  description: Array of affiliate IDs allowed to use this URL (when is_apply_specific_affiliates is true).
+                is_hidden_affiliate:
+                  type: boolean
+                  description: Whether this URL is hidden from affiliates.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OfferUrl"
+      security:
+        - API Key: []
+  /networks/offerurls/bulk:
+    post:
+      summary: Bulk Create Offer URLs
+      description: >
+        Create multiple offer URLs in a single request. The request body is an
+        array of offer URL objects, each with the same fields as the Create
+        Offer URL endpoint.
+      tags:
+        - Offer URLs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                required:
+                  - network_offer_id
+                  - name
+                  - destination_url
+                  - url_status
+                  - is_apply_specific_affiliates
+                  - is_hidden_affiliate
+                properties:
+                  network_offer_id:
+                    type: integer
+                    description: The ID of the offer this URL belongs to.
+                  name:
+                    type: string
+                    description: Descriptive name for this offer URL.
+                  destination_url:
+                    type: string
+                    description: The destination URL where traffic is sent.
+                  preview_url:
+                    type: string
+                    description: Optional preview URL for the offer landing page.
+                  url_status:
+                    type: string
+                    enum:
+                      - active
+                      - paused
+                      - deleted
+                    description: Status of the offer URL.
+                  is_apply_specific_affiliates:
+                    type: boolean
+                    description: Whether this URL is restricted to specific affiliates.
+                  network_affiliate_ids:
+                    type: array
+                    items:
+                      type: integer
+                    description: Array of affiliate IDs allowed to use this URL.
+                  is_hidden_affiliate:
+                    type: boolean
+                    description: Whether this URL is hidden from affiliates.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  urls:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/OfferUrl"
+      security:
+        - API Key: []
+  /networks/offerurls/{offerUrlId}:
+    get:
+      summary: Get Offer URL by ID
+      description: >
+        Retrieve a single offer URL by its ID. Returns the full offer URL
+        object including destination URL, status, and affiliate targeting.
+      tags:
+        - Offer URLs
+      parameters:
+        - in: path
+          name: offerUrlId
+          required: true
+          schema:
+            type: integer
+          description: The offer URL ID.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OfferUrl"
+      security:
+        - API Key: []
+    put:
+      summary: Update Offer URL
+      description: >
+        Update an existing offer URL. All fields must be included in the
+        request body — any omitted fields will be reset to defaults.
+        Retrieve the current offer URL first with GET, modify the needed
+        fields, and send the full object back.
+      tags:
+        - Offer URLs
+      parameters:
+        - in: path
+          name: offerUrlId
+          required: true
+          schema:
+            type: integer
+          description: The offer URL ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - network_offer_url_id
+                - network_offer_id
+                - name
+                - destination_url
+                - url_status
+                - is_apply_specific_affiliates
+                - is_hidden_affiliate
+              properties:
+                network_offer_url_id:
+                  type: integer
+                  description: The offer URL ID (must match the path parameter).
+                network_offer_id:
+                  type: integer
+                  description: The ID of the offer this URL belongs to.
+                name:
+                  type: string
+                  description: Descriptive name for this offer URL.
+                destination_url:
+                  type: string
+                  description: The destination URL where traffic is sent.
+                preview_url:
+                  type: string
+                  description: Optional preview URL for the offer landing page.
+                url_status:
+                  type: string
+                  enum:
+                    - active
+                    - paused
+                    - deleted
+                  description: Status of the offer URL.
+                is_apply_specific_affiliates:
+                  type: boolean
+                  description: Whether this URL is restricted to specific affiliates.
+                network_affiliate_ids:
+                  type: array
+                  items:
+                    type: integer
+                  description: Array of affiliate IDs allowed to use this URL.
+                is_hidden_affiliate:
+                  type: boolean
+                  description: Whether this URL is hidden from affiliates.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OfferUrl"
+      security:
+        - API Key: []
+  /networks/patch/offerurls/apply:
+    patch:
+      summary: Bulk Edit Offer URLs
+      description: >
+        Apply bulk edits to multiple offer URLs at once. Specify the offer ID,
+        the list of offer URL IDs to modify, and an array of field
+        modifications with their operators (overwrite, append, delete, clear).
+      tags:
+        - Offer URLs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              network_offer_id: 1
+              network_offer_url_ids: [10, 11, 12]
+              fields:
+                - field_type: "url_status"
+                  field_value: "paused"
+                  operator: "overwrite"
+            schema:
+              type: object
+              required:
+                - network_offer_id
+                - network_offer_url_ids
+                - fields
+              properties:
+                network_offer_id:
+                  type: integer
+                  description: The offer ID that the URLs belong to.
+                network_offer_url_ids:
+                  type: array
+                  items:
+                    type: integer
+                  description: Array of offer URL IDs to modify.
+                fields:
+                  type: array
+                  description: Array of field modifications to apply.
+                  items:
+                    type: object
+                    required:
+                      - field_type
+                      - operator
+                    properties:
+                      field_type:
+                        type: string
+                        description: The field name to modify.
+                      field_value:
+                        description: The value to apply (type varies by field).
+                      operator:
+                        type: string
+                        enum:
+                          - overwrite
+                          - append
+                          - delete
+                          - clear
+                        description: The operation to perform on the field.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    description: Whether the bulk edit was successful.
+      security:
+        - API Key: []
+components:
+  schemas:
+    OfferUrl:
+      type: object
+      properties:
+        network_offer_url_id:
+          type: integer
+          description: Unique offer URL ID.
+        network_id:
+          type: integer
+          description: Network ID.
+        network_offer_id:
+          type: integer
+          description: The associated offer ID.
+        name:
+          type: string
+          description: Descriptive name for this offer URL.
+        destination_url:
+          type: string
+          description: The destination URL where traffic is sent.
+        preview_url:
+          type: string
+          description: Preview URL for the offer landing page.
+        url_status:
+          type: string
+          enum:
+            - active
+            - paused
+            - deleted
+          description: Status of the offer URL.
+        network_affiliate_ids:
+          type: array
+          items:
+            type: integer
+          description: Array of affiliate IDs allowed to use this URL.
+        is_apply_specific_affiliates:
+          type: boolean
+          description: Whether this URL is restricted to specific affiliates.
+        is_hidden_affiliate:
+          type: boolean
+          description: Whether this URL is hidden from affiliates.
+        time_created:
+          type: integer
+          description: Unix timestamp of creation.
+        time_saved:
+          type: integer
+          description: Unix timestamp of last update.
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

@@ -1,0 +1,158 @@
+openapi: 3.0.3
+info:
+  title: Everflow Marketplace API - Connections
+  description: >
+    Marketplace connection endpoints for the Everflow partner marketing platform.
+    Retrieve and manage connections between marketplace partners and advertisers.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Marketplace Connections
+    description: Endpoints for managing marketplace partner connections.
+paths:
+  /partners/connections/table:
+    post:
+      summary: Fetch All Connections
+      description: >
+        Retrieve all marketplace connections between a partner and advertisers.
+        Filter by connection status (active, pending, or deleted). Each connection
+        includes details about the network, demand partner, and payment methods.
+
+
+        Supports pagination via `page` and `page_size` query parameters.
+      tags:
+        - Marketplace Connections
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number (1-based).
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            default: 50
+          description: Number of results per page.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              filters:
+                status: "active"
+            schema:
+              type: object
+              properties:
+                filters:
+                  type: object
+                  description: Filters to narrow the connection results.
+                  properties:
+                    status:
+                      type: string
+                      enum:
+                        - active
+                        - pending
+                        - deleted
+                      description: Filter connections by status.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  connections:
+                    type: array
+                    description: Array of marketplace connection objects.
+                    items:
+                      type: object
+                      properties:
+                        partner_id:
+                          type: integer
+                          description: Unique partner ID.
+                        network_id:
+                          type: integer
+                          description: Network ID of the connected advertiser.
+                        network_affiliate_id:
+                          type: integer
+                          description: Affiliate ID assigned to this partner within the network.
+                        network_affiliate_user_id:
+                          type: integer
+                          description: Affiliate user ID assigned to this partner within the network.
+                        status:
+                          type: string
+                          enum:
+                            - active
+                            - pending
+                            - deleted
+                          description: Current status of the connection.
+                        time_created:
+                          type: integer
+                          description: Unix timestamp of when the connection was created.
+                        relationship:
+                          type: object
+                          description: Related data for this connection.
+                          properties:
+                            network:
+                              type: object
+                              description: Network/brand details.
+                              properties:
+                                network_id:
+                                  type: integer
+                                  description: Network ID.
+                                name:
+                                  type: string
+                                  description: Network name.
+                                logo_url:
+                                  type: string
+                                  description: Network logo URL.
+                            demand_partner:
+                              type: object
+                              description: Demand partner information.
+                              properties:
+                                partner_id:
+                                  type: integer
+                                  description: Demand partner ID.
+                                name:
+                                  type: string
+                                  description: Demand partner name.
+                            payment_methods:
+                              type: array
+                              description: Available payment methods for this connection.
+                              items:
+                                type: object
+                                properties:
+                                  payment_type:
+                                    type: string
+                                    description: Payment method type.
+                                  is_enabled:
+                                    type: boolean
+                                    description: Whether this payment method is enabled.
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                        description: Current page number.
+                      page_size:
+                        type: integer
+                        description: Number of results per page.
+                      total_count:
+                        type: integer
+                        description: Total number of matching connections.
+      security:
+        - API Key: []
+components:
+  securitySchemes:
+    API Key:
+      description: >
+        The marketplace partner's API key. Uses the X-Eflow-Api-Key header.
+        The key belongs to the marketplace partner user.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

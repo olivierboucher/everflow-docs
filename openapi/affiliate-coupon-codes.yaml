@@ -1,0 +1,93 @@
+openapi: 3.0.3
+info:
+  title: Everflow Affiliate API - Coupon Codes
+  description: >
+    Coupon code endpoint for the Everflow Affiliate API. Affiliates can list
+    their active coupon codes and associated tracking links for offers they
+    are authorized to run.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Affiliate Coupon Codes
+    description: Endpoint for listing affiliate coupon codes.
+paths:
+  /affiliates/couponcodes:
+    get:
+      summary: List Coupon Codes
+      description: >
+        Returns all active coupon codes assigned to the authenticated affiliate
+        for offers they can run. Each coupon code includes its tracking link,
+        validity dates, and the associated offer details.
+      tags:
+        - Affiliate Coupon Codes
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  coupon_codes:
+                    type: array
+                    description: Array of coupon codes assigned to the affiliate.
+                    items:
+                      type: object
+                      properties:
+                        network_coupon_code_id:
+                          type: integer
+                          description: Unique identifier for the coupon code.
+                        network_offer_id:
+                          type: integer
+                          description: The offer ID this coupon code is associated with.
+                        coupon_code:
+                          type: string
+                          description: The coupon code string.
+                        coupon_status:
+                          type: string
+                          description: Status of the coupon code (active, inactive, expired).
+                        tracking_link:
+                          type: string
+                          description: Tracking link that includes this coupon code.
+                        start_date:
+                          type: string
+                          format: date-time
+                          description: Date when the coupon code becomes active.
+                        end_date:
+                          type: string
+                          format: date-time
+                          description: Date when the coupon code expires.
+                        description:
+                          type: string
+                          description: Description of the coupon code or promotion.
+                        is_description_plain_text:
+                          type: boolean
+                          description: Whether the description is plain text (true) or HTML (false).
+                        relationship:
+                          type: object
+                          description: Related entities.
+                          properties:
+                            offer:
+                              type: object
+                              description: The offer associated with this coupon code.
+                              properties:
+                                network_offer_id:
+                                  type: integer
+                                name:
+                                  type: string
+                                offer_status:
+                                  type: string
+      security:
+        - API Key: []
+
+components:
+  securitySchemes:
+    API Key:
+      description: >
+        The affiliate's API key generated from the Affiliate Portal.
+        Uses the X-Eflow-Api-Key header.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

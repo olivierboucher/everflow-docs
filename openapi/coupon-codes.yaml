@@ -1,0 +1,328 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Coupon Codes
+  description: Endpoints for managing coupon codes in the Everflow network.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Coupon Codes
+paths:
+  /networks/couponcodes:
+    get:
+      summary: List Coupon Codes
+      description: >
+        Retrieve all coupon codes for the network. Returns a paginated list
+        of coupon codes with their associated offer and affiliate details.
+        Supports filtering by status, code, offer ID, affiliate ID, and
+        timestamps.
+      tags:
+        - Coupon Codes
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number (1-based).
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            default: 50
+          description: Number of results per page.
+        - in: query
+          name: "filter[coupon_status]"
+          schema:
+            type: string
+            enum:
+              - active
+              - paused
+          description: Filter by coupon status.
+        - in: query
+          name: "filter[coupon_code]"
+          schema:
+            type: string
+          description: Filter by coupon code value.
+        - in: query
+          name: "filter[network_offer_id]"
+          schema:
+            type: integer
+          description: Filter by offer ID.
+        - in: query
+          name: "filter[network_affiliate_id]"
+          schema:
+            type: integer
+          description: Filter by affiliate ID.
+        - in: query
+          name: relationship
+          schema:
+            type: string
+            enum:
+              - offer
+              - affiliate
+          description: Include related offer or affiliate details.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  couponcodes:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CouponCode"
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+      security:
+        - API Key: []
+    post:
+      summary: Create Coupon Code
+      description: >
+        Create a new coupon code. You must specify the associated offer,
+        affiliate, the coupon code value, and the status. Optionally set
+        start and end dates, internal notes, and a description.
+      tags:
+        - Coupon Codes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              network_offer_id: 1
+              network_affiliate_id: 5
+              coupon_code: "SAVE20"
+              coupon_status: "active"
+              internal_notes: "Summer promotion"
+              description: "Save 20% on your order"
+              is_description_plain_text: true
+              start_date: "2025-06-01"
+              end_date: "2025-08-31"
+            schema:
+              type: object
+              required:
+                - network_offer_id
+                - network_affiliate_id
+                - coupon_code
+                - coupon_status
+              properties:
+                network_offer_id:
+                  type: integer
+                  description: The ID of the offer this coupon code is associated with.
+                network_affiliate_id:
+                  type: integer
+                  description: The ID of the affiliate this coupon code is assigned to.
+                coupon_code:
+                  type: string
+                  description: The coupon code value.
+                coupon_status:
+                  type: string
+                  enum:
+                    - active
+                    - paused
+                  description: Status of the coupon code.
+                internal_notes:
+                  type: string
+                  description: Internal-only notes (not visible to partners).
+                description:
+                  type: string
+                  description: Partner-visible description of the coupon.
+                is_description_plain_text:
+                  type: boolean
+                  description: Whether the description is plain text (true) or HTML (false).
+                start_date:
+                  type: string
+                  description: "Start date for the coupon validity (format: YYYY-MM-DD)."
+                end_date:
+                  type: string
+                  description: "End date for the coupon validity (format: YYYY-MM-DD)."
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CouponCode"
+      security:
+        - API Key: []
+  /networks/couponcodes/{couponCodeId}:
+    get:
+      summary: Get Coupon Code by ID
+      description: >
+        Retrieve a single coupon code by its ID. Returns the full coupon code
+        object including associated offer and affiliate IDs, status, dates,
+        and description.
+      tags:
+        - Coupon Codes
+      parameters:
+        - in: path
+          name: couponCodeId
+          required: true
+          schema:
+            type: integer
+          description: The coupon code ID.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CouponCode"
+      security:
+        - API Key: []
+    put:
+      summary: Update Coupon Code
+      description: >
+        Update an existing coupon code. All fields must be included in the
+        request body — any omitted fields will be reset to defaults.
+        Retrieve the current coupon code first with GET, modify the needed
+        fields, and send the full object back.
+      tags:
+        - Coupon Codes
+      parameters:
+        - in: path
+          name: couponCodeId
+          required: true
+          schema:
+            type: integer
+          description: The coupon code ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - network_offer_id
+                - network_affiliate_id
+                - coupon_code
+                - coupon_status
+              properties:
+                network_offer_id:
+                  type: integer
+                  description: The ID of the offer this coupon code is associated with.
+                network_affiliate_id:
+                  type: integer
+                  description: The ID of the affiliate this coupon code is assigned to.
+                coupon_code:
+                  type: string
+                  description: The coupon code value.
+                coupon_status:
+                  type: string
+                  enum:
+                    - active
+                    - paused
+                  description: Status of the coupon code.
+                internal_notes:
+                  type: string
+                  description: Internal-only notes (not visible to partners).
+                description:
+                  type: string
+                  description: Partner-visible description of the coupon.
+                is_description_plain_text:
+                  type: boolean
+                  description: Whether the description is plain text (true) or HTML (false).
+                start_date:
+                  type: string
+                  description: "Start date for the coupon validity (format: YYYY-MM-DD)."
+                end_date:
+                  type: string
+                  description: "End date for the coupon validity (format: YYYY-MM-DD)."
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CouponCode"
+      security:
+        - API Key: []
+    delete:
+      summary: Delete Coupon Code
+      description: >
+        Delete a coupon code by its ID. This action is permanent and cannot
+        be undone.
+      tags:
+        - Coupon Codes
+      parameters:
+        - in: path
+          name: couponCodeId
+          required: true
+          schema:
+            type: integer
+          description: The coupon code ID.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    description: Whether the deletion was successful.
+      security:
+        - API Key: []
+components:
+  schemas:
+    CouponCode:
+      type: object
+      properties:
+        network_coupon_code_id:
+          type: integer
+          description: Unique coupon code ID.
+        network_id:
+          type: integer
+          description: Network ID.
+        network_affiliate_id:
+          type: integer
+          description: The associated affiliate ID.
+        network_offer_id:
+          type: integer
+          description: The associated offer ID.
+        coupon_code:
+          type: string
+          description: The coupon code value.
+        coupon_status:
+          type: string
+          enum:
+            - active
+            - paused
+          description: Status of the coupon code.
+        internal_notes:
+          type: string
+          description: Internal-only notes (not visible to partners).
+        description:
+          type: string
+          description: Partner-visible description of the coupon.
+        is_description_plain_text:
+          type: boolean
+          description: Whether the description is plain text or HTML.
+        start_date:
+          type: string
+          description: "Start date for coupon validity (format: YYYY-MM-DD)."
+        end_date:
+          type: string
+          description: "End date for coupon validity (format: YYYY-MM-DD)."
+        time_created:
+          type: integer
+          description: Unix timestamp of creation.
+        time_saved:
+          type: integer
+          description: Unix timestamp of last update.
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

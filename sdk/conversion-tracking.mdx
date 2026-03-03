@@ -1,0 +1,79 @@
+---
+title: "Conversion Tracking"
+description: "Fire conversion events with the Everflow JavaScript SDK."
+---
+
+The `EF.conversion()` method fires a conversion event and returns a Promise that resolves with both the conversion ID and transaction ID.
+
+## Basic Usage
+
+```javascript
+EF.conversion({
+  offer_id: 1
+});
+```
+
+## Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `offer_id` | integer | One of `offer_id` or `aid` required | The offer identifier |
+| `aid` | integer | One of `offer_id` or `aid` required | The advertiser identifier |
+| `transaction_id` | string | No | Everflow transaction ID (improves attribution accuracy) |
+| `amount` | number | No | Sale amount (for Revenue Per Sale offers) |
+| `event_id` | integer | No | Event identifier for post-conversion events |
+| `adv_event_id` | integer | No | Global advertiser event identifier |
+| `coupon_code` | string | No | Promotional code |
+| `order_id` | string | No | Order reference ID |
+| `user_id` | string | No | User tracking identifier |
+| `verification_token` | string | No | Required if advertiser uses verification tokens |
+| `email` | string | No | Contact email |
+| `adv1` – `adv5` | string | No | Advertiser placement values |
+| `parameters` | object | No | Free-form custom key–value parameters |
+
+## Return Value
+
+Returns a Promise resolving with an object containing `conversion_id` and `transaction_id`:
+
+```javascript
+EF.conversion({
+  offer_id: 1,
+  amount: 29.99,
+  event_id: 11
+}).then(function(conversion) {
+  console.log('Conversion ID:', conversion.conversion_id);
+  console.log('Transaction ID:', conversion.transaction_id);
+});
+```
+
+## Examples
+
+**Sale conversion with amount:**
+
+```javascript
+EF.conversion({
+  offer_id: 1,
+  amount: 49.99,
+  order_id: 'ORD-12345',
+  transaction_id: EF.getTransactionId(1)
+});
+```
+
+**Post-conversion event:**
+
+```javascript
+EF.conversion({
+  offer_id: 1,
+  event_id: 3,
+  transaction_id: EF.getTransactionId(1)
+});
+```
+
+**Using advertiser ID instead of offer ID:**
+
+```javascript
+EF.conversion({
+  aid: 2,
+  amount: 9.99
+});
+```

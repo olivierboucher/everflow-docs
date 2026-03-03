@@ -1,0 +1,15 @@
+---
+title: Create Postback
+openapi: /openapi/affiliate-postbacks.yaml post /affiliates/pixels
+---
+
+Create a new postback to receive notifications when conversions, events, or clicks occur. Postbacks can be delivered via server-to-server URL calls, HTML/JavaScript pixels, or Facebook pixel integrations.
+
+Required fields:
+
+- **delivery_method** -- `postback` (server-to-server), `html` (pixel code), or `facebook` (Facebook Conversions API)
+- **pixel_level** -- `global` (all offers) or `specific` (single offer, requires `network_offer_id`)
+- **pixel_status** -- `active` or `inactive`
+- **pixel_type** -- `conversion`, `post_conversion`, or `cpc`
+
+For server-to-server postbacks, provide a `postback_url` with macros like `{transaction_id}`, `{revenue}`, `{offer_id}`, and `{sub1}`-`{sub5}`. The optional `delay_ms` field adds a delay before firing (max 300,000 ms / 5 minutes).

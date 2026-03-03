@@ -1,0 +1,14 @@
+---
+title: Search Conversions
+openapi: /openapi/affiliate-reporting.yaml post /affiliates/reporting/conversions
+---
+
+Retrieve a paginated list of individual conversions and post-conversion events for your affiliate account. Each record includes the conversion ID, associated click transaction ID, revenue, sale amount, status, and related offer/geo/device data.
+
+Control what is returned with the `show_conversions` and `show_events` flags:
+
+- Set `show_conversions: true` to include conversion records
+- Set `show_events: true` to include post-conversion event records
+- Both can be enabled simultaneously
+
+Results support optional query filters to narrow by offer, date range, sub-parameters, and other dimensions. Use the **Export Conversions** endpoint if you need the data in CSV or JSON file format.

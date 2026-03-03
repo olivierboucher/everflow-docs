@@ -1,0 +1,13 @@
+---
+title: Get Invoice
+openapi: /openapi/affiliate-invoices.yaml get /affiliates/billings/affiliates/invoices/{invoiceId}
+---
+
+Retrieve full details for a single invoice including the line item breakdown and payment history. Line items indicate how the invoice total was calculated, with types including:
+
+- **offer_detail** -- earnings from specific offers
+- **referral** -- referral commission earnings
+- **vat** -- tax entries
+- **adjustment** -- manual adjustments made by the network
+
+The payments array shows all payments applied to the invoice, including the payment method, amount, date, and reference ID.

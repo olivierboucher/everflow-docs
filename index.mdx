@@ -30,21 +30,32 @@ API keys are generated in the Everflow UI under **Control Center > Security**. S
 
 | API | Description |
 |-----|-------------|
-| **Network API** | Full platform management: offers, affiliates, advertisers, reporting, tracking, and more. |
-| **Affiliate API** | Affiliate-scoped access to reporting, deals, invoices, and traffic management. |
-| **Advertiser API** | Advertiser-scoped access to offer and reporting management. |
-| **Marketplace API** | Partner connections, earnings, and marketplace functionality. |
-| **Metadata API** | Reference data: countries, currencies, devices, timezones, and more. |
-
-This documentation currently covers the **Network API**, which provides the most comprehensive access to the Everflow platform.
+| **[Network API](/api-reference/post-networksofferstable)** | Full platform management: offers, affiliates, advertisers, reporting, tracking, and more. |
+| **[Affiliate API](/api-reference/get-affiliatesoffersrunnable)** | Affiliate-scoped access to offers, reporting, deals, invoices, postbacks, and traffic management. |
+| **[Advertiser API](/api-reference/get-advertisersoffers)** | Advertiser-scoped access to offers and reporting. |
+| **[Marketplace API](/api-reference/post-partnersconnectionstable)** | Partner connections, offers, earnings, and API key management. |
+| **[Webhooks](/webhooks/overview)** | Receive real-time HTTP notifications when advertisers, offers, or partners change. |
+| **[JavaScript SDK](/sdk/overview)** | Client-side click, conversion, and impression tracking without redirect links. |
 
 ## Quick links
 
-<CardGroup cols={2}>
+<CardGroup cols={3}>
   <Card title="User Guide" icon="book" href="/user-guide/authentication">
     Learn authentication, paging, filtering, and other API fundamentals.
   </Card>
-  <Card title="API Reference" icon="code" href="/api-reference/post-networksofferstable">
-    Explore available endpoints with request/response schemas.
+  <Card title="Network API" icon="server" href="/api-reference/post-networksofferstable">
+    The primary API for managing offers, affiliates, advertisers, and reporting.
+  </Card>
+  <Card title="Affiliate API" icon="handshake" href="/api-reference/get-affiliatesoffersrunnable">
+    Affiliate-scoped endpoints for offers, reporting, deals, and postbacks.
+  </Card>
+  <Card title="Advertiser API" icon="bullhorn" href="/api-reference/get-advertisersoffers">
+    Advertiser-scoped endpoints for offers and reporting.
+  </Card>
+  <Card title="Webhooks" icon="bell" href="/webhooks/overview">
+    Real-time notifications for advertiser, offer, and partner events.
+  </Card>
+  <Card title="JavaScript SDK" icon="code" href="/sdk/overview">
+    Client-side tracking for clicks, conversions, and impressions.
   </Card>
 </CardGroup>

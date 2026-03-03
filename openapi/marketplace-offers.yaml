@@ -1,0 +1,295 @@
+openapi: 3.0.3
+info:
+  title: Everflow Marketplace API - Offers
+  description: >
+    Marketplace offer endpoints for the Everflow partner marketing platform.
+    Retrieve runnable offers across all marketplace connections.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Marketplace Offers
+    description: Endpoints for retrieving marketplace offers.
+paths:
+  /partners/offersrunnable:
+    get:
+      summary: Find All Runnable Offers
+      description: >
+        Retrieve all runnable offers across all marketplace connections. Page size
+        is capped at 20. Each offer includes full tracking URLs, creative bundles,
+        payout details, and targeting rulesets.
+
+
+        Supports pagination via `page` and `page_size` query parameters.
+        Use the `relationship` query parameter to include related data.
+      tags:
+        - Marketplace Offers
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number (1-based).
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            default: 20
+            maximum: 20
+          description: Number of results per page (max 20).
+        - in: query
+          name: relationship
+          schema:
+            type: string
+            enum:
+              - category
+              - creatives
+              - reporting
+              - payouts
+              - ruleset
+              - urls
+              - channels
+              - creative_bundle
+              - remaining_caps
+              - custom_payout_settings
+          description: Include related data in the response. Repeat for multiple relationships.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  offers:
+                    type: array
+                    description: Array of runnable offer objects.
+                    items:
+                      $ref: "#/components/schemas/MarketplaceOffer"
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                        description: Current page number.
+                      page_size:
+                        type: integer
+                        description: Number of results per page.
+                      total_count:
+                        type: integer
+                        description: Total number of runnable offers.
+      security:
+        - API Key: []
+  /partners/offers/{networkId}/{offerId}:
+    get:
+      summary: Get Offer By ID
+      description: >
+        Retrieve a specific offer by its network ID and offer ID. Returns the full
+        offer object with all relationship data.
+      tags:
+        - Marketplace Offers
+      parameters:
+        - in: path
+          name: networkId
+          required: true
+          schema:
+            type: integer
+          description: The network ID that owns the offer.
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: integer
+          description: The unique offer ID.
+        - in: query
+          name: relationship
+          schema:
+            type: string
+            enum:
+              - category
+              - creatives
+              - reporting
+              - payouts
+              - ruleset
+              - urls
+              - channels
+              - creative_bundle
+              - remaining_caps
+              - custom_payout_settings
+          description: Include related data in the response. Repeat for multiple relationships.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MarketplaceOffer"
+        "404":
+          description: Offer not found or not runnable for this partner.
+      security:
+        - API Key: []
+components:
+  securitySchemes:
+    API Key:
+      description: >
+        The marketplace partner's API key. Uses the X-Eflow-Api-Key header.
+        The key belongs to the marketplace partner user.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey
+  schemas:
+    MarketplaceOffer:
+      type: object
+      properties:
+        network_offer_id:
+          type: integer
+          description: Unique offer ID.
+        network_id:
+          type: integer
+          description: Network ID that owns this offer.
+        name:
+          type: string
+          description: Offer name.
+        offer_status:
+          type: string
+          enum:
+            - active
+            - paused
+            - pending
+            - deleted
+          description: Current status of the offer.
+        thumbnail_url:
+          type: string
+          description: Offer thumbnail image URL.
+        network_category_id:
+          type: integer
+          description: Category ID for the offer.
+        destination_url:
+          type: string
+          description: The destination URL where traffic is sent.
+        preview_url:
+          type: string
+          description: Preview URL for the offer landing page.
+        currency_id:
+          type: string
+          description: Currency used for this offer (e.g. "USD").
+        html_description:
+          type: string
+          description: HTML description of the offer.
+        visibility:
+          type: string
+          enum:
+            - public
+            - require_approval
+            - private
+          description: Offer visibility setting.
+        is_caps_enabled:
+          type: boolean
+          description: Whether caps are enabled for this offer.
+        daily_conversion_cap:
+          type: integer
+          description: Maximum conversions allowed per day. 0 means unlimited.
+        weekly_conversion_cap:
+          type: integer
+          description: Maximum conversions allowed per week. 0 means unlimited.
+        monthly_conversion_cap:
+          type: integer
+          description: Maximum conversions allowed per month. 0 means unlimited.
+        global_conversion_cap:
+          type: integer
+          description: Maximum total conversions allowed. 0 means unlimited.
+        daily_payout_cap:
+          type: integer
+          description: Maximum payout amount per day. 0 means unlimited.
+        weekly_payout_cap:
+          type: integer
+          description: Maximum payout amount per week. 0 means unlimited.
+        monthly_payout_cap:
+          type: integer
+          description: Maximum payout amount per month. 0 means unlimited.
+        global_payout_cap:
+          type: integer
+          description: Maximum total payout amount. 0 means unlimited.
+        daily_revenue_cap:
+          type: integer
+          description: Maximum revenue amount per day. 0 means unlimited.
+        weekly_revenue_cap:
+          type: integer
+          description: Maximum revenue amount per week. 0 means unlimited.
+        monthly_revenue_cap:
+          type: integer
+          description: Maximum revenue amount per month. 0 means unlimited.
+        global_revenue_cap:
+          type: integer
+          description: Maximum total revenue amount. 0 means unlimited.
+        daily_click_cap:
+          type: integer
+          description: Maximum clicks allowed per day. 0 means unlimited.
+        weekly_click_cap:
+          type: integer
+          description: Maximum clicks allowed per week. 0 means unlimited.
+        monthly_click_cap:
+          type: integer
+          description: Maximum clicks allowed per month. 0 means unlimited.
+        global_click_cap:
+          type: integer
+          description: Maximum total clicks allowed. 0 means unlimited.
+        tracking_url:
+          type: string
+          description: The click tracking URL used to route traffic.
+        impression_tracking_url:
+          type: string
+          description: URL for tracking impressions.
+        redirect_tracking_url:
+          type: string
+          description: URL for redirect-based tracking.
+        time_created:
+          type: integer
+          description: Unix timestamp of when the offer was created.
+        time_saved:
+          type: integer
+          description: Unix timestamp of the last update to the offer.
+        relationship:
+          type: object
+          description: Related data (only present when requested via the relationship query parameter).
+          properties:
+            category:
+              type: object
+              description: Offer category information.
+            creatives:
+              type: array
+              description: Creatives associated with this offer.
+              items:
+                type: object
+            reporting:
+              type: object
+              description: Reporting metrics for this offer.
+            payouts:
+              type: array
+              description: Payout configurations for this offer.
+              items:
+                type: object
+            ruleset:
+              type: object
+              description: Targeting ruleset for this offer.
+            urls:
+              type: array
+              description: Offer URLs.
+              items:
+                type: object
+            channels:
+              type: array
+              description: Channels associated with this offer.
+              items:
+                type: object
+            creative_bundle:
+              type: object
+              description: Creative bundle information.
+            remaining_caps:
+              type: object
+              description: Remaining cap amounts.
+            custom_payout_settings:
+              type: object
+              description: Custom payout settings for this offer.

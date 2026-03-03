@@ -1,0 +1,14 @@
+---
+title: List Runnable Offers
+openapi: /openapi/affiliate-offers.yaml get /affiliates/offersrunnable
+---
+
+Returns only the offers your affiliate account is authorized to generate traffic for. This includes public offers and offers where your application has been approved. Unlike the **List Visible Offers** endpoint, every offer returned here is one you can actively promote.
+
+The response includes detailed relationship data for each offer:
+
+- **creatives** -- available banners, links, and other promotional materials
+- **payouts** -- your payout type and amounts
+- **urls** -- destination URLs you can use in tracking links
+- **remaining_caps** -- how much cap budget is left for the current interval
+- **channels** -- approved traffic channels

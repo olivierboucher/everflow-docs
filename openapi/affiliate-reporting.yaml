@@ -245,7 +245,605 @@ paths:
                     description: True if results exceeded the 10,000-row limit and were truncated.
       security:
         - API Key: []
+
+  /affiliates/dashboard/summary:
+    post:
+      summary: Dashboard Summary
+      description: >
+        Returns a high-level dashboard summary of the affiliate's performance metrics.
+        Provides today, yesterday, current month, last month values and trending
+        percentages for key metrics including revenue, clicks, conversions, CVR,
+        events, EVR, and impressions.
+      tags:
+        - Affiliate Reporting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              timezone_id: 67
+            schema:
+              type: object
+              required:
+                - timezone_id
+              properties:
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the summary calculations.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  revenue:
+                    $ref: "#/components/schemas/DashboardMetric"
+                  click:
+                    $ref: "#/components/schemas/DashboardMetric"
+                  conversion:
+                    $ref: "#/components/schemas/DashboardMetric"
+                  cvr:
+                    $ref: "#/components/schemas/DashboardMetric"
+                  events:
+                    $ref: "#/components/schemas/DashboardMetric"
+                  evr:
+                    $ref: "#/components/schemas/DashboardMetric"
+                  impression:
+                    $ref: "#/components/schemas/DashboardMetric"
+      security:
+        - API Key: []
+
+  /affiliates/reporting/clicks/stream:
+    post:
+      summary: Stream Clicks
+      description: >
+        Returns a raw list of individual clicks for the authenticated affiliate.
+        Each click is returned as a separate element in the response array. Results
+        are limited to a maximum of 5,000 clicks and requests cannot span more than
+        14 days.
+
+
+        Use this endpoint for granular click-level analysis. For large-scale click
+        extraction, use the Request Report feature instead.
+      tags:
+        - Affiliate Reporting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              from: "2024-01-01 00:00:00"
+              to: "2024-01-14 23:59:59"
+              timezone_id: 67
+              query:
+                filters: []
+            schema:
+              type: object
+              required:
+                - from
+                - to
+                - timezone_id
+              properties:
+                from:
+                  type: string
+                  description: Start date and time. Format `YYYY-mm-DD HH:MM:SS`.
+                to:
+                  type: string
+                  description: End date and time. Format `YYYY-mm-DD HH:MM:SS`.
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the date range.
+                query:
+                  type: object
+                  description: Query configuration with optional filters.
+                  properties:
+                    filters:
+                      type: array
+                      description: Filters to narrow results.
+                      items:
+                        type: object
+                        properties:
+                          filter_id_value:
+                            type: string
+                            description: The value to filter on.
+                          resource_type:
+                            type: string
+                            description: The dimension to filter on.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  clicks:
+                    type: array
+                    description: Array of click records (max 5,000).
+                    items:
+                      type: object
+                      properties:
+                        transaction_id:
+                          type: string
+                          description: Unique transaction identifier for the click.
+                        is_unique:
+                          type: boolean
+                          description: Whether this is a unique click.
+                        unix_timestamp:
+                          type: integer
+                          description: Unix timestamp of the click.
+                        sub1:
+                          type: string
+                          description: Sub-parameter 1 value.
+                        sub2:
+                          type: string
+                          description: Sub-parameter 2 value.
+                        sub3:
+                          type: string
+                          description: Sub-parameter 3 value.
+                        sub4:
+                          type: string
+                          description: Sub-parameter 4 value.
+                        sub5:
+                          type: string
+                          description: Sub-parameter 5 value.
+                        revenue:
+                          type: number
+                          description: Revenue associated with the click.
+                        user_ip:
+                          type: string
+                          description: IP address of the user who clicked.
+                        relationship:
+                          type: object
+                          description: Related entities for the click.
+                          properties:
+                            offer:
+                              type: object
+                              properties:
+                                network_offer_id:
+                                  type: integer
+                                name:
+                                  type: string
+                            geo:
+                              type: object
+                              properties:
+                                country:
+                                  type: string
+                                region:
+                                  type: string
+                                city:
+                                  type: string
+                            device:
+                              type: object
+                              properties:
+                                platform:
+                                  type: string
+                                device_type:
+                                  type: string
+                                browser:
+                                  type: string
+        "400":
+          description: Bad request. Date range exceeds 14-day limit or invalid parameters.
+      security:
+        - API Key: []
+
+  /affiliates/reporting/clicks/{transactionId}:
+    get:
+      summary: Get Click By ID
+      description: >
+        Returns full details for a single click by its transaction ID.
+      tags:
+        - Affiliate Reporting
+      parameters:
+        - name: transactionId
+          in: path
+          required: true
+          description: The transaction ID of the click.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transaction_id:
+                    type: string
+                    description: Unique transaction identifier.
+                  is_unique:
+                    type: boolean
+                  unix_timestamp:
+                    type: integer
+                  sub1:
+                    type: string
+                  sub2:
+                    type: string
+                  sub3:
+                    type: string
+                  sub4:
+                    type: string
+                  sub5:
+                    type: string
+                  revenue:
+                    type: number
+                  user_ip:
+                    type: string
+                  relationship:
+                    type: object
+                    properties:
+                      offer:
+                        type: object
+                      geo:
+                        type: object
+                      device:
+                        type: object
+        "404":
+          description: Click not found.
+      security:
+        - API Key: []
+
+  /affiliates/reporting/conversions:
+    post:
+      summary: Conversion Report
+      description: >
+        Returns a list of individual conversions and/or events for the authenticated
+        affiliate. Each conversion is returned as a separate element. Results are
+        paginated and can be filtered by date range, offer, and other dimensions.
+      tags:
+        - Affiliate Reporting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              from: "2024-01-01"
+              to: "2024-01-31"
+              timezone_id: 67
+              show_conversions: true
+              show_events: true
+              query:
+                filters: []
+            schema:
+              type: object
+              required:
+                - from
+                - to
+                - timezone_id
+              properties:
+                from:
+                  type: string
+                  description: Start date. Format `YYYY-MM-DD`.
+                to:
+                  type: string
+                  description: End date. Format `YYYY-MM-DD`.
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the date range.
+                show_conversions:
+                  type: boolean
+                  description: Include conversion records in the response.
+                  default: true
+                show_events:
+                  type: boolean
+                  description: Include post-conversion event records in the response.
+                  default: false
+                query:
+                  type: object
+                  description: Query configuration with optional filters.
+                  properties:
+                    filters:
+                      type: array
+                      description: Filters to narrow results.
+                      items:
+                        type: object
+                        properties:
+                          filter_id_value:
+                            type: string
+                          resource_type:
+                            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conversions:
+                    type: array
+                    description: Array of conversion/event records.
+                    items:
+                      type: object
+                      properties:
+                        network_conversion_id:
+                          type: integer
+                          description: Unique conversion identifier.
+                        transaction_id:
+                          type: string
+                          description: Associated click transaction ID.
+                        conversion_unix_timestamp:
+                          type: integer
+                          description: Unix timestamp of the conversion.
+                        revenue:
+                          type: number
+                          description: Revenue for the conversion.
+                        sale_amount:
+                          type: number
+                          description: Sale amount (for revenue share offers).
+                        conversion_status:
+                          type: string
+                          description: Status of the conversion (approved, pending, rejected).
+                        event_name:
+                          type: string
+                          description: Event name (for post-conversion events).
+                        sub1:
+                          type: string
+                        sub2:
+                          type: string
+                        sub3:
+                          type: string
+                        sub4:
+                          type: string
+                        sub5:
+                          type: string
+                        relationship:
+                          type: object
+                          properties:
+                            offer:
+                              type: object
+                            geo:
+                              type: object
+                            device:
+                              type: object
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+      security:
+        - API Key: []
+
+  /affiliates/reporting/conversions/export:
+    post:
+      summary: Export Conversions
+      description: >
+        Exports conversion and event data in the specified format (CSV or JSON).
+        Accepts the same parameters as the conversion report endpoint with an
+        additional format field.
+      tags:
+        - Affiliate Reporting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              from: "2024-01-01"
+              to: "2024-01-31"
+              timezone_id: 67
+              show_conversions: true
+              show_events: true
+              format: "csv"
+              query:
+                filters: []
+            schema:
+              type: object
+              required:
+                - from
+                - to
+                - timezone_id
+                - format
+              properties:
+                from:
+                  type: string
+                  description: Start date. Format `YYYY-MM-DD`.
+                to:
+                  type: string
+                  description: End date. Format `YYYY-MM-DD`.
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the date range.
+                show_conversions:
+                  type: boolean
+                  description: Include conversion records.
+                  default: true
+                show_events:
+                  type: boolean
+                  description: Include post-conversion event records.
+                  default: false
+                format:
+                  type: string
+                  enum:
+                    - csv
+                    - json
+                  description: Export format.
+                query:
+                  type: object
+                  properties:
+                    filters:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          filter_id_value:
+                            type: string
+                          resource_type:
+                            type: string
+      responses:
+        "200":
+          description: OK. Response format depends on the `format` parameter.
+      security:
+        - API Key: []
+
+  /affiliates/reporting/conversions/{conversionId}:
+    get:
+      summary: Get Conversion By ID
+      description: >
+        Returns full details for a single conversion by its ID.
+      tags:
+        - Affiliate Reporting
+      parameters:
+        - name: conversionId
+          in: path
+          required: true
+          description: The numeric ID of the conversion.
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  network_conversion_id:
+                    type: integer
+                    description: Unique conversion identifier.
+                  transaction_id:
+                    type: string
+                  conversion_unix_timestamp:
+                    type: integer
+                  revenue:
+                    type: number
+                  sale_amount:
+                    type: number
+                  conversion_status:
+                    type: string
+                  event_name:
+                    type: string
+                  sub1:
+                    type: string
+                  sub2:
+                    type: string
+                  sub3:
+                    type: string
+                  sub4:
+                    type: string
+                  sub5:
+                    type: string
+                  relationship:
+                    type: object
+                    properties:
+                      offer:
+                        type: object
+                      geo:
+                        type: object
+                      device:
+                        type: object
+        "404":
+          description: Conversion not found.
+      security:
+        - API Key: []
+
+  /affiliates/reporting/entity/table/export:
+    post:
+      summary: Export Aggregated Data
+      description: >
+        Exports aggregated reporting data in the specified format (CSV or JSON).
+        Accepts the same parameters as the aggregated reporting table endpoint
+        with an additional format field.
+      tags:
+        - Affiliate Reporting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              from: "2024-01-01"
+              to: "2024-01-31"
+              timezone_id: 67
+              currency_id: "USD"
+              columns:
+                - column: "offer"
+              format: "csv"
+              query:
+                filters: []
+            schema:
+              type: object
+              required:
+                - from
+                - to
+                - timezone_id
+                - currency_id
+                - columns
+                - format
+              properties:
+                from:
+                  type: string
+                  description: Start date. Format `YYYY-MM-DD`.
+                to:
+                  type: string
+                  description: End date. Format `YYYY-MM-DD`.
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier.
+                currency_id:
+                  type: string
+                  description: Currency code for monetary values.
+                columns:
+                  type: array
+                  description: Columns to group/pivot data by.
+                  items:
+                    type: object
+                    required:
+                      - column
+                    properties:
+                      column:
+                        type: string
+                        description: The dimension to group by.
+                format:
+                  type: string
+                  enum:
+                    - csv
+                    - json
+                  description: Export format.
+                query:
+                  type: object
+                  properties:
+                    filters:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          filter_id_value:
+                            type: string
+                          resource_type:
+                            type: string
+      responses:
+        "200":
+          description: OK. Response format depends on the `format` parameter.
+      security:
+        - API Key: []
+
 components:
+  schemas:
+    DashboardMetric:
+      type: object
+      description: A dashboard metric with period comparisons and trend.
+      properties:
+        today:
+          type: number
+          description: Value for today.
+        yesterday:
+          type: number
+          description: Value for yesterday.
+        current_month:
+          type: number
+          description: Value for the current month to date.
+        last_month:
+          type: number
+          description: Value for the previous month.
+        trending_percentage:
+          type: number
+          description: Percentage change indicating the trend direction.
   securitySchemes:
     API Key:
       description: >

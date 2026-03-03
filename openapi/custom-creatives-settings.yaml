@@ -1,0 +1,362 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Custom Creative Settings
+  description: Endpoints for managing custom creative settings in the Everflow network.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Custom Creative Settings
+paths:
+  /networks/custom/creative:
+    get:
+      summary: List Custom Creative Settings
+      description: >
+        Retrieve all custom creative settings for the network. Returns a
+        paginated list of custom creative configurations that assign specific
+        creatives to affiliates. Filterable by custom_setting_status,
+        time_created, and time_saved.
+      tags:
+        - Custom Creative Settings
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number (1-based).
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            default: 50
+          description: Number of results per page.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  custom_creative_settings:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CustomCreativeSetting"
+                  paging:
+                    $ref: "#/components/schemas/Paging"
+      security:
+        - API Key: []
+    post:
+      summary: Create Custom Creative Setting
+      description: >
+        Create a new custom creative setting. This allows you to assign
+        specific creatives to selected affiliates, overriding the default
+        creative assignments for an offer.
+      tags:
+        - Custom Creative Settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomCreativeSettingInput"
+            example:
+              network_offer_creative_ids: [10, 20]
+              network_affiliate_ids: [100, 200]
+              name: "Holiday Banner for Top Affiliates"
+              custom_setting_status: "active"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomCreativeSetting"
+      security:
+        - API Key: []
+    patch:
+      summary: Bulk Update Custom Creative Status
+      description: >
+        Bulk update the status of multiple custom creative settings at once.
+        Provide a list of setting IDs and the new status.
+      tags:
+        - Custom Creative Settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkStatusUpdateRequest"
+            example:
+              custom_creative_setting_ids: [1, 2, 3]
+              status: "inactive"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+      security:
+        - API Key: []
+  /networks/custom/creative/{settingId}:
+    get:
+      summary: Get Custom Creative Setting by ID
+      description: >
+        Retrieve a single custom creative setting by its ID, including
+        associated affiliates and creative details.
+      tags:
+        - Custom Creative Settings
+      parameters:
+        - in: path
+          name: settingId
+          required: true
+          schema:
+            type: integer
+          description: The custom creative setting identifier.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomCreativeSetting"
+      security:
+        - API Key: []
+    put:
+      summary: Update Custom Creative Setting
+      description: >
+        Update an existing custom creative setting. All fields must be
+        provided in the request body.
+      tags:
+        - Custom Creative Settings
+      parameters:
+        - in: path
+          name: settingId
+          required: true
+          schema:
+            type: integer
+          description: The custom creative setting identifier.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomCreativeSettingInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomCreativeSetting"
+      security:
+        - API Key: []
+    delete:
+      summary: Delete Custom Creative Setting
+      description: >
+        Delete a custom creative setting by its ID. This will revert the
+        affiliates to using the default creative assignments.
+      tags:
+        - Custom Creative Settings
+      parameters:
+        - in: path
+          name: settingId
+          required: true
+          schema:
+            type: integer
+          description: The custom creative setting identifier.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+      security:
+        - API Key: []
+components:
+  schemas:
+    CustomCreativeSetting:
+      type: object
+      properties:
+        network_custom_creative_setting_id:
+          type: integer
+          description: Unique custom creative setting ID.
+        network_id:
+          type: integer
+          description: Network ID.
+        network_offer_creative_ids:
+          type: array
+          items:
+            type: integer
+          description: List of offer creative IDs assigned.
+        network_affiliate_ids:
+          type: array
+          items:
+            type: integer
+          description: List of affiliate IDs this setting applies to.
+        name:
+          type: string
+          description: Custom creative setting name.
+        custom_setting_status:
+          type: string
+          enum:
+            - active
+            - inactive
+          description: Setting status.
+        time_created:
+          type: integer
+          description: Unix timestamp of creation.
+        time_saved:
+          type: integer
+          description: Unix timestamp of last update.
+        relationship:
+          type: object
+          properties:
+            affiliates:
+              type: array
+              items:
+                type: object
+              description: Associated affiliate details.
+            creative:
+              type: object
+              description: Associated creative details.
+    CustomCreativeSettingInput:
+      type: object
+      required:
+        - network_offer_creative_ids
+        - network_affiliate_ids
+        - name
+        - custom_setting_status
+      properties:
+        network_offer_creative_ids:
+          type: array
+          items:
+            type: integer
+          description: List of offer creative IDs to assign.
+        network_affiliate_ids:
+          type: array
+          items:
+            type: integer
+          description: List of affiliate IDs this setting applies to.
+        name:
+          type: string
+          description: Custom creative setting name.
+        custom_setting_status:
+          type: string
+          enum:
+            - active
+            - inactive
+          description: Setting status.
+        creative:
+          type: object
+          description: Creative object for creating a new creative inline.
+          properties:
+            network_offer_id:
+              type: integer
+              description: Offer ID for the new creative.
+            name:
+              type: string
+              description: Creative name.
+            creative_type:
+              type: string
+              enum:
+                - image
+                - html
+                - thumbnail
+                - email
+                - archive
+                - video
+                - text
+              description: Creative type.
+            is_private:
+              type: boolean
+              description: Whether the creative is private.
+            creative_status:
+              type: string
+              enum:
+                - active
+                - deleted
+              description: Creative status.
+            html_code:
+              type: string
+              description: HTML code (required if type is html or email).
+            width:
+              type: integer
+              description: Width in pixels (required if type is html).
+            height:
+              type: integer
+              description: Height in pixels (required if type is html).
+            email_from:
+              type: string
+              description: Sender email (required if type is email).
+            email_subject:
+              type: string
+              description: Email subject (required if type is email).
+            additional_offer_ids:
+              type: array
+              items:
+                type: integer
+              description: Additional offer IDs to associate.
+            is_apply_specific_affiliates:
+              type: boolean
+              description: Apply to specific affiliates only.
+            resource_file:
+              type: object
+              properties:
+                temp_url:
+                  type: string
+                  description: Temporary URL of the uploaded file.
+                original_file_name:
+                  type: string
+                  description: Original file name.
+            html_files:
+              type: array
+              items:
+                type: object
+              description: HTML files for archive creatives.
+            html_assets:
+              type: array
+              items:
+                type: object
+              description: HTML assets for archive creatives.
+    BulkStatusUpdateRequest:
+      type: object
+      required:
+        - custom_creative_setting_ids
+        - status
+      properties:
+        custom_creative_setting_ids:
+          type: array
+          items:
+            type: integer
+          description: List of custom creative setting IDs to update.
+        status:
+          type: string
+          enum:
+            - active
+            - inactive
+          description: New status for all specified settings.
+    Paging:
+      type: object
+      properties:
+        page:
+          type: integer
+        page_size:
+          type: integer
+        total_count:
+          type: integer
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

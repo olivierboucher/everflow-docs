@@ -1,0 +1,521 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Creatives
+  description: Endpoints for managing creatives in the Everflow network.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Creatives
+paths:
+  /networks/creativestable:
+    post:
+      summary: Search Creatives
+      description: >
+        Search and retrieve creatives with pagination. Use search terms to
+        filter by name, creative status, creative type, offer name, or
+        offer ID. Returns a paginated list of creatives.
+      tags:
+        - Creatives
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number (1-based).
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            default: 50
+          description: Number of results per page.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              search_terms:
+                - search_type: "creative_status"
+                  value: "active"
+            schema:
+              type: object
+              properties:
+                search_terms:
+                  type: array
+                  description: Array of search filters to apply.
+                  items:
+                    type: object
+                    properties:
+                      search_type:
+                        type: string
+                        enum:
+                          - name
+                          - creative_status
+                          - creative_type
+                          - network_offer_name
+                          - network_offer_id
+                        description: The field to search on.
+                      value:
+                        type: string
+                        description: The search value.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  creatives:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        network_offer_creative_id:
+                          type: integer
+                          description: Unique creative ID.
+                        network_id:
+                          type: integer
+                          description: Network ID.
+                        name:
+                          type: string
+                          description: Creative name.
+                        network_offer_id:
+                          type: integer
+                          description: Associated offer ID.
+                        network_offer_name:
+                          type: string
+                          description: Associated offer name.
+                        creative_type:
+                          type: string
+                          enum:
+                            - image
+                            - html
+                            - thumbnail
+                            - email
+                            - archive
+                            - video
+                            - text
+                            - link
+                          description: Type of creative.
+                        is_private:
+                          type: boolean
+                          description: Whether the creative is private.
+                        creative_status:
+                          type: string
+                          enum:
+                            - active
+                            - paused
+                            - deleted
+                          description: Status of the creative.
+                        resource_url:
+                          type: string
+                          description: URL to the creative resource file.
+                        html_code:
+                          type: string
+                          description: HTML code (for html/email types).
+                        width:
+                          type: integer
+                          description: Width in pixels (for image/html types).
+                        height:
+                          type: integer
+                          description: Height in pixels (for image/html types).
+                        email_from:
+                          type: string
+                          description: From address (for email type).
+                        email_subject:
+                          type: string
+                          description: Subject line (for email type).
+                        time_created:
+                          type: integer
+                          description: Unix timestamp of creation.
+                        time_saved:
+                          type: integer
+                          description: Unix timestamp of last update.
+                        optimized_thumbnail_url:
+                          type: string
+                          description: URL to the optimized thumbnail.
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+      security:
+        - API Key: []
+  /networks/creatives/{creativeId}:
+    get:
+      summary: Get Creative by ID
+      description: >
+        Retrieve a single creative by its ID. Returns the full creative
+        object including resource details, offer relationship, and
+        affiliate targeting settings.
+      tags:
+        - Creatives
+      parameters:
+        - in: path
+          name: creativeId
+          required: true
+          schema:
+            type: integer
+          description: The creative ID.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Creative"
+      security:
+        - API Key: []
+    put:
+      summary: Update Creative
+      description: >
+        Update an existing creative. All fields must be included in the
+        request body — any omitted fields will be reset to defaults.
+        Retrieve the current creative first with GET, modify the needed
+        fields, and send the full object back.
+      tags:
+        - Creatives
+      parameters:
+        - in: path
+          name: creativeId
+          required: true
+          schema:
+            type: integer
+          description: The creative ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreativeInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Creative"
+      security:
+        - API Key: []
+  /networks/creatives:
+    post:
+      summary: Create Creative
+      description: >
+        Create a new creative. You must specify the associated offer, a name,
+        and the creative type. Depending on the type, additional fields are
+        required such as html_code for HTML creatives, email_from and
+        email_subject for email creatives, or resource_file for image,
+        thumbnail, archive, and video creatives.
+      tags:
+        - Creatives
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              network_offer_id: 1
+              name: "Banner 300x250"
+              creative_type: "image"
+              creative_status: "active"
+              is_private: false
+              is_apply_specific_affiliates: false
+            schema:
+              $ref: "#/components/schemas/CreativeInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Creative"
+      security:
+        - API Key: []
+  /networks/patch/offers/creative/apply:
+    patch:
+      summary: Bulk Edit Creatives
+      description: >
+        Apply bulk edits to multiple creatives at once. Specify the creative
+        IDs to modify and an array of field modifications. Patchable fields
+        include name, is_private, and creative_status.
+      tags:
+        - Creatives
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              network_offer_creative_ids: [10, 11, 12]
+              fields:
+                - field_type: "creative_status"
+                  field_value: "paused"
+                  operator: "overwrite"
+            schema:
+              type: object
+              required:
+                - network_offer_creative_ids
+                - fields
+              properties:
+                network_offer_creative_ids:
+                  type: array
+                  items:
+                    type: integer
+                  description: Array of creative IDs to modify.
+                fields:
+                  type: array
+                  description: Array of field modifications to apply.
+                  items:
+                    type: object
+                    required:
+                      - field_type
+                      - field_value
+                      - operator
+                    properties:
+                      field_type:
+                        type: string
+                        enum:
+                          - name
+                          - is_private
+                          - creative_status
+                        description: The field to modify.
+                      field_value:
+                        description: The value to set (type varies by field).
+                      operator:
+                        type: string
+                        enum:
+                          - overwrite
+                        description: The operation to perform (always overwrite for creatives).
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    description: Whether the bulk edit was successful.
+      security:
+        - API Key: []
+components:
+  schemas:
+    Creative:
+      type: object
+      properties:
+        network_offer_creative_id:
+          type: integer
+          description: Unique creative ID.
+        network_id:
+          type: integer
+          description: Network ID.
+        network_offer_id:
+          type: integer
+          description: Associated offer ID.
+        name:
+          type: string
+          description: Creative name.
+        creative_type:
+          type: string
+          enum:
+            - image
+            - html
+            - thumbnail
+            - email
+            - archive
+            - video
+            - text
+            - link
+          description: Type of creative.
+        is_private:
+          type: boolean
+          description: Whether the creative is private.
+        creative_status:
+          type: string
+          enum:
+            - active
+            - paused
+            - deleted
+          description: Status of the creative.
+        resource_url:
+          type: string
+          description: URL to the creative resource file.
+        html_code:
+          type: string
+          description: HTML code (for html/email types).
+        width:
+          type: integer
+          description: Width in pixels (for image/html types).
+        height:
+          type: integer
+          description: Height in pixels (for image/html types).
+        email_from:
+          type: string
+          description: From address (for email type).
+        email_subject:
+          type: string
+          description: Subject line (for email type).
+        time_created:
+          type: integer
+          description: Unix timestamp of creation.
+        time_saved:
+          type: integer
+          description: Unix timestamp of last update.
+        additional_offer_ids:
+          type: array
+          items:
+            type: integer
+          nullable: true
+          description: Additional offer IDs this creative is associated with.
+        is_apply_specific_affiliates:
+          type: boolean
+          description: Whether this creative is restricted to specific affiliates.
+        relationship:
+          type: object
+          properties:
+            offer:
+              type: object
+              properties:
+                network_offer_id:
+                  type: integer
+                network_id:
+                  type: integer
+                network_advertiser_id:
+                  type: integer
+                network_offer_group_id:
+                  type: integer
+                name:
+                  type: string
+                offer_status:
+                  type: string
+                network_tracking_domain_id:
+                  type: integer
+                visibility:
+                  type: string
+                currency_id:
+                  type: string
+            resource_asset:
+              type: object
+              properties:
+                network_asset_id:
+                  type: integer
+                content_type:
+                  type: string
+                filename:
+                  type: string
+                url:
+                  type: string
+                file_size:
+                  type: integer
+                image_width:
+                  type: integer
+                image_height:
+                  type: integer
+    CreativeInput:
+      type: object
+      required:
+        - network_offer_id
+        - name
+        - creative_type
+      properties:
+        network_offer_id:
+          type: integer
+          description: The ID of the offer this creative belongs to.
+        name:
+          type: string
+          description: Creative name.
+        creative_type:
+          type: string
+          enum:
+            - image
+            - html
+            - thumbnail
+            - email
+            - archive
+            - video
+            - text
+            - link
+          description: Type of creative.
+        is_private:
+          type: boolean
+          description: Whether the creative is private.
+        creative_status:
+          type: string
+          enum:
+            - active
+            - deleted
+          description: Status of the creative.
+        html_code:
+          type: string
+          description: HTML code (required for html and email types).
+        width:
+          type: integer
+          description: Width in pixels (required for html type).
+        height:
+          type: integer
+          description: Height in pixels (required for html type).
+        email_from:
+          type: string
+          description: From address (required for email type).
+        email_subject:
+          type: string
+          description: Subject line (required for email type).
+        additional_offer_ids:
+          type: array
+          items:
+            type: integer
+          description: Additional offer IDs to associate this creative with.
+        is_apply_specific_affiliates:
+          type: boolean
+          description: Whether this creative is restricted to specific affiliates.
+        resource_file:
+          type: object
+          description: Resource file for image, thumbnail, archive, and video types.
+          properties:
+            temp_url:
+              type: string
+              description: Temporary upload URL.
+            original_file_name:
+              type: string
+              description: Original filename.
+        html_files:
+          type: array
+          description: HTML files (for html and email types).
+          items:
+            type: object
+            properties:
+              temp_url:
+                type: string
+                description: Temporary upload URL.
+              original_file_name:
+                type: string
+                description: Original filename.
+        html_assets:
+          type: array
+          description: Additional HTML assets.
+          items:
+            type: object
+            properties:
+              content_type:
+                type: string
+              filename:
+                type: string
+              url:
+                type: string
+              file_size:
+                type: integer
+              image_width:
+                type: integer
+              image_height:
+                type: integer
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

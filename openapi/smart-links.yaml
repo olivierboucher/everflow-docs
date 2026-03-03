@@ -1,0 +1,353 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Smart Links
+  description: Endpoints for managing smart links (campaigns) in the Everflow network.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Smart Links
+paths:
+  /networks/campaigns:
+    get:
+      summary: List Smart Links
+      description: >
+        Retrieve all smart links (campaigns) for the network. Returns a list
+        of campaigns with their routing configuration, status, and associated
+        redirects.
+      tags:
+        - Smart Links
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number (1-based).
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            default: 50
+          description: Number of results per page.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  campaigns:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SmartLink"
+                  paging:
+                    $ref: "#/components/schemas/Paging"
+      security:
+        - API Key: []
+    post:
+      summary: Create Smart Link
+      description: >
+        Create a new smart link (campaign). Smart links allow you to route
+        traffic across multiple offers using priority, weight, or KPI-based
+        routing strategies.
+      tags:
+        - Smart Links
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SmartLinkInput"
+            example:
+              campaign_name: "My Smart Link"
+              campaign_status: "active"
+              network_tracking_domain_id: 1
+              is_use_secure_link: false
+              redirect_routing_type: "priority"
+              catch_all_network_offer_id: 100
+              is_open_to_affiliates: true
+              redirects:
+                - redirect_network_offer_id: 200
+                  redirect_network_offer_url_id: 0
+                  routing_value: 1
+              labels: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SmartLink"
+      security:
+        - API Key: []
+  /networks/campaigns/{campaignId}:
+    get:
+      summary: Get Smart Link by ID
+      description: >
+        Retrieve a single smart link (campaign) by its ID, including its
+        routing configuration, redirects, and relationship data.
+      tags:
+        - Smart Links
+      parameters:
+        - in: path
+          name: campaignId
+          required: true
+          schema:
+            type: integer
+          description: The smart link (campaign) identifier.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SmartLink"
+      security:
+        - API Key: []
+    put:
+      summary: Update Smart Link
+      description: >
+        Update an existing smart link (campaign). All fields must be provided
+        in the request body.
+      tags:
+        - Smart Links
+      parameters:
+        - in: path
+          name: campaignId
+          required: true
+          schema:
+            type: integer
+          description: The smart link (campaign) identifier.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SmartLinkInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SmartLink"
+      security:
+        - API Key: []
+components:
+  schemas:
+    SmartLink:
+      type: object
+      properties:
+        network_campaign_id:
+          type: integer
+          description: Unique smart link (campaign) ID.
+        network_id:
+          type: integer
+          description: Network ID.
+        campaign_name:
+          type: string
+          description: Smart link name.
+        campaign_status:
+          type: string
+          enum:
+            - active
+            - paused
+            - deleted
+          description: Smart link status.
+        network_tracking_domain_id:
+          type: integer
+          description: Tracking domain ID.
+        is_use_secure_link:
+          type: boolean
+          description: Whether to use a secure (HTTPS) link.
+        redirect_routing_type:
+          type: string
+          enum:
+            - priority
+            - weight
+            - kpi
+          description: Routing strategy for redirects.
+        catch_all_network_offer_id:
+          type: integer
+          description: Fallback offer ID when no redirect matches.
+        is_open_to_affiliates:
+          type: boolean
+          description: Whether the smart link is open to all affiliates.
+        run_frequency:
+          type: string
+          enum:
+            - 12_hours
+            - 24_hours
+          description: KPI optimization run frequency (only for KPI routing).
+        metric:
+          type: string
+          enum:
+            - profit
+            - cvr
+            - evr
+            - conversions
+            - payout
+            - revenue
+          description: KPI optimization metric (only for KPI routing).
+        optimization_goal:
+          type: integer
+          description: KPI optimization goal value (only for KPI routing).
+        data_lookback_window:
+          type: string
+          enum:
+            - 12_hours
+            - 24_hours
+            - 48_hours
+          description: Data lookback window for KPI optimization (only for KPI routing).
+        data_collection_threshold:
+          type: integer
+          description: Minimum data points before optimization (only for KPI routing).
+        time_created:
+          type: integer
+          description: Unix timestamp of creation.
+        time_saved:
+          type: integer
+          description: Unix timestamp of last update.
+        relationship:
+          type: object
+          properties:
+            redirects:
+              type: array
+              items:
+                $ref: "#/components/schemas/Redirect"
+            labels:
+              type: array
+              items:
+                type: string
+            encoded_value:
+              type: string
+              description: Encoded tracking value.
+    SmartLinkInput:
+      type: object
+      required:
+        - campaign_name
+        - campaign_status
+        - network_tracking_domain_id
+        - is_use_secure_link
+        - redirect_routing_type
+        - catch_all_network_offer_id
+        - is_open_to_affiliates
+        - redirects
+      properties:
+        campaign_name:
+          type: string
+          description: Smart link name.
+        campaign_status:
+          type: string
+          enum:
+            - active
+            - paused
+            - deleted
+          description: Smart link status.
+        network_tracking_domain_id:
+          type: integer
+          description: Tracking domain ID.
+        is_use_secure_link:
+          type: boolean
+          description: Whether to use a secure (HTTPS) link.
+        redirect_routing_type:
+          type: string
+          enum:
+            - priority
+            - weight
+            - kpi
+          description: Routing strategy for redirects.
+        catch_all_network_offer_id:
+          type: integer
+          description: Fallback offer ID when no redirect matches.
+        is_open_to_affiliates:
+          type: boolean
+          description: Whether the smart link is open to all affiliates.
+        run_frequency:
+          type: string
+          enum:
+            - 12_hours
+            - 24_hours
+          description: KPI optimization run frequency (required if routing type is kpi).
+        metric:
+          type: string
+          enum:
+            - profit
+            - cvr
+            - evr
+            - conversions
+            - payout
+            - revenue
+          description: KPI optimization metric (required if routing type is kpi).
+        optimization_goal:
+          type: integer
+          description: KPI optimization goal value (required if routing type is kpi).
+        data_lookback_window:
+          type: string
+          enum:
+            - 12_hours
+            - 24_hours
+            - 48_hours
+          description: Data lookback window (required if routing type is kpi).
+        data_collection_threshold:
+          type: integer
+          description: Minimum data points before optimization (required if routing type is kpi).
+        redirects:
+          type: array
+          items:
+            $ref: "#/components/schemas/RedirectInput"
+        labels:
+          type: array
+          items:
+            type: string
+          description: Labels to associate with the smart link.
+    Redirect:
+      type: object
+      properties:
+        redirect_network_offer_id:
+          type: integer
+          description: The offer ID for this redirect.
+        redirect_network_offer_url_id:
+          type: integer
+          description: The offer URL ID for this redirect.
+        routing_value:
+          type: integer
+          description: Priority or weight value for routing.
+        ruleset:
+          type: object
+          description: Conditional targeting rules for this redirect.
+    RedirectInput:
+      type: object
+      required:
+        - redirect_network_offer_id
+        - routing_value
+      properties:
+        redirect_network_offer_id:
+          type: integer
+          description: The offer ID for this redirect.
+        redirect_network_offer_url_id:
+          type: integer
+          description: The offer URL ID for this redirect (0 for default).
+        routing_value:
+          type: integer
+          description: Priority or weight value for routing.
+        ruleset:
+          type: object
+          description: Conditional targeting rules for this redirect.
+    Paging:
+      type: object
+      properties:
+        page:
+          type: integer
+        page_size:
+          type: integer
+        total_count:
+          type: integer
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

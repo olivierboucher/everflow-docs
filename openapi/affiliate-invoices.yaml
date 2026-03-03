@@ -1,0 +1,217 @@
+openapi: 3.0.3
+info:
+  title: Everflow Affiliate API - Invoices
+  description: >
+    Invoice endpoints for the Everflow Affiliate API. Affiliates can view their
+    billing invoices, including line item details and payment history.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Affiliate Invoices
+    description: Endpoints for viewing affiliate invoices and billing details.
+paths:
+  /affiliates/billings/affiliates/invoicestable:
+    post:
+      summary: Get All Invoices
+      description: >
+        Returns a paginated list of invoices for the authenticated affiliate. Supports
+        filtering by invoice status, date range, and balance thresholds. Results are
+        sorted by date in descending order.
+      tags:
+        - Affiliate Invoices
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              filters:
+                affiliate_invoice_status: "unpaid"
+              page: 1
+              page_size: 50
+            schema:
+              type: object
+              properties:
+                filters:
+                  type: object
+                  description: Filter criteria for invoices.
+                  properties:
+                    affiliate_invoice_status:
+                      type: string
+                      enum:
+                        - paid
+                        - unpaid
+                      description: Filter by invoice payment status.
+                    min_start_time:
+                      type: string
+                      format: date-time
+                      description: Minimum start date for the invoice period.
+                    max_end_time:
+                      type: string
+                      format: date-time
+                      description: Maximum end date for the invoice period.
+                    min_balance:
+                      type: number
+                      description: Minimum invoice balance to include.
+                    max_balance:
+                      type: number
+                      description: Maximum invoice balance to include.
+                page:
+                  type: integer
+                  description: Page number (1-based).
+                  default: 1
+                page_size:
+                  type: integer
+                  description: Number of results per page.
+                  default: 50
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  invoices:
+                    type: array
+                    description: Array of invoices.
+                    items:
+                      $ref: "#/components/schemas/Invoice"
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+      security:
+        - API Key: []
+
+  /affiliates/billings/affiliates/invoices/{invoiceId}:
+    get:
+      summary: Get Invoice By ID
+      description: >
+        Returns full details for a single invoice including line item breakdown
+        and payment history. Line items can be of various types including referral
+        fees, offer details, VAT, and manual adjustments.
+      tags:
+        - Affiliate Invoices
+      parameters:
+        - name: invoiceId
+          in: path
+          required: true
+          description: The numeric ID of the invoice.
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Invoice"
+                  - type: object
+                    properties:
+                      relationship:
+                        type: object
+                        description: Related data for the invoice.
+                        properties:
+                          details:
+                            type: array
+                            description: Line item breakdown for the invoice.
+                            items:
+                              type: object
+                              properties:
+                                type:
+                                  type: string
+                                  enum:
+                                    - referral
+                                    - offer_detail
+                                    - vat
+                                    - adjustment
+                                  description: >
+                                    Type of line item. "referral" for referral commissions,
+                                    "offer_detail" for offer-level earnings, "vat" for
+                                    tax entries, "adjustment" for manual adjustments.
+                                description:
+                                  type: string
+                                  description: Description of the line item.
+                                amount:
+                                  type: number
+                                  description: Amount for this line item.
+                                network_offer_id:
+                                  type: integer
+                                  description: Associated offer ID (if applicable).
+                          payments:
+                            type: array
+                            description: Payment records for the invoice.
+                            items:
+                              type: object
+                              properties:
+                                payment_type:
+                                  type: string
+                                  description: >
+                                    Type of payment. Options include: check, wire_transfer,
+                                    paypal, ach, direct_deposit, other.
+                                amount:
+                                  type: number
+                                  description: Payment amount.
+                                payment_date:
+                                  type: string
+                                  format: date-time
+                                  description: Date the payment was made.
+                                reference:
+                                  type: string
+                                  description: Payment reference or transaction ID.
+        "404":
+          description: Invoice not found or does not belong to the authenticated affiliate.
+      security:
+        - API Key: []
+
+components:
+  schemas:
+    Invoice:
+      type: object
+      properties:
+        network_affiliate_invoice_id:
+          type: integer
+          description: Unique identifier for the invoice.
+        affiliate_invoice_status:
+          type: string
+          description: Payment status of the invoice (paid, unpaid).
+        start_time:
+          type: string
+          format: date-time
+          description: Start of the billing period.
+        end_time:
+          type: string
+          format: date-time
+          description: End of the billing period.
+        balance:
+          type: number
+          description: Outstanding balance on the invoice.
+        billed:
+          type: number
+          description: Total amount billed.
+        paid:
+          type: number
+          description: Total amount paid.
+        payment_terms:
+          type: string
+          description: Payment terms for the invoice (e.g. Net 30, Net 60).
+        currency_id:
+          type: string
+          description: Currency code for the invoice (e.g. "USD").
+
+  securitySchemes:
+    API Key:
+      description: >
+        The affiliate's API key generated from the Affiliate Portal.
+        Uses the X-Eflow-Api-Key header.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

@@ -1,0 +1,58 @@
+---
+title: "Offer Webhooks"
+description: "Webhook events fired when offers are created or updated."
+---
+
+Offer webhooks notify your endpoint when changes occur to offers in your network.
+
+## Events
+
+### Offer Created
+
+Fired when a new offer is created. This event does **not** fire when related objects are created (e.g., new offer URLs, Smart Links, or creatives).
+
+**Payload**: Matches the Find Offer By ID endpoint response.
+
+### Offer Updated
+
+Fired when the offer itself is modified.
+
+**Triggers include:**
+- Name or description changes
+- Payout/revenue setting additions or modifications
+- Cap configuration changes
+- Fail traffic setting adjustments
+
+**Does NOT trigger for:**
+- Partner visibility grants
+- Offer group modifications
+- Custom payout/revenue for specific partners
+- New or modified offer URLs
+
+**Payload**: Same structure as Offer Created.
+
+## Payload Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `network_offer_id` | integer | Unique offer identifier |
+| `network_id` | integer | Network identifier |
+| `network_advertiser_id` | integer | Associated advertiser |
+| `name` | string | Offer name |
+| `offer_status` | string | Status (active, paused, pending) |
+| `currency_id` | string | Currency code |
+| `destination_url` | string | Default destination URL |
+| `preview_url` | string | Preview URL |
+| `visibility` | string | Visibility level |
+| `daily_conversion_cap` | integer | Daily conversion cap |
+| `weekly_conversion_cap` | integer | Weekly conversion cap |
+| `monthly_conversion_cap` | integer | Monthly conversion cap |
+| `global_conversion_cap` | integer | Lifetime conversion cap |
+
+### Relationship Objects
+
+- **`category`**: Offer category details
+- **`labels`**: Applied labels
+- **`payouts`**: Payout/revenue entries
+- **`channels`**: Associated channels
+- **`thumbnail_asset`**: Thumbnail image details

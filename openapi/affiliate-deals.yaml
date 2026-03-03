@@ -1,0 +1,280 @@
+openapi: 3.0.3
+info:
+  title: Everflow Affiliate API - Deals
+  description: >
+    Deal endpoints for the Everflow Affiliate API. Affiliates can retrieve deals
+    associated with offers they are authorized to promote, including coupon codes,
+    discount details, and deal validity periods.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Affiliate Deals
+    description: Endpoints for retrieving deal information as an affiliate.
+paths:
+  /affiliates/offers/{offerId}/deals:
+    get:
+      summary: Get Offer Deals
+      description: >
+        Returns all deals associated with a specific offer. Deals include coupon codes,
+        discount information, brand partnerships, and validity periods. Only returns
+        deals for offers the affiliate is authorized to view.
+      tags:
+        - Affiliate Deals
+      parameters:
+        - name: offerId
+          in: path
+          required: true
+          description: The numeric ID of the offer.
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deals:
+                    type: array
+                    description: Array of deals for the specified offer.
+                    items:
+                      $ref: "#/components/schemas/Deal"
+      security:
+        - API Key: []
+
+  /affiliates/deals:
+    post:
+      summary: Get All Deals
+      description: >
+        Fetch all deals across offers with optional filtering by offer IDs. Returns
+        deals with their relationships including associated resources and offers.
+        Results are paginated.
+      tags:
+        - Affiliate Deals
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              network_offer_ids: [1, 2, 3]
+              page: 1
+              page_size: 50
+            schema:
+              type: object
+              properties:
+                network_offer_ids:
+                  type: array
+                  description: >
+                    Optional list of offer IDs to filter deals by. If omitted, returns
+                    deals for all offers the affiliate can access.
+                  items:
+                    type: integer
+                page:
+                  type: integer
+                  description: Page number for pagination (1-based).
+                  default: 1
+                page_size:
+                  type: integer
+                  description: Number of results per page.
+                  default: 50
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deals:
+                    type: array
+                    description: Array of deals matching the filter criteria.
+                    items:
+                      allOf:
+                        - $ref: "#/components/schemas/Deal"
+                        - type: object
+                          properties:
+                            relationship:
+                              type: object
+                              description: Related entities for this deal.
+                              properties:
+                                deal_resources:
+                                  type: array
+                                  description: Resources associated with the deal (images, links, etc.).
+                                  items:
+                                    type: object
+                                offers:
+                                  type: array
+                                  description: Offers associated with this deal.
+                                  items:
+                                    type: object
+                                    properties:
+                                      network_offer_id:
+                                        type: integer
+                                      name:
+                                        type: string
+                  paging:
+                    type: object
+                    description: Pagination metadata.
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+      security:
+        - API Key: []
+
+  /affiliates/offers/{offerId}/deals/{dealId}:
+    get:
+      summary: Get Deal By ID
+      description: >
+        Returns a single deal by its ID for a specific offer. Optionally includes
+        related data such as locations, products, resources, and tracking information
+        via query parameters.
+      tags:
+        - Affiliate Deals
+      parameters:
+        - name: offerId
+          in: path
+          required: true
+          description: The numeric ID of the offer.
+          schema:
+            type: integer
+        - name: dealId
+          in: path
+          required: true
+          description: The numeric ID of the deal.
+          schema:
+            type: integer
+        - name: locations
+          in: query
+          description: Include location restrictions for the deal.
+          schema:
+            type: boolean
+            default: false
+        - name: products
+          in: query
+          description: Include product associations for the deal.
+          schema:
+            type: boolean
+            default: false
+        - name: resources
+          in: query
+          description: Include deal resources (images, links).
+          schema:
+            type: boolean
+            default: false
+        - name: trackings
+          in: query
+          description: Include tracking configurations for the deal.
+          schema:
+            type: boolean
+            default: false
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Deal"
+                  - type: object
+                    properties:
+                      relationship:
+                        type: object
+                        properties:
+                          locations:
+                            type: array
+                            description: Location restrictions (only if requested).
+                            items:
+                              type: object
+                          products:
+                            type: array
+                            description: Associated products (only if requested).
+                            items:
+                              type: object
+                          resources:
+                            type: array
+                            description: Deal resources (only if requested).
+                            items:
+                              type: object
+                          trackings:
+                            type: array
+                            description: Tracking configurations (only if requested).
+                            items:
+                              type: object
+        "404":
+          description: Deal not found or not visible to the authenticated affiliate.
+      security:
+        - API Key: []
+
+components:
+  schemas:
+    Deal:
+      type: object
+      properties:
+        network_advertiser_deal_id:
+          type: integer
+          description: Unique identifier for the deal.
+        name:
+          type: string
+          description: Deal name.
+        brand_name:
+          type: string
+          description: Brand associated with the deal.
+        deal_type:
+          type: string
+          description: Type of deal (e.g. coupon, promotion, sale).
+        deal_status:
+          type: string
+          description: Current status of the deal (active, paused, expired).
+        deal_categories:
+          type: array
+          description: Categories assigned to the deal.
+          items:
+            type: string
+        coupon_code:
+          type: string
+          description: Coupon code associated with the deal, if applicable.
+        discount_amount:
+          type: number
+          description: Discount amount (flat amount or percentage based on discount_type).
+        discount_type:
+          type: string
+          description: Type of discount (flat, percentage).
+        discount_currency:
+          type: string
+          description: Currency for the discount amount.
+        threshold_amount:
+          type: number
+          description: Minimum purchase threshold to activate the deal.
+        threshold_type:
+          type: string
+          description: Threshold type (e.g. order_value, quantity).
+        purchase_limit_amount:
+          type: number
+          description: Maximum purchase amount or quantity for the deal.
+        purchase_limit_type:
+          type: string
+          description: Purchase limit type.
+        valid_from:
+          type: string
+          format: date-time
+          description: Start date and time when the deal becomes valid.
+        valid_to:
+          type: string
+          format: date-time
+          description: End date and time when the deal expires.
+
+  securitySchemes:
+    API Key:
+      description: >
+        The affiliate's API key generated from the Affiliate Portal.
+        Uses the X-Eflow-Api-Key header.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

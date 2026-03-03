@@ -1,0 +1,155 @@
+openapi: 3.0.3
+info:
+  title: Everflow Affiliate API - Encoding
+  description: >
+    ID encoding and decoding endpoints for the Everflow Affiliate API. These
+    endpoints allow affiliates to convert between numeric IDs and their encoded
+    string representations used in tracking links and URLs.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Affiliate Encoding
+    description: Endpoints for encoding and decoding Everflow IDs.
+paths:
+  /affiliates/encode:
+    post:
+      summary: Encode IDs
+      description: >
+        Encode numeric Everflow IDs into their encoded string representation.
+        This is useful when constructing tracking links or any context where
+        encoded IDs are required instead of raw numeric values. The `type`
+        field determines the encoding context.
+      tags:
+        - Affiliate Encoding
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              type: "tracking_link_affiliate"
+              ids:
+                - 1
+                - 2
+                - 3
+            schema:
+              type: object
+              required:
+                - type
+                - ids
+              properties:
+                type:
+                  type: string
+                  description: >
+                    The encoding context type. Determines how the IDs are encoded.
+                  enum:
+                    - tracking_link_affiliate
+                    - tracking_link_offer
+                    - smart_link_affiliate
+                    - smart_link_smart_link
+                    - signup_affiliate_employee
+                    - signup_advertiser_employee
+                    - signup_affiliate_affiliate
+                ids:
+                  type: array
+                  description: Array of numeric IDs to encode.
+                  items:
+                    type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  encoded_values:
+                    type: array
+                    description: Array of encoded string values corresponding to the input IDs.
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: The original numeric ID.
+                        encoded:
+                          type: string
+                          description: The encoded string representation.
+      security:
+        - API Key: []
+
+  /affiliates/decode:
+    post:
+      summary: Decode IDs
+      description: >
+        Decode encoded string representations back to their numeric Everflow IDs.
+        This reverses the encoding performed by the encode endpoint. The `type`
+        field must match the encoding context used when the values were originally
+        encoded.
+      tags:
+        - Affiliate Encoding
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              type: "tracking_link_affiliate"
+              encoded_values:
+                - "abc123"
+                - "def456"
+            schema:
+              type: object
+              required:
+                - type
+                - encoded_values
+              properties:
+                type:
+                  type: string
+                  description: >
+                    The encoding context type. Must match the type used during encoding.
+                  enum:
+                    - tracking_link_affiliate
+                    - tracking_link_offer
+                    - smart_link_affiliate
+                    - smart_link_smart_link
+                    - signup_affiliate_employee
+                    - signup_advertiser_employee
+                    - signup_affiliate_affiliate
+                encoded_values:
+                  type: array
+                  description: Array of encoded string values to decode.
+                  items:
+                    type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  decoded_values:
+                    type: array
+                    description: Array of decoded numeric IDs corresponding to the input strings.
+                    items:
+                      type: object
+                      properties:
+                        encoded:
+                          type: string
+                          description: The encoded string value.
+                        id:
+                          type: integer
+                          description: The decoded numeric ID.
+      security:
+        - API Key: []
+
+components:
+  securitySchemes:
+    API Key:
+      description: >
+        The affiliate's API key generated from the Affiliate Portal.
+        Uses the X-Eflow-Api-Key header.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

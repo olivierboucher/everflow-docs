@@ -1,0 +1,62 @@
+---
+title: "Advertiser Webhooks"
+description: "Webhook events fired when advertisers are created, updated, or sign up."
+---
+
+Advertiser webhooks notify your endpoint when changes occur to advertiser accounts in your network.
+
+## Events
+
+### Advertiser Created
+
+Fired when a new advertiser is created at the top level. This event does **not** fire when creating additional users for an existing advertiser.
+
+**Payload**: Matches the Find Advertiser By ID endpoint response with `users` and `billing` relationships.
+
+### Advertiser Updated
+
+Fired when the advertiser record itself is updated.
+
+**Triggers include:**
+- Account manager changes
+- Address updates
+- Billing modifications
+
+**Does NOT trigger for:**
+- Partner blacklist additions
+- Link template additions
+- Advertiser user changes
+
+**Payload**: Same structure as Advertiser Created.
+
+### Advertiser Signed Up
+
+Fired when an advertiser self-registers via the advertiser signup form. Does **not** fire when an advertiser is manually created in the UI.
+
+**Payload**: Includes `users`, `billing`, and `signup` relationships with additional signup-specific data.
+
+## Payload Fields
+
+All advertiser webhook payloads include:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `network_advertiser_id` | integer | Unique advertiser identifier |
+| `network_id` | integer | Network identifier |
+| `name` | string | Advertiser name |
+| `account_status` | string | Account status (active, inactive, pending) |
+| `default_currency_id` | string | Default currency code |
+| `reporting_timezone_id` | integer | Reporting timezone |
+| `platform_name` | string | Advertiser's platform name |
+| `platform_url` | string | Platform URL |
+| `attribution_method` | string | Attribution method |
+| `time_created` | integer | Unix timestamp of creation |
+| `time_saved` | integer | Unix timestamp of last update |
+
+### Relationship Objects
+
+- **`users`**: Array of advertiser user accounts
+- **`billing`**: Billing configuration and payment terms
+- **`account_manager`**: Assigned account manager details
+- **`contact_address`**: Business contact address
+- **`signup`** *(Signed Up event only)*: Signup form data including website URL, referral code, and promotional information

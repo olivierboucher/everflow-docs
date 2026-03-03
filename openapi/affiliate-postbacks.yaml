@@ -1,0 +1,377 @@
+openapi: 3.0.3
+info:
+  title: Everflow Affiliate API - Postbacks
+  description: >
+    Postback (pixel) management endpoints for the Everflow Affiliate API. Affiliates
+    can create, update, search, and list their conversion and event postbacks for
+    tracking purposes.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Affiliate Postbacks
+    description: Endpoints for managing affiliate postbacks (pixels).
+paths:
+  /affiliates/pixels:
+    get:
+      summary: Find All Postbacks
+      description: >
+        Returns a list of all postbacks configured by the authenticated affiliate.
+        Supports filtering by offer ID, status, type, and delivery method.
+      tags:
+        - Affiliate Postbacks
+      parameters:
+        - name: network_offer_id
+          in: query
+          description: Filter by specific offer ID. Omit to return postbacks for all offers.
+          schema:
+            type: integer
+        - name: pixel_status
+          in: query
+          description: Filter by postback status.
+          schema:
+            type: string
+            enum:
+              - active
+              - inactive
+        - name: pixel_type
+          in: query
+          description: Filter by postback type.
+          schema:
+            type: string
+            enum:
+              - conversion
+              - post_conversion
+              - cpc
+        - name: delivery_method
+          in: query
+          description: Filter by delivery method.
+          schema:
+            type: string
+            enum:
+              - html
+              - postback
+              - facebook
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pixels:
+                    type: array
+                    description: Array of postbacks.
+                    items:
+                      $ref: "#/components/schemas/Postback"
+      security:
+        - API Key: []
+
+    post:
+      summary: Create Postback
+      description: >
+        Creates a new postback for the authenticated affiliate. A postback fires
+        when a conversion or event occurs, notifying the affiliate's system via
+        a URL call, HTML pixel, or Facebook pixel integration.
+      tags:
+        - Affiliate Postbacks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              delivery_method: "postback"
+              pixel_level: "global"
+              pixel_status: "active"
+              pixel_type: "conversion"
+              postback_url: "https://example.com/postback?tid={transaction_id}&amount={revenue}"
+            schema:
+              $ref: "#/components/schemas/PostbackInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Postback"
+        "400":
+          description: >
+            Bad request. Possible reasons include missing required fields, invalid
+            delivery_method, or delay_ms exceeding 300000.
+      security:
+        - API Key: []
+
+  /affiliates/pixels/{pixelId}:
+    get:
+      summary: Find Postback By ID
+      description: >
+        Returns a single postback by its ID. The postback must belong to the
+        authenticated affiliate.
+      tags:
+        - Affiliate Postbacks
+      parameters:
+        - name: pixelId
+          in: path
+          required: true
+          description: The numeric ID of the postback.
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Postback"
+        "404":
+          description: Postback not found or does not belong to the authenticated affiliate.
+      security:
+        - API Key: []
+
+    put:
+      summary: Update Postback
+      description: >
+        Updates an existing postback. This is a full object replacement — all fields
+        must be provided, not just the ones being changed. The postback must belong
+        to the authenticated affiliate.
+      tags:
+        - Affiliate Postbacks
+      parameters:
+        - name: pixelId
+          in: path
+          required: true
+          description: The numeric ID of the postback to update.
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostbackInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Postback"
+        "400":
+          description: Bad request due to invalid input.
+        "404":
+          description: Postback not found or does not belong to the authenticated affiliate.
+      security:
+        - API Key: []
+
+  /affiliates/pixelstable:
+    post:
+      summary: Search Postbacks
+      description: >
+        Advanced search endpoint for postbacks. Supports search terms, filtering,
+        and pagination. Returns results in a paginated table format.
+      tags:
+        - Affiliate Postbacks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              search_terms: []
+              filters:
+                pixel_status: "active"
+              page: 1
+              page_size: 50
+            schema:
+              type: object
+              properties:
+                search_terms:
+                  type: array
+                  description: Search terms to filter postbacks.
+                  items:
+                    type: string
+                filters:
+                  type: object
+                  description: Filter criteria for the search.
+                  properties:
+                    pixel_status:
+                      type: string
+                      enum:
+                        - active
+                        - inactive
+                    pixel_type:
+                      type: string
+                      enum:
+                        - conversion
+                        - post_conversion
+                        - cpc
+                    delivery_method:
+                      type: string
+                      enum:
+                        - html
+                        - postback
+                        - facebook
+                    network_offer_id:
+                      type: integer
+                      description: Filter by offer ID.
+                page:
+                  type: integer
+                  description: Page number (1-based).
+                  default: 1
+                page_size:
+                  type: integer
+                  description: Number of results per page.
+                  default: 50
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pixels:
+                    type: array
+                    description: Array of postbacks matching the search criteria.
+                    items:
+                      $ref: "#/components/schemas/Postback"
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+      security:
+        - API Key: []
+
+components:
+  schemas:
+    PostbackInput:
+      type: object
+      required:
+        - delivery_method
+        - pixel_level
+        - pixel_status
+        - pixel_type
+      properties:
+        delivery_method:
+          type: string
+          enum:
+            - html
+            - postback
+            - facebook
+          description: >
+            How the postback is delivered. Use "postback" for server-to-server URL calls,
+            "html" for HTML/JavaScript pixel code, or "facebook" for Facebook pixel integration.
+        pixel_level:
+          type: string
+          enum:
+            - global
+            - specific
+          description: >
+            Scope of the postback. "global" fires for all offers, "specific" fires only
+            for the offer specified by network_offer_id.
+        pixel_status:
+          type: string
+          enum:
+            - active
+            - inactive
+          description: Whether the postback is active or inactive.
+        pixel_type:
+          type: string
+          enum:
+            - conversion
+            - post_conversion
+            - cpc
+          description: >
+            Type of event that triggers the postback. "conversion" fires on conversions,
+            "post_conversion" fires on post-conversion events, "cpc" fires on clicks.
+        postback_url:
+          type: string
+          description: >
+            The URL to call when the postback fires. Supports macros like
+            {transaction_id}, {revenue}, {offer_id}, {sub1}–{sub5}. Required when
+            delivery_method is "postback".
+        html_code:
+          type: string
+          description: >
+            HTML or JavaScript code for the pixel. Required when delivery_method is "html".
+        network_offer_id:
+          type: integer
+          description: >
+            The offer ID this postback applies to. Required when pixel_level is "specific".
+        delay_ms:
+          type: integer
+          description: >
+            Delay in milliseconds before firing the postback. Maximum value is 300000
+            (5 minutes). Defaults to 0.
+          maximum: 300000
+          default: 0
+        facebook_pixel:
+          type: object
+          description: >
+            Facebook pixel configuration. Required when delivery_method is "facebook".
+          properties:
+            pixel_id:
+              type: string
+              description: Facebook pixel ID.
+            event_name:
+              type: string
+              description: Facebook event name to fire (e.g. Purchase, Lead).
+            access_token:
+              type: string
+              description: Facebook Conversions API access token.
+
+    Postback:
+      type: object
+      properties:
+        network_affiliate_pixel_id:
+          type: integer
+          description: Unique identifier for the postback.
+        delivery_method:
+          type: string
+          description: Delivery method (html, postback, facebook).
+        pixel_level:
+          type: string
+          description: Scope of the postback (global, specific).
+        pixel_status:
+          type: string
+          description: Whether the postback is active or inactive.
+        pixel_type:
+          type: string
+          description: Type of event trigger (conversion, post_conversion, cpc).
+        postback_url:
+          type: string
+          description: URL called when the postback fires.
+        html_code:
+          type: string
+          description: HTML/JavaScript pixel code.
+        network_offer_id:
+          type: integer
+          description: Associated offer ID (0 if global).
+        delay_ms:
+          type: integer
+          description: Delay in milliseconds before firing.
+        facebook_pixel:
+          type: object
+          description: Facebook pixel configuration.
+          properties:
+            pixel_id:
+              type: string
+            event_name:
+              type: string
+            access_token:
+              type: string
+
+  securitySchemes:
+    API Key:
+      description: >
+        The affiliate's API key generated from the Affiliate Portal.
+        Uses the X-Eflow-Api-Key header.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

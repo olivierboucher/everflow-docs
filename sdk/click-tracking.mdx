@@ -1,0 +1,72 @@
+---
+title: "Click Tracking"
+description: "Record clicks and generate transaction IDs using the Everflow JavaScript SDK."
+---
+
+The `EF.click()` method records a click event and returns a Promise that resolves with the transaction ID. This transaction ID can then be used for conversion attribution.
+
+## Basic Usage
+
+```javascript
+EF.click({
+  offer_id: 1,
+  affiliate_id: 1
+});
+```
+
+## Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `offer_id` | integer | Yes | The offer identifier |
+| `affiliate_id` | integer | Yes | The affiliate identifier |
+| `uid` | integer | No | Offer URL ID (extra destination URL) |
+| `creative_id` | integer | No | Creative identifier |
+| `sub1` – `sub5` | string | No | Sub-placement tracking values |
+| `source_id` | string | No | Traffic source identifier |
+| `coupon_code` | string | No | Coupon code for click-level attribution |
+| `fbclid` | string | No | Facebook click ID |
+| `gclid` | string | No | Google click ID |
+| `ttclid` | string | No | TikTok click ID |
+| `transaction_id` | string | No | Custom transaction ID (for ITP workaround) |
+| `parameters` | object | No | Free-form custom key–value parameters |
+
+## Return Value
+
+`EF.click()` returns a Promise that resolves with the transaction ID:
+
+```javascript
+EF.click({
+  offer_id: 1,
+  affiliate_id: 1
+}).then(function(transactionId) {
+  console.log('Transaction ID:', transactionId);
+});
+```
+
+## Examples
+
+**With sub-placements and URL parameters:**
+
+```javascript
+EF.click({
+  offer_id: EF.urlParameter('oid'),
+  affiliate_id: EF.urlParameter('affid'),
+  sub1: EF.urlParameter('sub1'),
+  sub2: EF.urlParameter('sub2'),
+  source_id: EF.urlParameter('source')
+});
+```
+
+**With custom parameters:**
+
+```javascript
+EF.click({
+  offer_id: 1,
+  affiliate_id: 1,
+  parameters: {
+    campaign_name: 'summer_sale',
+    landing_page: 'variant_b'
+  }
+});
+```

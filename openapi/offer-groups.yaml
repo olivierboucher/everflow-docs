@@ -1,0 +1,328 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Offer Groups
+  description: Endpoints for managing offer groups in the Everflow network.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Offer Groups
+paths:
+  /networks/offergroups:
+    get:
+      summary: List Offer Groups
+      description: >
+        Retrieve all offer groups for the network. Returns a list of offer
+        groups with their cap settings, advertiser relationships, and
+        associated offer IDs. Supports including audit and reporting
+        relationships.
+      tags:
+        - Offer Groups
+      parameters:
+        - in: query
+          name: relationship
+          schema:
+            type: string
+            enum:
+              - audits
+              - reporting
+          description: Include related data (audits or today's reporting).
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  offer_groups:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/OfferGroup"
+      security:
+        - API Key: []
+    post:
+      summary: Create Offer Group
+      description: >
+        Create a new offer group. You must specify the advertiser and a name.
+        Optionally configure conversion, payout, revenue, and click caps
+        at daily, weekly, monthly, and global levels. You can also assign
+        offers and labels to the group.
+      tags:
+        - Offer Groups
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              network_advertiser_id: 1
+              name: "Premium Offers"
+              offer_group_status: "active"
+              is_caps_enabled: true
+              daily_conversion_cap: 1000
+              monthly_conversion_cap: 25000
+              network_offer_ids: [10, 11, 12]
+            schema:
+              $ref: "#/components/schemas/OfferGroupInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OfferGroup"
+      security:
+        - API Key: []
+  /networks/offergroups/{offerGroupId}:
+    get:
+      summary: Get Offer Group by ID
+      description: >
+        Retrieve a single offer group by its ID. Returns the full offer group
+        object including cap settings, advertiser relationship, associated
+        offers, and remaining cap values.
+      tags:
+        - Offer Groups
+      parameters:
+        - in: path
+          name: offerGroupId
+          required: true
+          schema:
+            type: integer
+          description: The offer group ID.
+        - in: query
+          name: relationship
+          schema:
+            type: string
+            enum:
+              - audits
+              - reporting
+          description: Include related data (audits or today's reporting).
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OfferGroup"
+      security:
+        - API Key: []
+    put:
+      summary: Update Offer Group
+      description: >
+        Update an existing offer group. All fields should be included in
+        the request body. Retrieve the current offer group first with GET,
+        modify the needed fields, and send the full object back.
+      tags:
+        - Offer Groups
+      parameters:
+        - in: path
+          name: offerGroupId
+          required: true
+          schema:
+            type: integer
+          description: The offer group ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OfferGroupInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OfferGroup"
+      security:
+        - API Key: []
+components:
+  schemas:
+    OfferGroup:
+      type: object
+      properties:
+        network_offer_group_id:
+          type: integer
+          description: Unique offer group ID.
+        network_id:
+          type: integer
+          description: Network ID.
+        network_advertiser_id:
+          type: integer
+          description: Associated advertiser ID.
+        name:
+          type: string
+          description: Offer group name.
+        internal_notes:
+          type: string
+          description: Internal notes about the offer group.
+        offer_group_status:
+          type: string
+          enum:
+            - active
+            - paused
+            - deleted
+          description: Status of the offer group.
+        is_caps_enabled:
+          type: boolean
+          description: Whether caps are enabled for this group.
+        daily_conversion_cap:
+          type: integer
+          description: Daily conversion cap.
+        weekly_conversion_cap:
+          type: integer
+          description: Weekly conversion cap (Monday to Sunday).
+        monthly_conversion_cap:
+          type: integer
+          description: Monthly conversion cap.
+        global_conversion_cap:
+          type: integer
+          description: Global (lifetime) conversion cap.
+        daily_payout_cap:
+          type: integer
+          description: Daily payout cap.
+        weekly_payout_cap:
+          type: integer
+          description: Weekly payout cap.
+        monthly_payout_cap:
+          type: integer
+          description: Monthly payout cap.
+        global_payout_cap:
+          type: integer
+          description: Global (lifetime) payout cap.
+        daily_revenue_cap:
+          type: integer
+          description: Daily revenue cap.
+        weekly_revenue_cap:
+          type: integer
+          description: Weekly revenue cap.
+        monthly_revenue_cap:
+          type: integer
+          description: Monthly revenue cap.
+        global_revenue_cap:
+          type: integer
+          description: Global (lifetime) revenue cap.
+        daily_click_cap:
+          type: integer
+          description: Daily click cap.
+        weekly_click_cap:
+          type: integer
+          description: Weekly click cap.
+        monthly_click_cap:
+          type: integer
+          description: Monthly click cap.
+        global_click_cap:
+          type: integer
+          description: Global (lifetime) click cap.
+        time_created:
+          type: integer
+          description: Unix timestamp of creation.
+        time_saved:
+          type: integer
+          description: Unix timestamp of last update.
+        relationship:
+          type: object
+          properties:
+            advertiser:
+              type: object
+              description: Associated advertiser details.
+            labels:
+              type: object
+              description: Labels assigned to this offer group.
+            network_offer_ids:
+              type: array
+              items:
+                type: integer
+              description: Offer IDs in this group.
+            remaining_caps:
+              type: object
+              description: Remaining cap values for each cap type.
+    OfferGroupInput:
+      type: object
+      required:
+        - network_advertiser_id
+        - name
+      properties:
+        network_advertiser_id:
+          type: integer
+          description: The advertiser ID this offer group belongs to.
+        name:
+          type: string
+          description: Offer group name.
+        internal_notes:
+          type: string
+          description: Internal notes about the offer group.
+        offer_group_status:
+          type: string
+          enum:
+            - active
+            - paused
+            - deleted
+          description: Status of the offer group.
+        is_caps_enabled:
+          type: boolean
+          description: Whether caps are enabled for this group.
+        daily_conversion_cap:
+          type: integer
+          description: Daily conversion cap.
+        weekly_conversion_cap:
+          type: integer
+          description: Weekly conversion cap (Monday to Sunday).
+        monthly_conversion_cap:
+          type: integer
+          description: Monthly conversion cap.
+        global_conversion_cap:
+          type: integer
+          description: Global (lifetime) conversion cap.
+        daily_payout_cap:
+          type: integer
+          description: Daily payout cap.
+        weekly_payout_cap:
+          type: integer
+          description: Weekly payout cap.
+        monthly_payout_cap:
+          type: integer
+          description: Monthly payout cap.
+        global_payout_cap:
+          type: integer
+          description: Global (lifetime) payout cap.
+        daily_revenue_cap:
+          type: integer
+          description: Daily revenue cap.
+        weekly_revenue_cap:
+          type: integer
+          description: Weekly revenue cap.
+        monthly_revenue_cap:
+          type: integer
+          description: Monthly revenue cap.
+        global_revenue_cap:
+          type: integer
+          description: Global (lifetime) revenue cap.
+        daily_click_cap:
+          type: integer
+          description: Daily click cap.
+        weekly_click_cap:
+          type: integer
+          description: Weekly click cap.
+        monthly_click_cap:
+          type: integer
+          description: Monthly click cap.
+        global_click_cap:
+          type: integer
+          description: Global (lifetime) click cap.
+        network_offer_ids:
+          type: array
+          items:
+            type: integer
+          description: Offer IDs to include in this group.
+        labels:
+          type: array
+          items:
+            type: string
+          description: Labels to assign to this offer group.
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

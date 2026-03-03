@@ -1,0 +1,238 @@
+openapi: 3.0.3
+info:
+  title: Everflow Advertiser API - Offers
+  description: >
+    Offer endpoints for the Everflow Advertiser API. These endpoints are
+    accessed by advertiser users using their own API key and return
+    data scoped to the authenticated advertiser's account only.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Advertiser Offers
+    description: Endpoints for listing and retrieving offers visible to the authenticated advertiser.
+paths:
+  /advertisers/offers:
+    get:
+      summary: List All Offers
+      description: >
+        Retrieve a paginated list of all offers visible to the authenticated advertiser.
+        Use the `relationship` query parameter to include related data alongside each offer.
+        Data is automatically scoped to the authenticated advertiser — no advertiser filter is needed.
+      tags:
+        - Advertiser Offers
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number (1-based).
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            default: 50
+          description: Number of results per page.
+        - in: query
+          name: relationship
+          schema:
+            type: string
+            enum:
+              - category
+              - creatives
+              - reporting
+              - thumbnail_asset
+              - revenues
+              - ruleset
+              - remaining_caps
+              - meta
+          description: Include related data in the response. Repeat for multiple relationships.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  offers:
+                    type: array
+                    description: Array of offer objects visible to the advertiser.
+                    items:
+                      $ref: "#/components/schemas/AdvertiserOffer"
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                        description: Current page number.
+                      page_size:
+                        type: integer
+                        description: Number of results per page.
+                      total_count:
+                        type: integer
+                        description: Total number of matching offers.
+      security:
+        - API Key: []
+  /advertisers/offers/{offerId}:
+    get:
+      summary: Get Offer By ID
+      description: >
+        Retrieve a single offer by its ID. Returns the full offer object including
+        caps, URLs, and visibility settings. Returns 404 if the offer does not exist
+        or is not visible to the authenticated advertiser.
+      tags:
+        - Advertiser Offers
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: integer
+          description: The unique offer ID.
+        - in: query
+          name: relationship
+          schema:
+            type: string
+            enum:
+              - category
+              - creatives
+              - reporting
+              - thumbnail_asset
+              - revenues
+              - ruleset
+              - remaining_caps
+              - meta
+          description: Include related data in the response. Repeat for multiple relationships.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdvertiserOffer"
+        "404":
+          description: Offer not found or not visible to the advertiser.
+      security:
+        - API Key: []
+components:
+  securitySchemes:
+    API Key:
+      description: >
+        The advertiser's API key generated from the Advertiser Portal.
+        Uses the same X-Eflow-Api-Key header as other Everflow APIs, but the key
+        belongs to the advertiser user rather than the network admin.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey
+  schemas:
+    AdvertiserOffer:
+      type: object
+      properties:
+        network_offer_id:
+          type: integer
+          description: Unique offer ID.
+        network_id:
+          type: integer
+          description: Network ID that owns this offer.
+        name:
+          type: string
+          description: Offer name.
+        thumbnail_url:
+          type: string
+          description: Offer thumbnail image URL.
+        network_category_id:
+          type: integer
+          description: Category ID for the offer.
+        destination_url:
+          type: string
+          description: The destination URL where traffic is sent.
+        preview_url:
+          type: string
+          description: Preview URL for the offer landing page.
+        offer_status:
+          type: string
+          enum:
+            - active
+            - paused
+            - pending
+            - deleted
+          description: Current status of the offer.
+        currency_id:
+          type: string
+          description: Currency used for this offer (e.g. "USD").
+        html_description:
+          type: string
+          description: HTML description of the offer.
+        visibility:
+          type: string
+          enum:
+            - public
+            - require_approval
+            - private
+          description: Offer visibility setting.
+        is_caps_enabled:
+          type: boolean
+          description: Whether caps are enabled for this offer.
+        daily_conversion_cap:
+          type: integer
+          description: Maximum conversions allowed per day. 0 means unlimited.
+        weekly_conversion_cap:
+          type: integer
+          description: Maximum conversions allowed per week. 0 means unlimited.
+        monthly_conversion_cap:
+          type: integer
+          description: Maximum conversions allowed per month. 0 means unlimited.
+        global_conversion_cap:
+          type: integer
+          description: Maximum total conversions allowed. 0 means unlimited.
+        daily_payout_cap:
+          type: integer
+          description: Maximum payout amount per day. 0 means unlimited.
+        weekly_payout_cap:
+          type: integer
+          description: Maximum payout amount per week. 0 means unlimited.
+        monthly_payout_cap:
+          type: integer
+          description: Maximum payout amount per month. 0 means unlimited.
+        global_payout_cap:
+          type: integer
+          description: Maximum total payout amount. 0 means unlimited.
+        daily_revenue_cap:
+          type: integer
+          description: Maximum revenue amount per day. 0 means unlimited.
+        weekly_revenue_cap:
+          type: integer
+          description: Maximum revenue amount per week. 0 means unlimited.
+        monthly_revenue_cap:
+          type: integer
+          description: Maximum revenue amount per month. 0 means unlimited.
+        global_revenue_cap:
+          type: integer
+          description: Maximum total revenue amount. 0 means unlimited.
+        daily_click_cap:
+          type: integer
+          description: Maximum clicks allowed per day. 0 means unlimited.
+        weekly_click_cap:
+          type: integer
+          description: Maximum clicks allowed per week. 0 means unlimited.
+        monthly_click_cap:
+          type: integer
+          description: Maximum clicks allowed per month. 0 means unlimited.
+        global_click_cap:
+          type: integer
+          description: Maximum total clicks allowed. 0 means unlimited.
+        tracking_url:
+          type: string
+          description: The tracking URL used to route traffic to this offer.
+        time_created:
+          type: integer
+          description: Unix timestamp of when the offer was created.
+        time_saved:
+          type: integer
+          description: Unix timestamp of the last update to the offer.
+        relationship:
+          type: object
+          description: Related data (only present when requested via the relationship query parameter).

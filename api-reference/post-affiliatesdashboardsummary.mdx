@@ -1,0 +1,18 @@
+---
+title: Get Dashboard Summary
+openapi: /openapi/affiliate-reporting.yaml post /affiliates/dashboard/summary
+---
+
+Returns a high-level summary of your affiliate performance metrics, designed for dashboard displays. Each metric includes values for today, yesterday, the current month, and last month, along with a trending percentage indicating the direction of change.
+
+Metrics returned:
+
+- **revenue** -- your total payout earnings
+- **click** -- total click count
+- **conversion** -- total conversion count
+- **cvr** -- conversion rate
+- **events** -- post-conversion event count
+- **evr** -- event rate
+- **impression** -- total impression count
+
+Only `timezone_id` is required. Data is automatically scoped to your affiliate account.

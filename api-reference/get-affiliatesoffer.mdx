@@ -1,0 +1,6 @@
+---
+title: Get Offer
+openapi: /openapi/affiliate-offers.yaml get /affiliates/offers/{offerId}
+---
+
+Retrieve full details for a single offer by its ID. The response includes integrations, metadata, product feeds, and the affiliate-specific relationship data such as payout configuration and approval status. The offer must be visible to your affiliate account (public, approved, or requiring approval). Returns 404 if the offer does not exist or is not accessible.

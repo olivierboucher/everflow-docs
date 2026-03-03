@@ -1,0 +1,345 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Custom Caps
+  description: Endpoints for managing custom caps in the Everflow network.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Custom Caps
+paths:
+  /networks/custom/caps:
+    get:
+      summary: List Custom Caps
+      description: >
+        Retrieve all custom cap settings for the network. Returns a paginated
+        list of custom cap configurations that override default offer caps
+        for specific affiliates. Filterable by network_offer_id,
+        network_affiliate_id, time_created, and time_saved.
+      tags:
+        - Custom Caps
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number (1-based).
+        - in: query
+          name: page_size
+          schema:
+            type: integer
+            default: 50
+          description: Number of results per page.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  custom_cap_settings:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/CustomCap"
+                  paging:
+                    $ref: "#/components/schemas/Paging"
+      security:
+        - API Key: []
+    post:
+      summary: Create Custom Cap
+      description: >
+        Create a new custom cap setting. Custom caps allow you to override
+        the default offer caps (conversions, payouts, clicks, and revenue)
+        for a specific affiliate.
+      tags:
+        - Custom Caps
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomCapInput"
+            example:
+              network_affiliate_id: 200
+              network_offer_id: 100
+              name: "Affiliate 200 Custom Cap"
+              daily_conversion_cap: 100
+              weekly_conversion_cap: 500
+              monthly_conversion_cap: 2000
+              global_conversion_cap: 0
+              daily_payout_cap: 0
+              weekly_payout_cap: 0
+              monthly_payout_cap: 0
+              global_payout_cap: 0
+              daily_click_cap: 0
+              weekly_click_cap: 0
+              monthly_click_cap: 0
+              global_click_cap: 0
+              daily_revenue_cap: 0
+              weekly_revenue_cap: 0
+              monthly_revenue_cap: 0
+              global_revenue_cap: 0
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomCap"
+      security:
+        - API Key: []
+    patch:
+      summary: Bulk Update Custom Caps
+      description: >
+        Bulk update multiple custom cap settings at once. Provide a list
+        of setting IDs and the cap fields to update.
+      tags:
+        - Custom Caps
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkUpdateRequest"
+            example:
+              network_custom_cap_setting_ids: [1, 2, 3]
+              fields:
+                - field_type: "daily_conversion_cap"
+                  field_value: 150
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+      security:
+        - API Key: []
+  /networks/custom/caps/{settingId}:
+    get:
+      summary: Get Custom Cap by ID
+      description: >
+        Retrieve a single custom cap setting by its ID.
+      tags:
+        - Custom Caps
+      parameters:
+        - in: path
+          name: settingId
+          required: true
+          schema:
+            type: integer
+          description: The custom cap setting identifier.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomCap"
+      security:
+        - API Key: []
+components:
+  schemas:
+    CustomCap:
+      type: object
+      properties:
+        network_custom_cap_setting_id:
+          type: integer
+          description: Unique custom cap setting ID.
+        network_id:
+          type: integer
+          description: Network ID.
+        network_affiliate_id:
+          type: integer
+          description: Associated affiliate ID.
+        network_offer_id:
+          type: integer
+          description: Associated offer ID.
+        name:
+          type: string
+          description: Custom cap setting name.
+        daily_conversion_cap:
+          type: integer
+          description: Daily conversion limit (0 for unlimited).
+        weekly_conversion_cap:
+          type: integer
+          description: Weekly conversion limit (0 for unlimited).
+        monthly_conversion_cap:
+          type: integer
+          description: Monthly conversion limit (0 for unlimited).
+        global_conversion_cap:
+          type: integer
+          description: Global conversion limit (0 for unlimited).
+        daily_payout_cap:
+          type: number
+          format: double
+          description: Daily payout limit (0 for unlimited).
+        weekly_payout_cap:
+          type: number
+          format: double
+          description: Weekly payout limit (0 for unlimited).
+        monthly_payout_cap:
+          type: number
+          format: double
+          description: Monthly payout limit (0 for unlimited).
+        global_payout_cap:
+          type: number
+          format: double
+          description: Global payout limit (0 for unlimited).
+        daily_click_cap:
+          type: integer
+          description: Daily click limit (0 for unlimited).
+        weekly_click_cap:
+          type: integer
+          description: Weekly click limit (0 for unlimited).
+        monthly_click_cap:
+          type: integer
+          description: Monthly click limit (0 for unlimited).
+        global_click_cap:
+          type: integer
+          description: Global click limit (0 for unlimited).
+        daily_revenue_cap:
+          type: number
+          format: double
+          description: Daily revenue limit (0 for unlimited).
+        weekly_revenue_cap:
+          type: number
+          format: double
+          description: Weekly revenue limit (0 for unlimited).
+        monthly_revenue_cap:
+          type: number
+          format: double
+          description: Monthly revenue limit (0 for unlimited).
+        global_revenue_cap:
+          type: number
+          format: double
+          description: Global revenue limit (0 for unlimited).
+        time_created:
+          type: integer
+          description: Unix timestamp of creation.
+        time_saved:
+          type: integer
+          description: Unix timestamp of last update.
+        relationship:
+          type: object
+          properties:
+            offer:
+              type: object
+              description: Associated offer details.
+            affiliate:
+              type: object
+              description: Associated affiliate details.
+    CustomCapInput:
+      type: object
+      required:
+        - network_affiliate_id
+        - network_offer_id
+      properties:
+        network_affiliate_id:
+          type: integer
+          description: Associated affiliate ID.
+        network_offer_id:
+          type: integer
+          description: Associated offer ID.
+        name:
+          type: string
+          description: Custom cap setting name.
+        daily_conversion_cap:
+          type: integer
+          description: Daily conversion limit (0 for unlimited).
+        weekly_conversion_cap:
+          type: integer
+          description: Weekly conversion limit (0 for unlimited).
+        monthly_conversion_cap:
+          type: integer
+          description: Monthly conversion limit (0 for unlimited).
+        global_conversion_cap:
+          type: integer
+          description: Global conversion limit (0 for unlimited).
+        daily_payout_cap:
+          type: number
+          format: double
+          description: Daily payout limit (0 for unlimited).
+        weekly_payout_cap:
+          type: number
+          format: double
+          description: Weekly payout limit (0 for unlimited).
+        monthly_payout_cap:
+          type: number
+          format: double
+          description: Monthly payout limit (0 for unlimited).
+        global_payout_cap:
+          type: number
+          format: double
+          description: Global payout limit (0 for unlimited).
+        daily_click_cap:
+          type: integer
+          description: Daily click limit (0 for unlimited).
+        weekly_click_cap:
+          type: integer
+          description: Weekly click limit (0 for unlimited).
+        monthly_click_cap:
+          type: integer
+          description: Monthly click limit (0 for unlimited).
+        global_click_cap:
+          type: integer
+          description: Global click limit (0 for unlimited).
+        daily_revenue_cap:
+          type: number
+          format: double
+          description: Daily revenue limit (0 for unlimited).
+        weekly_revenue_cap:
+          type: number
+          format: double
+          description: Weekly revenue limit (0 for unlimited).
+        monthly_revenue_cap:
+          type: number
+          format: double
+          description: Monthly revenue limit (0 for unlimited).
+        global_revenue_cap:
+          type: number
+          format: double
+          description: Global revenue limit (0 for unlimited).
+    BulkUpdateRequest:
+      type: object
+      required:
+        - network_custom_cap_setting_ids
+        - fields
+      properties:
+        network_custom_cap_setting_ids:
+          type: array
+          items:
+            type: integer
+          description: List of custom cap setting IDs to update.
+        fields:
+          type: array
+          items:
+            type: object
+            properties:
+              field_type:
+                type: string
+                description: >
+                  The cap field to update (e.g., daily_conversion_cap,
+                  weekly_conversion_cap, monthly_payout_cap, global_click_cap).
+              field_value:
+                description: The new cap value.
+    Paging:
+      type: object
+      properties:
+        page:
+          type: integer
+        page_size:
+          type: integer
+        total_count:
+          type: integer
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

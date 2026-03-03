@@ -1,0 +1,8 @@
+---
+title: Decode IDs
+openapi: /openapi/affiliate-encoding.yaml post /affiliates/decode
+---
+
+Decode encoded string representations back into their numeric Everflow IDs. This reverses the encoding performed by the **Encode IDs** endpoint. The `type` field must match the encoding context that was used when the values were originally encoded.
+
+Use this endpoint when you receive encoded IDs in tracking URLs or callbacks and need to resolve them to their original numeric values for use with other API endpoints.

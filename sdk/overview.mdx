@@ -1,0 +1,60 @@
+---
+title: "Everflow SDK"
+description: "Track clicks, conversions, and impressions client-side using the Everflow JavaScript SDK."
+---
+
+The Everflow JavaScript SDK enables client-side tracking directly on your website. It supports direct linking — tracking user activity without requiring a redirect through a tracking link. This is useful when third-party links or cookies cannot be used.
+
+<Note>The JavaScript SDK is not optimized for Internet Explorer.</Note>
+
+## Installation
+
+Add the SDK script tag to every page where you want to track events. Replace `YOUR-TRACKING-DOMAIN.com` with your actual Everflow tracking domain:
+
+```html
+<script type="text/javascript" src="https://www.YOUR-TRACKING-DOMAIN.com/scripts/main.js"></script>
+```
+
+The script exposes the global `EF` object with methods for click tracking, conversion tracking, and impression tracking.
+
+## Available Modules
+
+<CardGroup cols={2}>
+  <Card title="Click Tracking" icon="arrow-pointer" href="/sdk/click-tracking">
+    Record clicks and generate transaction IDs for attribution.
+  </Card>
+  <Card title="Conversion Tracking" icon="circle-check" href="/sdk/conversion-tracking">
+    Fire conversion events with amounts, event IDs, and custom parameters.
+  </Card>
+  <Card title="Impression Tracking" icon="eye" href="/sdk/impression-tracking">
+    Log impression events for CPM-based offers.
+  </Card>
+</CardGroup>
+
+## Helper Methods
+
+### EF.urlParameter(paramName)
+
+Extracts a query string parameter from the current page URL. Returns an empty string if the parameter is not present.
+
+```javascript
+// URL: https://example.com/?oid=5&affid=10
+const offerId = EF.urlParameter('oid');       // "5"
+const affiliateId = EF.urlParameter('affid'); // "10"
+```
+
+### EF.getTransactionId(offerId)
+
+Returns the most recent transaction ID for a given offer. Returns an empty string if no transaction exists.
+
+```javascript
+const txnId = EF.getTransactionId(5);
+```
+
+### EF.getAdvertiserTransactionId(advertiserId)
+
+Returns the most recent transaction ID for a given advertiser, regardless of which offer generated it.
+
+```javascript
+const txnId = EF.getAdvertiserTransactionId(2);
+```

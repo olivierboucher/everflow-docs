@@ -1,0 +1,8 @@
+---
+title: Export Aggregated Data
+openapi: /openapi/affiliate-reporting.yaml post /affiliates/reporting/entity/table/export
+---
+
+Export aggregated reporting data in CSV or JSON format. Accepts the same parameters as the **Get Aggregated Reporting Data** endpoint with an additional `format` field. Use this endpoint when you need to download pivoted performance data for external analysis or reporting tools.
+
+The `format` field accepts `csv` or `json`. All the same column, filter, and date range options from the aggregated reporting endpoint apply here.

@@ -66,11 +66,70 @@
                 ]
               },
               {
-                "group": "Conversion Management",
+                "group": "Coupon Codes",
                 "expanded": false,
                 "pages": [
-                  "api-reference/put-networksreportingconversionspayoutrevenue",
-                  "api-reference/patch-networksreportingconversions"
+                  "api-reference/get-networkscouponcodes",
+                  "api-reference/post-networkscouponcodes",
+                  "api-reference/get-networkscouponcode",
+                  "api-reference/put-networkscouponcode",
+                  "api-reference/delete-networkscouponcode"
+                ]
+              },
+              {
+                "group": "Creatives",
+                "expanded": false,
+                "pages": [
+                  "api-reference/post-networkscreativestable",
+                  "api-reference/post-networkscreatives",
+                  "api-reference/get-networkscreative",
+                  "api-reference/put-networkscreative",
+                  "api-reference/patch-networkscreativesapply"
+                ]
+              },
+              {
+                "group": "Custom Caps",
+                "expanded": false,
+                "pages": [
+                  "api-reference/get-networkscustomcaps",
+                  "api-reference/post-networkscustomcaps",
+                  "api-reference/get-networkscustomcap",
+                  "api-reference/patch-networkscustomcaps"
+                ]
+              },
+              {
+                "group": "Custom Creative Settings",
+                "expanded": false,
+                "pages": [
+                  "api-reference/get-networkscustomcreative",
+                  "api-reference/post-networkscustomcreative",
+                  "api-reference/get-networkscustomcreativesetting",
+                  "api-reference/put-networkscustomcreativesetting",
+                  "api-reference/delete-networkscustomcreativesetting",
+                  "api-reference/patch-networkscustomcreative"
+                ]
+              },
+              {
+                "group": "Custom Payout/Revenue",
+                "expanded": false,
+                "pages": [
+                  "api-reference/get-networkscustompayoutrevenue",
+                  "api-reference/post-networkscustompayoutrevenue",
+                  "api-reference/get-networkscustompayoutrevenuesetting",
+                  "api-reference/put-networkscustompayoutrevenuesetting",
+                  "api-reference/delete-networkscustompayoutrevenuesetting",
+                  "api-reference/patch-networkscustompayoutrevenue"
+                ]
+              },
+              {
+                "group": "Custom Scrub Rates",
+                "expanded": false,
+                "pages": [
+                  "api-reference/post-networkscustomscrubratetable",
+                  "api-reference/post-networkscustomscrubrate",
+                  "api-reference/get-networkscustomscrubrate",
+                  "api-reference/put-networkscustomscrubrate",
+                  "api-reference/delete-networkscustomscrubrate"
                 ]
               },
               {
@@ -91,6 +150,37 @@
                 ]
               },
               {
+                "group": "Offer Groups",
+                "expanded": false,
+                "pages": [
+                  "api-reference/get-networksoffergroups",
+                  "api-reference/post-networksoffergroups",
+                  "api-reference/get-networksoffergroup",
+                  "api-reference/put-networksoffergroup"
+                ]
+              },
+              {
+                "group": "Offer URLs",
+                "expanded": false,
+                "pages": [
+                  "api-reference/get-networksofferurls",
+                  "api-reference/post-networksofferurls",
+                  "api-reference/post-networksofferurlsbulk",
+                  "api-reference/get-networksofferurl",
+                  "api-reference/put-networksofferurl",
+                  "api-reference/patch-networksofferurlsapply"
+                ]
+              },
+              {
+                "group": "Offer Visibility",
+                "expanded": false,
+                "pages": [
+                  "api-reference/get-networksoffervisibility",
+                  "api-reference/put-networksoffervisibility",
+                  "api-reference/patch-networksaffiliateoffervisibility"
+                ]
+              },
+              {
                 "group": "Offers",
                 "expanded": false,
                 "pages": [
@@ -98,6 +188,24 @@
                   "api-reference/get-networksoffer",
                   "api-reference/post-networksofferstable",
                   "api-reference/put-networksoffer"
+                ]
+              },
+              {
+                "group": "Partner Postbacks",
+                "expanded": false,
+                "pages": [
+                  "api-reference/post-networkspixelstable",
+                  "api-reference/post-networkspixels",
+                  "api-reference/get-networkspixel",
+                  "api-reference/put-networkspixel"
+                ]
+              },
+              {
+                "group": "Conversion Management",
+                "expanded": false,
+                "pages": [
+                  "api-reference/put-networksreportingconversionspayoutrevenue",
+                  "api-reference/patch-networksreportingconversions"
                 ]
               },
               {
@@ -113,6 +221,16 @@
                   "api-reference/post-networksreportingimpressionsstream",
                   "api-reference/post-networksreportinginvalidclicks",
                   "api-reference/get-networksreportingtransactions"
+                ]
+              },
+              {
+                "group": "Smart Links",
+                "expanded": false,
+                "pages": [
+                  "api-reference/get-networkscampaigns",
+                  "api-reference/post-networkscampaigns",
+                  "api-reference/get-networkscampaign",
+                  "api-reference/put-networkscampaign"
                 ]
               },
               {
@@ -133,12 +251,179 @@
             "group": "Affiliate API",
             "pages": [
               {
+                "group": "Offers",
+                "expanded": false,
+                "pages": [
+                  "api-reference/get-affiliatesalloffers",
+                  "api-reference/get-affiliatesoffersrunnable",
+                  "api-reference/get-affiliatesoffer",
+                  "api-reference/get-affiliatesofferurl",
+                  "api-reference/get-affiliatesofferimpressionurl"
+                ]
+              },
+              {
                 "group": "Reporting",
                 "expanded": false,
                 "pages": [
-                  "api-reference/post-affiliatesreportingentitytable"
+                  "api-reference/post-affiliatesreportingentitytable",
+                  "api-reference/post-affiliatesreportingentitytableexport",
+                  "api-reference/post-affiliatesdashboardsummary",
+                  "api-reference/post-affiliatesreportingclicksstream",
+                  "api-reference/get-affiliatesreportingclick",
+                  "api-reference/post-affiliatesreportingconversions",
+                  "api-reference/post-affiliatesreportingconversionsexport",
+                  "api-reference/get-affiliatesreportingconversion"
+                ]
+              },
+              {
+                "group": "Deals",
+                "expanded": false,
+                "pages": [
+                  "api-reference/get-affiliatesofferdeals",
+                  "api-reference/post-affiliatesdeals",
+                  "api-reference/get-affiliatesofferdeal"
+                ]
+              },
+              {
+                "group": "Postbacks",
+                "expanded": false,
+                "pages": [
+                  "api-reference/get-affiliatespixels",
+                  "api-reference/get-affiliatespixel",
+                  "api-reference/post-affiliatespixelstable",
+                  "api-reference/post-affiliatespixels",
+                  "api-reference/put-affiliatespixel"
+                ]
+              },
+              {
+                "group": "Invoices",
+                "expanded": false,
+                "pages": [
+                  "api-reference/post-affiliatesinvoicestable",
+                  "api-reference/get-affiliatesinvoice"
+                ]
+              },
+              {
+                "group": "Coupon Codes",
+                "expanded": false,
+                "pages": [
+                  "api-reference/get-affiliatescouponcodes"
+                ]
+              },
+              {
+                "group": "Traffic",
+                "expanded": false,
+                "pages": [
+                  "api-reference/get-affiliatestrafficblocking",
+                  "api-reference/get-affiliatestrafficcontrols",
+                  "api-reference/get-affiliatestrafficcontrol",
+                  "api-reference/post-affiliatesblockedvariables"
+                ]
+              },
+              {
+                "group": "Encoding / Decoding",
+                "expanded": false,
+                "pages": [
+                  "api-reference/post-affiliatesencode",
+                  "api-reference/post-affiliatesdecode"
                 ]
               }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Advertiser API",
+        "groups": [
+          {
+            "group": "Advertiser API",
+            "pages": [
+              {
+                "group": "Offers",
+                "expanded": false,
+                "pages": [
+                  "api-reference/get-advertisersoffers",
+                  "api-reference/get-advertisersoffer"
+                ]
+              },
+              {
+                "group": "Reporting",
+                "expanded": false,
+                "pages": [
+                  "api-reference/post-advertisersreportingentity",
+                  "api-reference/post-advertisersreportingconversions",
+                  "api-reference/post-advertisersreportingconversionsexport",
+                  "api-reference/get-advertisersreportingconversion",
+                  "api-reference/post-advertisersdashboardsummary"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Marketplace API",
+        "groups": [
+          {
+            "group": "Marketplace API",
+            "pages": [
+              {
+                "group": "Connections",
+                "expanded": false,
+                "pages": [
+                  "api-reference/post-partnersconnectionstable"
+                ]
+              },
+              {
+                "group": "Offers",
+                "expanded": false,
+                "pages": [
+                  "api-reference/get-partnersoffersrunnable",
+                  "api-reference/get-partnersoffer"
+                ]
+              },
+              {
+                "group": "Earnings",
+                "expanded": false,
+                "pages": [
+                  "api-reference/post-partnerspayments"
+                ]
+              },
+              {
+                "group": "API Keys",
+                "expanded": false,
+                "pages": [
+                  "api-reference/get-partnersapikeys"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Webhooks",
+        "groups": [
+          {
+            "group": "Webhooks",
+            "pages": [
+              "webhooks/overview",
+              "webhooks/advertiser-webhooks",
+              "webhooks/offer-webhooks",
+              "webhooks/partner-webhooks"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "SDK",
+        "groups": [
+          {
+            "group": "JavaScript SDK",
+            "pages": [
+              "sdk/overview",
+              "sdk/click-tracking",
+              "sdk/conversion-tracking",
+              "sdk/impression-tracking"
             ]
           }
         ]

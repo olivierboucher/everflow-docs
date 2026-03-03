@@ -1,0 +1,14 @@
+---
+title: Stream Clicks
+openapi: /openapi/affiliate-reporting.yaml post /affiliates/reporting/clicks/stream
+---
+
+Extract a raw list of individual clicks for your affiliate account. Each click is returned as a separate element with transaction ID, sub-parameters, revenue, IP address, and related offer/geo/device data.
+
+**Constraints:**
+
+- Maximum **5,000** clicks per request
+- Date range limited to **14 days** or less (returns `400` if exceeded)
+- Dates must be in `YYYY-mm-DD HH:MM:SS` format
+
+This endpoint is intended for granular click-level analysis over short time windows. Do not use it to extract your entire click history -- use the Request Report feature for large-scale exports instead.

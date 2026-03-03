@@ -1,0 +1,188 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Offer Visibility
+  description: Endpoints for managing offer visibility settings in the Everflow network.
+  version: 1.0.0
+servers:
+  - url: https://api.eflow.team/v1
+tags:
+  - name: Offer Visibility
+paths:
+  /networks/offers/{offerId}/visibility:
+    get:
+      summary: Get Offer Visibility
+      description: >
+        Retrieve the visibility settings for a specific offer. Returns the
+        lists of affiliate IDs that have visible, rejected, or hidden access
+        to the offer.
+      tags:
+        - Offer Visibility
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: integer
+          description: The offer ID.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  network_id:
+                    type: integer
+                    description: Network ID.
+                  network_offer_id:
+                    type: integer
+                    description: Offer ID.
+                  network_affiliate_visible_ids:
+                    type: array
+                    items:
+                      type: integer
+                    description: Affiliate IDs with visible access to the offer.
+                  network_affiliate_rejected_ids:
+                    type: array
+                    items:
+                      type: integer
+                    description: Affiliate IDs with rejected access to the offer.
+                  network_affiliate_hidden_ids:
+                    type: array
+                    items:
+                      type: integer
+                    description: Affiliate IDs with hidden access to the offer.
+      security:
+        - API Key: []
+    put:
+      summary: Set Offer Visibility
+      description: >
+        Update the visibility settings for a specific offer. This operation
+        completely overwrites the existing visibility settings for the
+        specified set type. Provide the list of affiliate IDs and the
+        visibility type (visible or hidden).
+      tags:
+        - Offer Visibility
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            type: integer
+          description: The offer ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              network_affiliate_ids: [5, 10, 15]
+              set_type: "visible"
+            schema:
+              type: object
+              required:
+                - network_affiliate_ids
+                - set_type
+              properties:
+                network_affiliate_ids:
+                  type: array
+                  items:
+                    type: integer
+                  description: List of affiliate IDs to set visibility for.
+                set_type:
+                  type: string
+                  enum:
+                    - visible
+                    - hidden
+                  description: The visibility type to apply.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  network_id:
+                    type: integer
+                    description: Network ID.
+                  network_offer_id:
+                    type: integer
+                    description: Offer ID.
+                  network_affiliate_visible_ids:
+                    type: array
+                    items:
+                      type: integer
+                    description: Updated list of affiliate IDs with visible access.
+                  network_affiliate_rejected_ids:
+                    type: array
+                    items:
+                      type: integer
+                    description: Updated list of affiliate IDs with rejected access.
+                  network_affiliate_hidden_ids:
+                    type: array
+                    items:
+                      type: integer
+                    description: Updated list of affiliate IDs with hidden access.
+      security:
+        - API Key: []
+  /networks/affiliates/{affiliateId}/offers/visibility:
+    patch:
+      summary: Update Affiliate Offer Visibility
+      description: >
+        Update offer visibility for a specific affiliate. Provide a list of
+        offer IDs and the visibility type to set for that affiliate across
+        those offers.
+      tags:
+        - Offer Visibility
+      parameters:
+        - in: path
+          name: affiliateId
+          required: true
+          schema:
+            type: integer
+          description: The affiliate ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              network_offer_ids: [1, 2, 3]
+              visibility_type: "visible"
+            schema:
+              type: object
+              required:
+                - network_offer_ids
+                - visibility_type
+              properties:
+                network_offer_ids:
+                  type: array
+                  items:
+                    type: integer
+                  description: List of offer IDs to set visibility for.
+                visibility_type:
+                  type: string
+                  enum:
+                    - visible
+                    - hidden
+                  description: The visibility type to apply for the affiliate.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    description: Whether the update was successful.
+      security:
+        - API Key: []
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

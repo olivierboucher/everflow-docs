@@ -1,0 +1,71 @@
+---
+title: "Impression Tracking"
+description: "Log impression events using the Everflow JavaScript SDK."
+---
+
+The `EF.impression()` method records an impression event. Use this for CPM-based offers or when you need to track ad views.
+
+## Basic Usage
+
+```javascript
+EF.impression({
+  offer_id: 1,
+  affiliate_id: 1
+});
+```
+
+## Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `offer_id` | integer | Yes | The offer identifier |
+| `affiliate_id` | integer | Yes | The affiliate identifier |
+| `sub1` – `sub5` | string | No | Sub-placement tracking values |
+| `source_id` | string | No | Traffic source identifier |
+| `fbclid` | string | No | Facebook click ID |
+| `gclid` | string | No | Google click ID |
+| `tracking_domain` | string | No | Tracking domain override (for multi-tenant setups) |
+| `parameters` | object | No | Free-form custom key–value parameters |
+
+## Examples
+
+**Basic impression:**
+
+```javascript
+EF.impression({
+  offer_id: 1,
+  affiliate_id: 1
+});
+```
+
+**With URL parameters:**
+
+```javascript
+EF.impression({
+  offer_id: EF.urlParameter('oid'),
+  affiliate_id: EF.urlParameter('affid')
+});
+```
+
+**Multi-tenant with specific tracking domain:**
+
+```javascript
+EF.impression({
+  tracking_domain: 'www.tracking-domain-b.com',
+  offer_id: 50,
+  affiliate_id: 17
+});
+```
+
+**With custom parameters:**
+
+```javascript
+EF.impression({
+  offer_id: 1,
+  affiliate_id: 1,
+  parameters: {
+    placement: 'sidebar',
+    page_type: 'article'
+  }
+});
+```

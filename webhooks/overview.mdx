@@ -1,0 +1,42 @@
+---
+title: "Webhooks Overview"
+description: "Receive real-time notifications when events occur in your Everflow account."
+---
+
+Webhooks are automated HTTP POST messages sent from Everflow when events occur in your account. Unlike API calls, webhooks cannot be used on demand — they fire only when something happens inside Everflow.
+
+## How Webhooks Work
+
+When an event occurs (e.g., an advertiser is created or an offer is updated), Everflow sends an HTTP POST request to the URL you've configured. The request body contains a JSON payload with the full details of the affected resource.
+
+## Key Characteristics
+
+- **Push-based**: Everflow sends data to your endpoint — no polling needed
+- **No API key required**: Webhooks are configured in the Everflow UI, not via the API
+- **Network user only**: Webhook configuration is available exclusively to network administrators
+- **JSON payloads**: All webhook payloads are delivered as JSON
+
+## Setup
+
+Webhooks are configured directly inside the Everflow platform under **Control Center > Automations**. For detailed setup instructions, visit the [Everflow Helpdesk](https://helpdesk.everflow.io/).
+
+## Available Webhook Events
+
+Everflow supports webhooks for three resource types:
+
+| Resource | Events |
+|----------|--------|
+| **Advertiser** | Created, Updated, Signed Up |
+| **Offer** | Created, Updated |
+| **Partner** | Created, Updated, Signed Up, Sign Up Verdict |
+
+## Payload Format
+
+All webhook payloads match the response structure of the corresponding "Find By ID" API endpoint. For example, the Advertiser Created webhook payload matches the response from `GET /v1/networks/advertisers/{advertiserId}` with the `users` and `billing` relationships included.
+
+## Best Practices
+
+- **Respond quickly**: Return a `200` status code as fast as possible — process the payload asynchronously
+- **Verify payloads**: Validate that incoming requests match expected structure before processing
+- **Handle duplicates**: Webhooks may occasionally deliver the same event more than once — use the resource ID to deduplicate
+- **Use HTTPS**: Always use an HTTPS endpoint for webhook delivery
