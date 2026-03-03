@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "mintlify",
-      "runtimeExecutable": "mint",
-      "runtimeArgs": ["dev"],
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["mintlify", "dev"],
       "port": 3000
     }
   ]

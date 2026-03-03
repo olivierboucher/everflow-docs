@@ -1,0 +1,11 @@
+/* Vertical line indicator for nested sidebar groups */
+#sidebar-group > li[data-title] > ul {
+  margin-left: 1rem;
+  padding-left: 0.75rem;
+  border-left: 2px solid rgb(209 213 219);
+}
+
+/* Dark mode */
+.dark #sidebar-group > li[data-title] > ul {
+  border-left-color: rgb(75 85 99);
+}

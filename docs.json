@@ -14,20 +14,27 @@
         "tab": "User Guide",
         "groups": [
           {
-            "group": "Getting Started",
+            "group": "User Guide",
             "pages": [
-              "user-guide/authentication",
-              "user-guide/rate-limiting",
-              "user-guide/errors"
-            ]
-          },
-          {
-            "group": "Working with Data",
-            "pages": [
-              "user-guide/paging",
-              "user-guide/api-filters",
-              "user-guide/relationships",
-              "user-guide/rulesets"
+              {
+                "group": "Getting Started",
+                "expanded": true,
+                "pages": [
+                  "user-guide/authentication",
+                  "user-guide/rate-limiting",
+                  "user-guide/errors"
+                ]
+              },
+              {
+                "group": "Working with Data",
+                "expanded": true,
+                "pages": [
+                  "user-guide/paging",
+                  "user-guide/api-filters",
+                  "user-guide/relationships",
+                  "user-guide/rulesets"
+                ]
+              }
             ]
           }
         ]
@@ -60,11 +67,11 @@
                 "expanded": false,
                 "pages": [
                   "api-reference/post-networksadvertisers",
-                  "api-reference/get-networksadvertiser",
                   "api-reference/put-networksadvertiser",
-                  "api-reference/post-networksadvertiserstable",
+                  "api-reference/get-networksadvertiser",
                   "api-reference/get-networksadvertisers",
                   "api-reference/get-networksadvertisersshort",
+                  "api-reference/post-networksadvertiserstable",
                   "api-reference/get-networksadvertiserblacklist",
                   "api-reference/get-networksadvertiserglobalevents",
                   "api-reference/post-networksadvertiserevents",
@@ -76,10 +83,10 @@
                 "group": "Advertiser Users",
                 "expanded": false,
                 "pages": [
-                  "api-reference/get-networksadvertiserusers",
-                  "api-reference/get-networksadvertiserusersbyid",
                   "api-reference/post-networksadvertiserusers",
-                  "api-reference/put-networksadvertiseruser"
+                  "api-reference/put-networksadvertiseruser",
+                  "api-reference/get-networksadvertiserusersbyid",
+                  "api-reference/get-networksadvertiserusers"
                 ]
               },
               {
@@ -87,15 +94,15 @@
                 "expanded": false,
                 "pages": [
                   "api-reference/post-networksaffiliates",
-                  "api-reference/get-networksaffiliate",
                   "api-reference/put-networksaffiliate",
-                  "api-reference/post-networksaffiliatestable",
-                  "api-reference/get-networksaffiliates",
                   "api-reference/patch-networksaffiliatespatch",
                   "api-reference/patch-networksaffiliatespending",
-                  "api-reference/post-networksaffiliatespatchsubmit",
+                  "api-reference/get-networksaffiliate",
+                  "api-reference/get-networksaffiliates",
                   "api-reference/get-networksoffersrunnableids",
                   "api-reference/get-networksaffiliatetrackingurls",
+                  "api-reference/post-networksaffiliatestable",
+                  "api-reference/post-networksaffiliatespatchsubmit",
                   "api-reference/post-networksaffiliatereferrals"
                 ]
               },
@@ -103,23 +110,23 @@
                 "group": "Affiliate Users",
                 "expanded": false,
                 "pages": [
-                  "api-reference/get-networksaffiliateusersby",
-                  "api-reference/get-networksaffiliateusersall",
-                  "api-reference/get-networksaffiliateuser",
                   "api-reference/post-networksaffiliateusers",
                   "api-reference/put-networksaffiliateuser",
-                  "api-reference/post-networksaffiliateuserresetpassword",
-                  "api-reference/get-networksaffiliateuseremails"
+                  "api-reference/get-networksaffiliateuser",
+                  "api-reference/get-networksaffiliateusersby",
+                  "api-reference/get-networksaffiliateusersall",
+                  "api-reference/get-networksaffiliateuseremails",
+                  "api-reference/post-networksaffiliateuserresetpassword"
                 ]
               },
               {
                 "group": "Affiliate Tiers",
                 "expanded": false,
                 "pages": [
-                  "api-reference/get-networksaffiliatetiers",
-                  "api-reference/get-networksaffiliatetier",
                   "api-reference/post-networksaffiliatetiers",
                   "api-reference/put-networksaffiliatetier",
+                  "api-reference/get-networksaffiliatetier",
+                  "api-reference/get-networksaffiliatetiers",
                   "api-reference/patch-networksaffiliatetiersbulk"
                 ]
               },
@@ -127,12 +134,12 @@
                 "group": "Billing - Partner Invoices",
                 "expanded": false,
                 "pages": [
-                  "api-reference/post-networksbillingsinvoicestable",
-                  "api-reference/post-networksbillingssummary",
-                  "api-reference/get-networksbillingsinvoice",
                   "api-reference/post-networksbillingsinvoices",
                   "api-reference/put-networksbillingsinvoice",
                   "api-reference/patch-networksbillingsinvoices",
+                  "api-reference/get-networksbillingsinvoice",
+                  "api-reference/post-networksbillingsinvoicestable",
+                  "api-reference/post-networksbillingssummary",
                   "api-reference/post-networksbillingspayments"
                 ]
               },
@@ -140,10 +147,10 @@
                 "group": "Billing - Advertiser Invoices",
                 "expanded": false,
                 "pages": [
-                  "api-reference/post-networksbillingsadvinvoicestable",
-                  "api-reference/get-networksbillingsadvinvoice",
                   "api-reference/post-networksbillingsadvinvoices",
-                  "api-reference/patch-networksbillingsadvinvoices"
+                  "api-reference/patch-networksbillingsadvinvoices",
+                  "api-reference/get-networksbillingsadvinvoice",
+                  "api-reference/post-networksbillingsadvinvoicestable"
                 ]
               },
               {
@@ -157,10 +164,10 @@
                 "group": "Categories",
                 "expanded": false,
                 "pages": [
-                  "api-reference/get-networkscategories",
-                  "api-reference/get-networkscategory",
                   "api-reference/post-networkscategories",
-                  "api-reference/put-networkscategory"
+                  "api-reference/put-networkscategory",
+                  "api-reference/get-networkscategory",
+                  "api-reference/get-networkscategories"
                 ]
               },
               {
@@ -175,22 +182,22 @@
                 "group": "Coupon Codes",
                 "expanded": false,
                 "pages": [
-                  "api-reference/get-networkscouponcodes",
                   "api-reference/post-networkscouponcodes",
-                  "api-reference/get-networkscouponcode",
                   "api-reference/put-networkscouponcode",
-                  "api-reference/delete-networkscouponcode",
-                  "api-reference/post-networkscouponCodesbulk"
+                  "api-reference/get-networkscouponcode",
+                  "api-reference/get-networkscouponcodes",
+                  "api-reference/post-networkscouponCodesbulk",
+                  "api-reference/delete-networkscouponcode"
                 ]
               },
               {
                 "group": "Creatives",
                 "expanded": false,
                 "pages": [
-                  "api-reference/post-networkscreativestable",
                   "api-reference/post-networkscreatives",
-                  "api-reference/get-networkscreative",
                   "api-reference/put-networkscreative",
+                  "api-reference/get-networkscreative",
+                  "api-reference/post-networkscreativestable",
                   "api-reference/patch-networkscreativesapply"
                 ]
               },
@@ -198,54 +205,54 @@
                 "group": "Custom Caps",
                 "expanded": false,
                 "pages": [
-                  "api-reference/get-networkscustomcaps",
                   "api-reference/post-networkscustomcaps",
+                  "api-reference/patch-networkscustomcaps",
                   "api-reference/get-networkscustomcap",
-                  "api-reference/patch-networkscustomcaps"
+                  "api-reference/get-networkscustomcaps"
                 ]
               },
               {
                 "group": "Custom Creative Settings",
                 "expanded": false,
                 "pages": [
-                  "api-reference/get-networkscustomcreative",
                   "api-reference/post-networkscustomcreative",
-                  "api-reference/get-networkscustomcreativesetting",
                   "api-reference/put-networkscustomcreativesetting",
-                  "api-reference/delete-networkscustomcreativesetting",
-                  "api-reference/patch-networkscustomcreative"
+                  "api-reference/patch-networkscustomcreative",
+                  "api-reference/get-networkscustomcreativesetting",
+                  "api-reference/get-networkscustomcreative",
+                  "api-reference/delete-networkscustomcreativesetting"
                 ]
               },
               {
                 "group": "Custom Landing Pages",
                 "expanded": false,
                 "pages": [
-                  "api-reference/get-networkscustomlandingpages",
-                  "api-reference/post-networkscustomlandingpagetable",
                   "api-reference/post-networkscustomlandingpage",
-                  "api-reference/put-networkscustomlandingpage"
+                  "api-reference/put-networkscustomlandingpage",
+                  "api-reference/get-networkscustomlandingpages",
+                  "api-reference/post-networkscustomlandingpagetable"
                 ]
               },
               {
                 "group": "Custom Payout/Revenue",
                 "expanded": false,
                 "pages": [
-                  "api-reference/get-networkscustompayoutrevenue",
                   "api-reference/post-networkscustompayoutrevenue",
-                  "api-reference/get-networkscustompayoutrevenuesetting",
                   "api-reference/put-networkscustompayoutrevenuesetting",
-                  "api-reference/delete-networkscustompayoutrevenuesetting",
-                  "api-reference/patch-networkscustompayoutrevenue"
+                  "api-reference/patch-networkscustompayoutrevenue",
+                  "api-reference/get-networkscustompayoutrevenuesetting",
+                  "api-reference/get-networkscustompayoutrevenue",
+                  "api-reference/delete-networkscustompayoutrevenuesetting"
                 ]
               },
               {
                 "group": "Custom Scrub Rates",
                 "expanded": false,
                 "pages": [
-                  "api-reference/post-networkscustomscrubratetable",
                   "api-reference/post-networkscustomscrubrate",
-                  "api-reference/get-networkscustomscrubrate",
                   "api-reference/put-networkscustomscrubrate",
+                  "api-reference/get-networkscustomscrubrate",
+                  "api-reference/post-networkscustomscrubratetable",
                   "api-reference/delete-networkscustomscrubrate"
                 ]
               },
@@ -253,29 +260,29 @@
                 "group": "Employees",
                 "expanded": false,
                 "pages": [
-                  "api-reference/get-networksemployees",
                   "api-reference/post-networksemployees",
-                  "api-reference/put-networksemployee"
+                  "api-reference/put-networksemployee",
+                  "api-reference/get-networksemployees"
                 ]
               },
               {
                 "group": "Encoding & Labels",
                 "expanded": false,
                 "pages": [
-                  "api-reference/post-networksdecode",
                   "api-reference/post-networksencode",
-                  "api-reference/get-networkslabels",
-                  "api-reference/get-networkslabel",
+                  "api-reference/post-networksdecode",
                   "api-reference/post-networkslabels",
-                  "api-reference/put-networkslabel"
+                  "api-reference/put-networkslabel",
+                  "api-reference/get-networkslabel",
+                  "api-reference/get-networkslabels"
                 ]
               },
               {
                 "group": "Actions",
                 "expanded": false,
                 "pages": [
-                  "api-reference/post-networksactionstable",
                   "api-reference/post-networksactions",
+                  "api-reference/post-networksactionstable",
                   "api-reference/delete-networksaction"
                 ]
               },
@@ -291,10 +298,10 @@
                 "group": "Offer Groups",
                 "expanded": false,
                 "pages": [
-                  "api-reference/get-networksoffergroups",
                   "api-reference/post-networksoffergroups",
-                  "api-reference/get-networksoffergroup",
                   "api-reference/put-networksoffergroup",
+                  "api-reference/get-networksoffergroup",
+                  "api-reference/get-networksoffergroups",
                   "api-reference/post-networksoffergroupstable"
                 ]
               },
@@ -302,21 +309,21 @@
                 "group": "Offer URLs",
                 "expanded": false,
                 "pages": [
-                  "api-reference/get-networksofferurls",
                   "api-reference/post-networksofferurls",
-                  "api-reference/post-networksofferurlsbulk",
-                  "api-reference/get-networksofferurl",
                   "api-reference/put-networksofferurl",
-                  "api-reference/patch-networksofferurlsapply"
+                  "api-reference/patch-networksofferurlsapply",
+                  "api-reference/get-networksofferurl",
+                  "api-reference/get-networksofferurls",
+                  "api-reference/post-networksofferurlsbulk"
                 ]
               },
               {
                 "group": "Offer Visibility",
                 "expanded": false,
                 "pages": [
-                  "api-reference/get-networksoffervisibility",
                   "api-reference/put-networksoffervisibility",
                   "api-reference/patch-networksaffiliateoffervisibility",
+                  "api-reference/get-networksoffervisibility",
                   "api-reference/post-networksoffervisibilitytable"
                 ]
               },
@@ -325,32 +332,32 @@
                 "expanded": false,
                 "pages": [
                   "api-reference/post-networksoffers",
-                  "api-reference/get-networksoffer",
                   "api-reference/put-networksoffer",
-                  "api-reference/post-networksofferstable",
+                  "api-reference/patch-networksofferspatch",
+                  "api-reference/get-networksoffer",
                   "api-reference/get-networksoffersall",
                   "api-reference/get-networksoffersbasic",
+                  "api-reference/post-networksofferstable",
                   "api-reference/post-networksoffersstream",
                   "api-reference/post-networksofferscopy",
-                  "api-reference/patch-networksofferspatch",
                   "api-reference/post-networksofferspatchsubmit",
                   "api-reference/post-networksoffertrackingurl",
                   "api-reference/post-networksofferimpressionurl",
-                  "api-reference/get-networksofferpayoutrevenue",
                   "api-reference/put-networksofferpayoutrevenue",
-                  "api-reference/get-networksofferforwardingrule",
-                  "api-reference/put-networksofferforwardingrule"
+                  "api-reference/get-networksofferpayoutrevenue",
+                  "api-reference/put-networksofferforwardingrule",
+                  "api-reference/get-networksofferforwardingrule"
                 ]
               },
               {
                 "group": "Partner Postbacks",
                 "expanded": false,
                 "pages": [
-                  "api-reference/post-networkspixelstable",
                   "api-reference/post-networkspixels",
-                  "api-reference/get-networkspixel",
                   "api-reference/put-networkspixel",
+                  "api-reference/get-networkspixel",
                   "api-reference/get-networkspixels",
+                  "api-reference/post-networkspixelstable",
                   "api-reference/delete-networkspixel"
                 ]
               },
@@ -393,9 +400,9 @@
                 "group": "Reporting - On-Hold Conversions",
                 "expanded": false,
                 "pages": [
+                  "api-reference/patch-networksreportingonholdconversions",
                   "api-reference/post-networksreportingonholdconversions",
-                  "api-reference/post-networksreportingonholdconversionsstream",
-                  "api-reference/patch-networksreportingonholdconversions"
+                  "api-reference/post-networksreportingonholdconversionsstream"
                 ]
               },
               {
@@ -410,8 +417,8 @@
                 "group": "Reporting - Adjustments",
                 "expanded": false,
                 "pages": [
-                  "api-reference/get-networksreportingadjustments",
                   "api-reference/post-networksreportingadjustments",
+                  "api-reference/get-networksreportingadjustments",
                   "api-reference/post-networksreportingadjustmentstable"
                 ]
               },
@@ -419,26 +426,26 @@
                 "group": "Conversion Management",
                 "expanded": false,
                 "pages": [
+                  "api-reference/post-networksreportingconversionscreate",
                   "api-reference/put-networksreportingconversionspayoutrevenue",
                   "api-reference/patch-networksreportingconversions",
-                  "api-reference/post-networksreportingconversionscreate",
-                  "api-reference/post-networksreportingconversionsbyemail",
                   "api-reference/patch-networksreportingconversionsbytxnid",
-                  "api-reference/post-networksreportingconversionsbytxnids",
                   "api-reference/patch-networksreportingconversionssaleamount",
-                  "api-reference/post-networksreportinguploadconversions",
+                  "api-reference/get-networksreportingconversionupload",
                   "api-reference/post-networksreportingconversionuploadstable",
-                  "api-reference/get-networksreportingconversionupload"
+                  "api-reference/post-networksreportingconversionsbyemail",
+                  "api-reference/post-networksreportingconversionsbytxnids",
+                  "api-reference/post-networksreportinguploadconversions"
                 ]
               },
               {
                 "group": "Smart Links",
                 "expanded": false,
                 "pages": [
-                  "api-reference/get-networkscampaigns",
                   "api-reference/post-networkscampaigns",
-                  "api-reference/get-networkscampaign",
                   "api-reference/put-networkscampaign",
+                  "api-reference/get-networkscampaign",
+                  "api-reference/get-networkscampaigns",
                   "api-reference/post-networkscampaignstracking"
                 ]
               },
@@ -446,9 +453,9 @@
                 "group": "Terms & Conditions",
                 "expanded": false,
                 "pages": [
-                  "api-reference/get-networkstermsconditions",
-                  "api-reference/get-networksaffiliatetnc",
                   "api-reference/put-networksaffiliatetnc",
+                  "api-reference/get-networksaffiliatetnc",
+                  "api-reference/get-networkstermsconditions",
                   "api-reference/post-networksaffiliatetnctable"
                 ]
               },
@@ -456,9 +463,9 @@
                 "group": "Tiered Commissions",
                 "expanded": false,
                 "pages": [
-                  "api-reference/post-networkstieredcommissionstable",
+                  "api-reference/put-networkstieredcommission",
                   "api-reference/get-networkstieredcommission",
-                  "api-reference/put-networkstieredcommission"
+                  "api-reference/post-networkstieredcommissionstable"
                 ]
               },
               {
@@ -481,10 +488,10 @@
                 "group": "Traffic Controls",
                 "expanded": false,
                 "pages": [
-                  "api-reference/get-networkstrafficcontrols",
-                  "api-reference/get-networkstrafficcontrol",
                   "api-reference/post-networkstrafficcontrols",
-                  "api-reference/put-networkstrafficcontrol"
+                  "api-reference/put-networkstrafficcontrol",
+                  "api-reference/get-networkstrafficcontrol",
+                  "api-reference/get-networkstrafficcontrols"
                 ]
               },
               {
@@ -513,28 +520,28 @@
                 "group": "Report Schedules",
                 "expanded": false,
                 "pages": [
-                  "api-reference/get-networksreportschedule",
-                  "api-reference/put-networksreportschedule"
+                  "api-reference/put-networksreportschedule",
+                  "api-reference/get-networksreportschedule"
                 ]
               },
               {
                 "group": "Signup",
                 "expanded": false,
                 "pages": [
-                  "api-reference/get-networkssignupaffiliate",
-                  "api-reference/put-networkssignupaffiliate",
                   "api-reference/post-networkssignupaffiliate",
+                  "api-reference/put-networkssignupaffiliate",
+                  "api-reference/get-networkssignupaffiliate",
                   "api-reference/post-networkssignupaffiliatelogin",
-                  "api-reference/get-networkssignupadvertiser",
-                  "api-reference/post-networkssignupadvertiser"
+                  "api-reference/post-networkssignupadvertiser",
+                  "api-reference/get-networkssignupadvertiser"
                 ]
               },
               {
                 "group": "Webhooks API",
                 "expanded": false,
                 "pages": [
-                  "api-reference/get-networkswebhook",
-                  "api-reference/post-networkswebhooks"
+                  "api-reference/post-networkswebhooks",
+                  "api-reference/get-networkswebhook"
                 ]
               }
             ]
@@ -563,13 +570,13 @@
                 "group": "Offers",
                 "expanded": false,
                 "pages": [
-                  "api-reference/get-affiliatesalloffers",
-                  "api-reference/get-affiliatesoffersrunnable",
                   "api-reference/get-affiliatesoffer",
                   "api-reference/get-affiliatesofferurl",
                   "api-reference/get-affiliatesofferimpressionurl",
-                  "api-reference/post-affiliatesofferstable",
+                  "api-reference/get-affiliatesalloffers",
+                  "api-reference/get-affiliatesoffersrunnable",
                   "api-reference/get-affiliatesoffersall",
+                  "api-reference/post-affiliatesofferstable",
                   "api-reference/post-affiliatesoffersrunnableids",
                   "api-reference/post-affiliatesoffertrackingurl"
                 ]
@@ -608,28 +615,28 @@
                 "group": "Deals",
                 "expanded": false,
                 "pages": [
-                  "api-reference/get-affiliatesofferdeals",
                   "api-reference/post-affiliatesdeals",
-                  "api-reference/get-affiliatesofferdeal"
+                  "api-reference/get-affiliatesofferdeal",
+                  "api-reference/get-affiliatesofferdeals"
                 ]
               },
               {
                 "group": "Postbacks",
                 "expanded": false,
                 "pages": [
-                  "api-reference/get-affiliatespixels",
-                  "api-reference/get-affiliatespixel",
-                  "api-reference/post-affiliatespixelstable",
                   "api-reference/post-affiliatespixels",
-                  "api-reference/put-affiliatespixel"
+                  "api-reference/put-affiliatespixel",
+                  "api-reference/get-affiliatespixel",
+                  "api-reference/get-affiliatespixels",
+                  "api-reference/post-affiliatespixelstable"
                 ]
               },
               {
                 "group": "Invoices",
                 "expanded": false,
                 "pages": [
-                  "api-reference/post-affiliatesinvoicestable",
-                  "api-reference/get-affiliatesinvoice"
+                  "api-reference/get-affiliatesinvoice",
+                  "api-reference/post-affiliatesinvoicestable"
                 ]
               },
               {
@@ -679,9 +686,9 @@
                 "group": "Traffic",
                 "expanded": false,
                 "pages": [
-                  "api-reference/get-affiliatestrafficblocking",
-                  "api-reference/get-affiliatestrafficcontrols",
                   "api-reference/get-affiliatestrafficcontrol",
+                  "api-reference/get-affiliatestrafficcontrols",
+                  "api-reference/get-affiliatestrafficblocking",
                   "api-reference/post-affiliatesblockedvariables"
                 ]
               },
@@ -721,8 +728,8 @@
                 "group": "Offers",
                 "expanded": false,
                 "pages": [
-                  "api-reference/get-advertisersoffers",
-                  "api-reference/get-advertisersoffer"
+                  "api-reference/get-advertisersoffer",
+                  "api-reference/get-advertisersoffers"
                 ]
               },
               {
@@ -754,16 +761,16 @@
                 "group": "Connections",
                 "expanded": false,
                 "pages": [
-                  "api-reference/post-partnersconnectionstable",
-                  "api-reference/get-partnersconnectionsactive"
+                  "api-reference/get-partnersconnectionsactive",
+                  "api-reference/post-partnersconnectionstable"
                 ]
               },
               {
                 "group": "Offers",
                 "expanded": false,
                 "pages": [
-                  "api-reference/get-partnersoffersrunnable",
-                  "api-reference/get-partnersoffer"
+                  "api-reference/get-partnersoffer",
+                  "api-reference/get-partnersoffersrunnable"
                 ]
               },
               {
@@ -785,8 +792,8 @@
                 "group": "Demand Partners",
                 "expanded": false,
                 "pages": [
-                  "api-reference/get-partnersdemandpartners",
-                  "api-reference/get-partnersdemandpartner"
+                  "api-reference/get-partnersdemandpartner",
+                  "api-reference/get-partnersdemandpartners"
                 ]
               },
               {
