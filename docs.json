@@ -495,14 +495,6 @@
                 ]
               },
               {
-                "group": "API Keys",
-                "expanded": false,
-                "pages": [
-                  "api-reference/post-networksapikeys",
-                  "api-reference/delete-networksapikey"
-                ]
-              },
-              {
                 "group": "Audit Log",
                 "expanded": false,
                 "pages": [
@@ -794,13 +786,6 @@
                 "pages": [
                   "api-reference/get-partnersdemandpartner",
                   "api-reference/get-partnersdemandpartners"
-                ]
-              },
-              {
-                "group": "API Keys",
-                "expanded": false,
-                "pages": [
-                  "api-reference/get-partnersapikeys"
                 ]
               }
             ]
