@@ -109,6 +109,8 @@ paths:
                           - referer
                           - event_name
                           - connection_type
+                          - campaign
+                          - campaign_id
                           - tracking_domain
                           - hour
                           - date

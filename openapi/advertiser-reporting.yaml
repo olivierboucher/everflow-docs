@@ -82,7 +82,6 @@ paths:
                           - offer
                           - affiliate
                           - creative
-                          - coupon_code
                           - offer_url
                           - country
                           - country_code
@@ -104,9 +103,16 @@ paths:
                           - sub4
                           - sub5
                           - source_id
-                          - referer
-                          - event_name
                           - connection_type
+                          - advertiser_campaign_name
+                          - app_identifier
+                          - bundle_id
+                          - meta_platform
+                          - score_rating
+                          - total_rating
+                          - size
+                          - developer
+                          - version
                           - hour
                           - date
                           - week
@@ -157,7 +163,6 @@ paths:
                               - offer_url
                               - device_model
                               - os_version
-                              - coupon_code
                             description: The resource type / dimension to filter on.
                     metric_filters:
                       type: array
@@ -617,7 +622,6 @@ paths:
                           - offer
                           - affiliate
                           - creative
-                          - coupon_code
                           - offer_url
                           - country
                           - country_code
@@ -639,9 +643,16 @@ paths:
                           - sub4
                           - sub5
                           - source_id
-                          - referer
-                          - event_name
                           - connection_type
+                          - advertiser_campaign_name
+                          - app_identifier
+                          - bundle_id
+                          - meta_platform
+                          - score_rating
+                          - total_rating
+                          - size
+                          - developer
+                          - version
                           - hour
                           - date
                           - week
@@ -793,7 +804,6 @@ paths:
                           - offer
                           - affiliate
                           - creative
-                          - coupon_code
                           - offer_url
                           - country
                           - country_code
@@ -815,9 +825,16 @@ paths:
                           - sub4
                           - sub5
                           - source_id
-                          - referer
-                          - event_name
                           - connection_type
+                          - advertiser_campaign_name
+                          - app_identifier
+                          - bundle_id
+                          - meta_platform
+                          - score_rating
+                          - total_rating
+                          - size
+                          - developer
+                          - version
                           - hour
                           - date
                           - week

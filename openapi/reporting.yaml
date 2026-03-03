@@ -6166,7 +6166,6 @@ paths:
                         - sub4
                         - sub5
                         - event_name
-                        - network
                         - region
                         - city
                         - dma
@@ -6209,8 +6208,6 @@ paths:
                         - offer_status
                         - hourly
                         - originating_offer
-                        - customer_support_manager
-                        - admin_account_manager
                         - is_proxy
                         - affiliate_status
                         - coupon_code
@@ -6502,7 +6499,6 @@ paths:
                               - sub4
                               - sub5
                               - event_name
-                              - network
                               - currency
                               - connection_type
                               - campaign
@@ -6547,8 +6543,6 @@ paths:
                               - hourly
                               - previous_network_offer_id
                               - originating_offer
-                              - customer_support_manager
-                              - admin_account_manager
                               - is_proxy
                               - affiliate_status
                               - coupon_code
