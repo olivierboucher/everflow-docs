@@ -3968,7 +3968,6 @@ paths:
                             - affiliate
                             - advertiser
                             - creative
-                            - network
                             - account_manager
                             - affiliate_manager
                             - category
@@ -3982,11 +3981,6 @@ paths:
                             - device_type
                             - device_make
                             - browser
-                            - s1
-                            - s2
-                            - s3
-                            - s4
-                            - s5
                             - event_name
                             - language
                             - connection_type
@@ -4021,19 +4015,11 @@ paths:
                             - sub4
                             - sub5
                             - originating_offer
-                            - customer_support_manager
                             - channel
                             - coupon_code
                             - affiliate_tier
                             - tracking_domain
-                            - network_status
-                            - partner_type
                             - country_code
-                            - customer_billing_item_type
-                            - partner
-                            - vertical
-                            - client_type
-                            - offer_type
                             - advertiser_billing_frequency
                           type: string
                       type: object
@@ -4048,7 +4034,6 @@ paths:
                             - affiliate
                             - advertiser
                             - creative
-                            - network
                             - account_manager
                             - affiliate_manager
                             - category
@@ -4062,11 +4047,6 @@ paths:
                             - device_type
                             - device_make
                             - browser
-                            - s1
-                            - s2
-                            - s3
-                            - s4
-                            - s5
                             - event_name
                             - language
                             - connection_type
@@ -4101,19 +4081,11 @@ paths:
                             - sub4
                             - sub5
                             - originating_offer
-                            - customer_support_manager
                             - channel
                             - coupon_code
                             - affiliate_tier
                             - tracking_domain
-                            - network_status
-                            - partner_type
                             - country_code
-                            - customer_billing_item_type
-                            - partner
-                            - vertical
-                            - client_type
-                            - offer_type
                             - advertiser_billing_frequency
                           type: string
                       type: object
@@ -6250,7 +6222,6 @@ paths:
                             - affiliate
                             - advertiser
                             - creative
-                            - network
                             - account_manager
                             - affiliate_manager
                             - category
@@ -6264,11 +6235,6 @@ paths:
                             - device_type
                             - device_make
                             - browser
-                            - s1
-                            - s2
-                            - s3
-                            - s4
-                            - s5
                             - event_name
                             - language
                             - connection_type
@@ -6303,19 +6269,11 @@ paths:
                             - sub4
                             - sub5
                             - originating_offer
-                            - customer_support_manager
                             - channel
                             - coupon_code
                             - affiliate_tier
                             - tracking_domain
-                            - network_status
-                            - partner_type
                             - country_code
-                            - customer_billing_item_type
-                            - partner
-                            - vertical
-                            - client_type
-                            - offer_type
                             - advertiser_billing_frequency
                           type: string
                       type: object
@@ -6330,7 +6288,6 @@ paths:
                             - affiliate
                             - advertiser
                             - creative
-                            - network
                             - account_manager
                             - affiliate_manager
                             - category
@@ -6344,11 +6301,6 @@ paths:
                             - device_type
                             - device_make
                             - browser
-                            - s1
-                            - s2
-                            - s3
-                            - s4
-                            - s5
                             - event_name
                             - language
                             - connection_type
@@ -6383,19 +6335,11 @@ paths:
                             - sub4
                             - sub5
                             - originating_offer
-                            - customer_support_manager
                             - channel
                             - coupon_code
                             - affiliate_tier
                             - tracking_domain
-                            - network_status
-                            - partner_type
                             - country_code
-                            - customer_billing_item_type
-                            - partner
-                            - vertical
-                            - client_type
-                            - offer_type
                             - advertiser_billing_frequency
                           type: string
                       type: object

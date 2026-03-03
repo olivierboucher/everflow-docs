@@ -163,6 +163,12 @@ paths:
                               - offer_url
                               - device_model
                               - os_version
+                              - coupon_code
+                              - adv1
+                              - adv2
+                              - adv3
+                              - adv4
+                              - adv5
                             description: The resource type / dimension to filter on.
                     metric_filters:
                       type: array
