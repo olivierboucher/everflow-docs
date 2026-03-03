@@ -1,0 +1,269 @@
+---
+title: "Conversion & Event Webhooks"
+description: "Webhook events fired when conversions or post-conversion events are registered."
+---
+
+Conversion and event webhooks notify your endpoint when new conversions or post-conversion events are recorded in your network. Both webhook types use the same handler and share an identical payload structure.
+
+## Events
+
+### Conversion Registered
+
+Fired when a new conversion is recorded in the system. This includes conversions from clicks, impression-based (view-through) conversions, and manually uploaded conversions.
+
+### Event Registered
+
+Fired when a post-conversion event is recorded. Events are additional actions that occur after the initial conversion (e.g., a purchase after a signup, or an upsell after an initial order).
+
+The payload structure is identical to Conversion Registered. You can distinguish events from base conversions using the `is_event` field and the `event` field which contains the event name.
+
+## Payload Structure
+
+The conversion webhook uses a **simplified conversion payload** — it does not match the full conversion reporting response. It includes core conversion fields with basic offer, advertiser, and affiliate relationships.
+
+### Core Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `conversion_id` | integer | Unique conversion identifier |
+| `conversion_unix_timestamp` | integer | Unix timestamp when the conversion occurred |
+| `status` | string | Conversion status (approved, pending, rejected, invalid) |
+| `transaction_id` | string | Associated click transaction ID |
+| `click_unix_timestamp` | integer | Unix timestamp of the original click |
+| `is_event` | boolean | `true` if this is a post-conversion event, `false` for base conversions |
+| `event` | string | Event name (populated for events, empty for base conversions) |
+| `is_view_through` | boolean | `true` if this is a view-through conversion |
+| `currency_id` | string | Currency code |
+
+### Financial Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `payout` | number | Payout amount |
+| `revenue` | number | Revenue amount |
+| `payout_type` | string | Payout type |
+| `revenue_type` | string | Revenue type |
+| `sale_amount` | number | Sale amount (if applicable) |
+| `coupon_code` | string | Coupon code used (if applicable) |
+| `order_id` | string | Order identifier (if applicable) |
+
+### Tracking Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `sub1` through `sub5` | string | Subscriber tracking parameters |
+| `adv1` through `adv5` | string | Advertiser custom parameters |
+| `source_id` | string | Traffic source identifier |
+| `email` | string | User email (if captured) |
+
+### Geolocation & Device Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `country` | string | Country code |
+| `region` | string | Region/state |
+| `city` | string | City name |
+| `dma` | string | Designated Market Area |
+| `session_user_ip` | string | IP address from the click session |
+| `conversion_user_ip` | string | IP address at conversion time |
+| `carrier` | string | Mobile carrier |
+| `platform` | string | Operating system |
+| `os_version` | string | OS version |
+| `device_type` | string | Device type (desktop, mobile, tablet) |
+| `device_model` | string | Device model name |
+| `brand` | string | Device brand |
+| `browser` | string | Browser name |
+| `language` | string | Browser language |
+| `http_user_agent` | string | Full user agent string |
+
+### Device Identifiers
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `idfa` | string | iOS Identifier for Advertisers |
+| `idfa_md5` | string | MD5 hash of IDFA |
+| `idfa_sha1` | string | SHA1 hash of IDFA |
+| `google_ad_id` | string | Google Advertising ID |
+| `google_ad_id_md5` | string | MD5 hash of Google Ad ID |
+| `google_ad_id_sha1` | string | SHA1 hash of Google Ad ID |
+| `android_id` | string | Android device ID |
+| `android_id_md5` | string | MD5 hash of Android ID |
+| `android_id_sha1` | string | SHA1 hash of Android ID |
+
+### Additional Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `url` | string | Conversion URL |
+| `isp` | string | Internet Service Provider |
+| `referer` | string | Referrer URL |
+| `app_id` | string | Application identifier |
+| `notes` | string | Custom notes |
+| `error_code` | integer | Error code (if applicable) |
+| `error_message` | string | Error message (if applicable) |
+| `previous_network_offer_id` | integer | Previous offer ID (for offer change tracking) |
+| `network_offer_payout_revenue_id` | integer | Payout/revenue rule ID |
+
+### Relationship Objects
+
+The webhook payload includes basic relationship objects:
+
+- **`offer`**: Basic offer details (ID, name, status)
+- **`advertiser`**: Basic advertiser details (ID, name)
+- **`affiliate`**: Basic affiliate details (ID, name)
+- **`query_parameters`**: Map of URL query parameters passed at conversion time
+
+## Example Payload (Conversion Registered)
+
+```json
+{
+  "conversion_id": 987654,
+  "conversion_unix_timestamp": 1709500000,
+  "status": "approved",
+  "transaction_id": "abc123def456",
+  "click_unix_timestamp": 1709499800,
+  "is_event": false,
+  "event": "",
+  "is_view_through": false,
+  "currency_id": "USD",
+  "payout": 25.00,
+  "revenue": 100.00,
+  "payout_type": "fixed",
+  "revenue_type": "fixed",
+  "sale_amount": 149.99,
+  "coupon_code": "SAVE20",
+  "order_id": "ORD-2024-001",
+  "sub1": "campaign_123",
+  "sub2": "ad_456",
+  "sub3": "",
+  "sub4": "",
+  "sub5": "",
+  "adv1": "",
+  "adv2": "",
+  "adv3": "",
+  "adv4": "",
+  "adv5": "",
+  "source_id": "google",
+  "email": "",
+  "country": "US",
+  "region": "CA",
+  "city": "Los Angeles",
+  "dma": "803",
+  "session_user_ip": "203.0.113.50",
+  "conversion_user_ip": "203.0.113.50",
+  "carrier": "",
+  "platform": "Windows",
+  "os_version": "10",
+  "device_type": "desktop",
+  "device_model": "",
+  "brand": "",
+  "browser": "Chrome",
+  "language": "en-US",
+  "http_user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+  "idfa": "",
+  "idfa_md5": "",
+  "idfa_sha1": "",
+  "google_ad_id": "",
+  "google_ad_id_md5": "",
+  "google_ad_id_sha1": "",
+  "android_id": "",
+  "android_id_md5": "",
+  "android_id_sha1": "",
+  "url": "https://brand.com/thankyou",
+  "isp": "Comcast",
+  "referer": "https://agency.com/landing",
+  "app_id": "",
+  "notes": "",
+  "error_code": 0,
+  "error_message": "",
+  "previous_network_offer_id": 0,
+  "network_offer_payout_revenue_id": 222,
+  "relationship": {
+    "offer": {
+      "network_offer_id": 12345,
+      "name": "Premium Subscription Offer",
+      "offer_status": "active"
+    },
+    "advertiser": {
+      "network_advertiser_id": 789,
+      "name": "Brand Corporation"
+    },
+    "affiliate": {
+      "network_affiliate_id": 456,
+      "name": "Performance Agency LLC"
+    },
+    "query_parameters": {
+      "utm_source": "partner",
+      "utm_medium": "affiliate"
+    }
+  }
+}
+```
+
+## Example Payload (Event Registered)
+
+```json
+{
+  "conversion_id": 987655,
+  "conversion_unix_timestamp": 1709503600,
+  "status": "approved",
+  "transaction_id": "abc123def456",
+  "click_unix_timestamp": 1709499800,
+  "is_event": true,
+  "event": "purchase",
+  "is_view_through": false,
+  "currency_id": "USD",
+  "payout": 5.00,
+  "revenue": 20.00,
+  "payout_type": "fixed",
+  "revenue_type": "fixed",
+  "sale_amount": 49.99,
+  "coupon_code": "",
+  "order_id": "ORD-2024-002",
+  "sub1": "campaign_123",
+  "sub2": "ad_456",
+  "sub3": "",
+  "sub4": "",
+  "sub5": "",
+  "adv1": "",
+  "adv2": "",
+  "adv3": "",
+  "adv4": "",
+  "adv5": "",
+  "source_id": "google",
+  "email": "",
+  "country": "US",
+  "region": "CA",
+  "city": "Los Angeles",
+  "dma": "803",
+  "session_user_ip": "203.0.113.50",
+  "conversion_user_ip": "203.0.113.50",
+  "platform": "Windows",
+  "os_version": "10",
+  "device_type": "desktop",
+  "browser": "Chrome",
+  "language": "en-US",
+  "url": "https://brand.com/upsell/complete",
+  "isp": "Comcast",
+  "notes": "",
+  "error_code": 0,
+  "error_message": "",
+  "network_offer_payout_revenue_id": 223,
+  "relationship": {
+    "offer": {
+      "network_offer_id": 12345,
+      "name": "Premium Subscription Offer",
+      "offer_status": "active"
+    },
+    "advertiser": {
+      "network_advertiser_id": 789,
+      "name": "Brand Corporation"
+    },
+    "affiliate": {
+      "network_affiliate_id": 456,
+      "name": "Performance Agency LLC"
+    },
+    "query_parameters": {}
+  }
+}
+```

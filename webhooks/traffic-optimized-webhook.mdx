@@ -1,0 +1,80 @@
+---
+title: "Traffic Optimized Webhook"
+description: "Webhook event fired when traffic optimization rules block traffic variables."
+---
+
+The Traffic Optimized webhook notifies your endpoint when Everflow's traffic optimization engine blocks traffic variables based on configured optimization rules.
+
+## Event
+
+### Traffic Optimized
+
+Fired when the traffic optimization system identifies and blocks underperforming traffic variables. The payload contains a list of all blocked variables for the optimization run.
+
+## Payload Structure
+
+The webhook payload contains a list of blocked variable entries, each representing a specific traffic variable that was blocked by the optimization engine.
+
+### Blocked Variable Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `network_traffic_optimization_blocked_variable_id` | integer | Unique identifier for this blocked variable entry |
+| `network_traffic_optimization_id` | integer | Parent optimization rule identifier |
+| `network_traffic_optimization_run_id` | integer | Specific optimization run that triggered the block |
+| `network_id` | integer | Network identifier |
+| `variable` | string | The traffic variable type being blocked (e.g., sub ID, source) |
+| `value` | string | The specific value of the variable that was blocked |
+| `network_offer_id` | integer | Offer associated with the blocked variable |
+| `network_affiliate_id` | integer | Partner associated with the blocked variable |
+| `manual_override` | boolean | Whether this block was manually overridden |
+| `action` | string | Action taken on the variable |
+| `time_created` | integer | Unix timestamp when the block was created |
+| `time_blocked` | integer | Unix timestamp when blocking started |
+| `time_blocked_until` | integer | Unix timestamp of when the block expires |
+
+### Relationship Objects
+
+Each blocked variable entry includes:
+
+- **`offer`**: Basic offer details (ID, name, status)
+- **`affiliate`**: Short affiliate details (ID, name)
+- **`reporting`**: Performance metrics including:
+  - `cvr`: Conversion rate for the blocked variable
+
+## Example Payload Structure
+
+```json
+{
+  "blocked_variables": [
+    {
+      "network_traffic_optimization_blocked_variable_id": 1001,
+      "network_traffic_optimization_id": 50,
+      "network_traffic_optimization_run_id": 200,
+      "network_id": 1,
+      "variable": "sub1",
+      "value": "traffic_source_123",
+      "network_offer_id": 100,
+      "network_affiliate_id": 200,
+      "manual_override": false,
+      "action": "block",
+      "time_created": 1709500000,
+      "time_blocked": 1709500000,
+      "time_blocked_until": 1709586400,
+      "relationship": {
+        "offer": {
+          "network_offer_id": 100,
+          "name": "Example Offer"
+        },
+        "affiliate": {
+          "network_affiliate_id": 200,
+          "name": "Example Partner"
+        },
+        "reporting": {
+          "cvr": 0.012
+        }
+      }
+    }
+  ]
+}
+```

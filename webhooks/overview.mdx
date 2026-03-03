@@ -7,7 +7,7 @@ Webhooks are automated HTTP POST messages sent from Everflow when events occur i
 
 ## How Webhooks Work
 
-When an event occurs (e.g., an advertiser is created or an offer is updated), Everflow sends an HTTP POST request to the URL you've configured. The request body contains a JSON payload with the full details of the affected resource.
+When an event occurs (e.g., an advertiser is created or a conversion is registered), Everflow sends an HTTP POST request to the URL you've configured. The request body contains a JSON payload with details of the affected resource.
 
 ## Key Characteristics
 
@@ -22,17 +22,28 @@ Webhooks are configured directly inside the Everflow platform under **Control Ce
 
 ## Available Webhook Events
 
-Everflow supports webhooks for three resource types:
+Everflow supports webhooks for the following event types:
 
-| Resource | Events |
-|----------|--------|
-| **Advertiser** | Created, Updated, Signed Up |
-| **Offer** | Created, Updated |
-| **Partner** | Created, Updated, Signed Up, Sign Up Verdict |
+| Resource | Events | Payload Type |
+|----------|--------|--------------|
+| **Offer** | Created, Updated | Matches Find Offer By ID response (with `targeting` relationship) |
+| **Advertiser** | Created, Updated, Signed Up | Matches Find Advertiser By ID response (with `users` and `billing` relationships) |
+| **Partner** | Created, Updated, Signed Up | Matches Find Affiliate By ID response (with `users` and `billing` relationships) |
+| **Partner Sign Up Verdict** | Sign Up Verdict | Custom flat payload with verdict details |
+| **Partner Approved for Offer** | Approved for Offer | Custom envelope with full offer and affiliate objects |
+| **Conversion** | Registered | Simplified conversion payload with offer, advertiser, and affiliate relationships |
+| **Event** | Registered | Same structure as Conversion Registered (for post-conversion events) |
+| **Traffic Optimization** | Optimized | List of blocked traffic variables with offer and affiliate relationships |
 
 ## Payload Format
 
-All webhook payloads match the response structure of the corresponding "Find By ID" API endpoint. For example, the Advertiser Created webhook payload matches the response from `GET /v1/networks/advertisers/{advertiserId}` with the `users` and `billing` relationships included.
+Webhook payloads vary by event type:
+
+- **CRUD webhooks** (Offer, Advertiser, Partner Created/Updated/Signed Up): Payloads closely match the response structure of the corresponding "Find By ID" API endpoint with specific relationships included. See individual webhook pages for details on which relationships are included.
+- **Partner Sign Up Verdict**: Uses a custom flat payload with the verdict decision and employee details.
+- **Partner Approved for Offer**: Uses a custom envelope containing the offer ID, affiliate ID, timestamps, and full nested offer and affiliate objects.
+- **Conversion / Event Registered**: Uses a simplified conversion payload with core conversion fields and basic offer, advertiser, and affiliate relationships.
+- **Traffic Optimization**: Returns a list of blocked traffic variables with offer and affiliate relationship data.
 
 ## Best Practices
 

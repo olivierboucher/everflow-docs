@@ -1,0 +1,72 @@
+---
+title: "Partner Approved for Offer Webhook"
+description: "Webhook event fired when a partner is approved to run a specific offer."
+---
+
+The Partner Approved for Offer webhook notifies your endpoint when a partner (affiliate) is approved to run a specific offer in your network.
+
+## Event
+
+### Partner Approved for Offer
+
+Fired when a partner receives approval to run an offer. This typically occurs when the network grants offer visibility or approves an offer application for a specific partner.
+
+## Payload Structure
+
+This webhook uses a **custom envelope payload** that contains top-level metadata fields along with full nested `offer` and `affiliate` objects.
+
+### Top-Level Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `offer_id` | integer | The offer the partner was approved for |
+| `affiliate_id` | integer | The partner who was approved |
+| `event_time` | integer | Unix timestamp of when the approval occurred |
+| `webhook_generation_time` | integer | Unix timestamp of when the webhook payload was generated |
+
+### Nested Objects
+
+#### `offer`
+
+Contains the full offer object matching the Find Offer By ID response structure, with the `targeting` relationship included. This is the same payload structure used by Offer Created/Updated webhooks.
+
+Key fields include:
+- `network_offer_id`, `name`, `offer_status`
+- `network_advertiser_id`, `currency_id`
+- `destination_url`, `preview_url`
+- `visibility`, `daily_conversion_cap`, `weekly_conversion_cap`, `monthly_conversion_cap`, `global_conversion_cap`
+- `targeting` relationship object
+
+#### `affiliate`
+
+Contains the full affiliate object matching the Find Affiliate By ID response structure.
+
+Key fields include:
+- `network_affiliate_id`, `name`, `account_status`
+- `network_id`, `default_currency_id`
+- `network_traffic_source_id`
+- `time_created`, `time_saved`
+
+## Example Payload Structure
+
+```json
+{
+  "offer_id": 123,
+  "affiliate_id": 456,
+  "event_time": 1709500000,
+  "webhook_generation_time": 1709500001,
+  "offer": {
+    "network_offer_id": 123,
+    "network_id": 1,
+    "name": "Example Offer",
+    "offer_status": "active",
+    "targeting": { ... }
+  },
+  "affiliate": {
+    "network_affiliate_id": 456,
+    "network_id": 1,
+    "name": "Example Partner",
+    "account_status": "active"
+  }
+}
+```

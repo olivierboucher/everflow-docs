@@ -814,9 +814,12 @@
             "group": "Webhooks",
             "pages": [
               "webhooks/overview",
-              "webhooks/advertiser-webhooks",
               "webhooks/offer-webhooks",
-              "webhooks/partner-webhooks"
+              "webhooks/advertiser-webhooks",
+              "webhooks/partner-webhooks",
+              "webhooks/partner-approved-for-offer-webhook",
+              "webhooks/conversion-webhooks",
+              "webhooks/traffic-optimized-webhook"
             ]
           }
         ]

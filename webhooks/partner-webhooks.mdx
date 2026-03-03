@@ -44,17 +44,19 @@ Fired when a partner self-registers via the signup form. If email verification i
 
 Fired when a network employee approves or rejects a signup application. Note: The Partner Updated webhook also fires when this event occurs.
 
-**Payload** (minimal):
+This webhook uses a **custom flat payload** that does not match the standard Find Affiliate By ID response.
+
+**Payload:**
 
 | Field | Type | Description |
 |-------|------|-------------|
 | `network_id` | integer | Network identifier |
 | `network_affiliate_id` | integer | Partner identifier |
 | `network_affiliate_name` | string | Partner name |
-| `new_status` | string | New status: `active` or `inactive` |
+| `new_status` | enum | New status value (maps to the partner account status) |
 | `employee_id` | integer | Employee who made the decision |
-| `employee_full_name` | string | Employee name |
-| `timestamp` | integer | Unix timestamp of the decision |
+| `employee_full_name` | string | Full name of the employee |
+| `timestamp` | integer | Unix timestamp of the last update to the partner record |
 
 ## Common Payload Fields
 
@@ -70,3 +72,162 @@ All partner webhook payloads (except Sign Up Verdict) include:
 | `network_traffic_source_id` | integer | Traffic source |
 | `time_created` | integer | Creation timestamp |
 | `time_saved` | integer | Last update timestamp |
+
+## Example Payload (Created / Updated)
+
+```json
+{
+  "network_affiliate_id": 456,
+  "network_id": 1,
+  "name": "Performance Agency LLC",
+  "account_status": "active",
+  "network_employee_id": 102,
+  "account_executive_id": 103,
+  "default_currency_id": "USD",
+  "network_traffic_source_id": 5,
+  "internal_notes": "",
+  "time_created": 1709500000,
+  "time_saved": 1709500000,
+  "relationship": {
+    "labels": {
+      "total": 2,
+      "label_entry_list": ["tier1", "mobile"]
+    },
+    "account_manager": {
+      "first_name": "Bob",
+      "last_name": "Handler",
+      "email": "bob@network.com",
+      "cell_phone": "+1-555-0200",
+      "work_phone": "+1-555-0201"
+    },
+    "account_executive": {
+      "first_name": "Alice",
+      "last_name": "Executive",
+      "email": "alice@network.com"
+    },
+    "contact_address": {
+      "network_address_id": 666,
+      "address_line_1": "456 Partner Ave",
+      "city": "San Francisco",
+      "state": "CA",
+      "postal_code": "94105",
+      "country_code": "US"
+    },
+    "users": {
+      "total": 1,
+      "user_entities": [
+        {
+          "network_affiliate_user_id": 2001,
+          "network_affiliate_id": 456,
+          "first_name": "Jane",
+          "last_name": "Affiliate",
+          "email": "jane@agency.com",
+          "title": "Affiliate Manager",
+          "account_status": "active",
+          "work_phone": "+1-555-2234",
+          "cell_phone": "+1-555-6678",
+          "language_id": 1,
+          "timezone_id": 12,
+          "currency_id": "USD",
+          "time_created": 1709500000,
+          "time_saved": 1709500000
+        }
+      ]
+    },
+    "billing": {
+      "network_affiliate_billing_id": 3001,
+      "network_affiliate_id": 456,
+      "invoice_method": "manual",
+      "payment_method": "ach",
+      "payment_term_days": 14,
+      "currency_id": "USD"
+    }
+  }
+}
+```
+
+## Example Payload (Signed Up)
+
+The Signed Up event includes the same base structure as Created/Updated, with an additional `sign_up` relationship:
+
+```json
+{
+  "network_affiliate_id": 457,
+  "network_id": 1,
+  "name": "New Partner Co",
+  "account_status": "pending",
+  "default_currency_id": "USD",
+  "network_traffic_source_id": 0,
+  "time_created": 1709500000,
+  "time_saved": 1709500000,
+  "relationship": {
+    "users": {
+      "total": 1,
+      "user_entities": [
+        {
+          "network_affiliate_user_id": 2010,
+          "network_affiliate_id": 457,
+          "first_name": "Tom",
+          "last_name": "Partner",
+          "email": "tom@newpartner.com",
+          "account_status": "active",
+          "time_created": 1709500000,
+          "time_saved": 1709500000
+        }
+      ]
+    },
+    "billing": {
+      "network_affiliate_billing_id": 3010,
+      "network_affiliate_id": 457,
+      "currency_id": "USD"
+    },
+    "sign_up": {
+      "network_affiliate_signup_info_id": 4002,
+      "network_affiliate_id": 457,
+      "company_description": "Performance marketing agency",
+      "website_url": "https://newpartner.com",
+      "time_created": 1709500000,
+      "time_saved": 1709500000,
+      "relationship": {
+        "custom_field_values": [
+          {
+            "network_affiliate_signup_info_custom_field_value_id": 5002,
+            "network_affiliate_id": 457,
+            "network_signup_custom_field_id": 701,
+            "value": "Social Media"
+          }
+        ],
+        "mailing_address": {
+          "network_address_id": 888,
+          "address_line_1": "789 Agency Blvd",
+          "city": "San Francisco",
+          "state": "CA",
+          "postal_code": "94105",
+          "country_code": "US"
+        },
+        "promotional_information": [
+          {
+            "network_affiliate_promotional_information_id": 6001,
+            "promotion_type": "blog",
+            "promotion_description": "Featured in industry blogs"
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+## Example Payload (Sign Up Verdict)
+
+```json
+{
+  "network_id": 1,
+  "network_affiliate_id": 457,
+  "network_affiliate_name": "New Partner Co",
+  "new_status": "active",
+  "employee_id": 102,
+  "employee_full_name": "Bob Handler",
+  "timestamp": 1709500000
+}
+```

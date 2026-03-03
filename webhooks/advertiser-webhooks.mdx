@@ -60,3 +60,145 @@ All advertiser webhook payloads include:
 - **`account_manager`**: Assigned account manager details
 - **`contact_address`**: Business contact address
 - **`signup`** *(Signed Up event only)*: Signup form data including website URL, referral code, and promotional information
+
+## Example Payload (Created / Updated)
+
+```json
+{
+  "network_advertiser_id": 789,
+  "network_id": 1,
+  "name": "Brand Corporation",
+  "account_status": "active",
+  "network_employee_id": 100,
+  "sales_manager_id": 101,
+  "default_currency_id": "USD",
+  "attribution_method": "last_touch",
+  "platform_name": "Brand Platform",
+  "platform_url": "https://brand.com",
+  "internal_notes": "",
+  "time_created": 1709500000,
+  "time_saved": 1709500000,
+  "relationship": {
+    "labels": {
+      "total": 1,
+      "label_entry_list": ["vip"]
+    },
+    "account_manager": {
+      "first_name": "John",
+      "last_name": "Manager",
+      "email": "john@network.com",
+      "cell_phone": "+1-555-0100",
+      "work_phone": "+1-555-0101"
+    },
+    "sale_manager": {
+      "first_name": "Jane",
+      "last_name": "Sales",
+      "email": "jane@network.com",
+      "cell_phone": "+1-555-0102",
+      "work_phone": "+1-555-0103"
+    },
+    "contact_address": {
+      "network_address_id": 555,
+      "address_line_1": "123 Main St",
+      "address_line_2": "Suite 100",
+      "city": "New York",
+      "state": "NY",
+      "postal_code": "10001",
+      "country_code": "US"
+    },
+    "users": {
+      "total": 1,
+      "user_entities": [
+        {
+          "network_advertiser_user_id": 1001,
+          "network_advertiser_id": 789,
+          "first_name": "Alex",
+          "last_name": "Smith",
+          "email": "alex@brand.com",
+          "title": "Marketing Manager",
+          "account_status": "active",
+          "work_phone": "+1-555-1234",
+          "cell_phone": "+1-555-5678",
+          "language_id": 1,
+          "timezone_id": 10,
+          "currency_id": "USD",
+          "time_created": 1709500000,
+          "time_saved": 1709500000
+        }
+      ]
+    },
+    "billing": {
+      "network_advertiser_billing_id": 2001,
+      "network_advertiser_id": 789,
+      "invoice_method": "manual",
+      "payment_method": "bank_transfer",
+      "payment_term_days": 30,
+      "currency_id": "USD"
+    }
+  }
+}
+```
+
+## Example Payload (Signed Up)
+
+The Signed Up event includes the same base structure as Created/Updated, with an additional `sign_up` relationship:
+
+```json
+{
+  "network_advertiser_id": 790,
+  "network_id": 1,
+  "name": "New Advertiser Inc",
+  "account_status": "pending",
+  "default_currency_id": "USD",
+  "time_created": 1709500000,
+  "time_saved": 1709500000,
+  "relationship": {
+    "users": {
+      "total": 1,
+      "user_entities": [
+        {
+          "network_advertiser_user_id": 1010,
+          "network_advertiser_id": 790,
+          "first_name": "Sarah",
+          "last_name": "Johnson",
+          "email": "sarah@newadvertiser.com",
+          "account_status": "active",
+          "time_created": 1709500000,
+          "time_saved": 1709500000
+        }
+      ]
+    },
+    "billing": {
+      "network_advertiser_billing_id": 2010,
+      "network_advertiser_id": 790,
+      "currency_id": "USD"
+    },
+    "sign_up": {
+      "network_advertiser_signup_info_id": 4001,
+      "network_advertiser_id": 790,
+      "company_description": "E-commerce brand specializing in home goods",
+      "website_url": "https://newadvertiser.com",
+      "time_created": 1709500000,
+      "time_saved": 1709500000,
+      "relationship": {
+        "custom_field_values": [
+          {
+            "network_advertiser_signup_info_custom_field_value_id": 5001,
+            "network_advertiser_id": 790,
+            "network_signup_custom_field_id": 601,
+            "value": "Retail"
+          }
+        ],
+        "mailing_address": {
+          "network_address_id": 777,
+          "address_line_1": "123 Corporate Blvd",
+          "city": "New York",
+          "state": "NY",
+          "postal_code": "10001",
+          "country_code": "US"
+        }
+      }
+    }
+  }
+}
+```

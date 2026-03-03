@@ -11,7 +11,7 @@ Offer webhooks notify your endpoint when changes occur to offers in your network
 
 Fired when a new offer is created. This event does **not** fire when related objects are created (e.g., new offer URLs, Smart Links, or creatives).
 
-**Payload**: Matches the Find Offer By ID endpoint response.
+**Payload**: Matches the Find Offer By ID endpoint response with the `targeting` relationship always included.
 
 ### Offer Updated
 
@@ -29,7 +29,7 @@ Fired when the offer itself is modified.
 - Custom payout/revenue for specific partners
 - New or modified offer URLs
 
-**Payload**: Same structure as Offer Created.
+**Payload**: Same structure as Offer Created (includes `targeting` relationship).
 
 ## Payload Fields
 
@@ -51,8 +51,79 @@ Fired when the offer itself is modified.
 
 ### Relationship Objects
 
+- **`targeting`**: Offer targeting configuration (always included in webhook payloads)
 - **`category`**: Offer category details
 - **`labels`**: Applied labels
 - **`payouts`**: Payout/revenue entries
 - **`channels`**: Associated channels
 - **`thumbnail_asset`**: Thumbnail image details
+
+## Example Payload
+
+```json
+{
+  "network_offer_id": 12345,
+  "network_id": 1,
+  "network_advertiser_id": 789,
+  "network_category_id": 456,
+  "name": "Premium Subscription Offer",
+  "offer_status": "active",
+  "currency_id": "USD",
+  "destination_url": "https://brand.com/subscribe?tid={transaction_id}",
+  "preview_url": "https://brand.com/subscribe",
+  "visibility": "require_approval",
+  "daily_conversion_cap": 500,
+  "weekly_conversion_cap": 0,
+  "monthly_conversion_cap": 10000,
+  "global_conversion_cap": 0,
+  "time_created": 1709500000,
+  "time_saved": 1709500000,
+  "relationship": {
+    "labels": {
+      "total": 2,
+      "label_entry_list": ["premium", "subscription"]
+    },
+    "category": {
+      "network_category_id": 456,
+      "name": "E-Commerce"
+    },
+    "channels": {
+      "total": 1,
+      "channel_entities": [
+        {
+          "network_channel_id": 111,
+          "name": "Web"
+        }
+      ]
+    },
+    "payout_revenue": {
+      "total": 1,
+      "payout_revenue_entities": [
+        {
+          "network_offer_payout_revenue_id": 222,
+          "event_type": "conversion",
+          "payout_type": "fixed",
+          "payout_value": 25.00,
+          "payout_currency_id": "USD",
+          "revenue_type": "fixed",
+          "revenue_value": 100.00,
+          "is_default": true,
+          "must_approve_conversion": false,
+          "allow_duplicate_conversion": false
+        }
+      ]
+    },
+    "advertiser": {
+      "network_advertiser_id": 789,
+      "name": "Brand Corporation"
+    },
+    "targeting": {
+      "geo": {
+        "countries": ["US", "CA", "GB"]
+      },
+      "device_types": ["desktop", "mobile"],
+      "platforms": ["windows", "ios", "android"]
+    }
+  }
+}
+```
