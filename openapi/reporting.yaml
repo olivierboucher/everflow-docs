@@ -5551,6 +5551,228 @@ paths:
           description: OK
       security:
         - API Key: []
+  /networks/reporting/conversions/summary:
+    post:
+      summary: Get Conversion Summary
+      description: >
+        Returns a high-level summary of conversions and/or events for a given date range.
+        Provides counts broken down by status (approved, pending, invalid, rejected)
+        along with total payout, revenue, and gross sales amounts.
+
+
+        At least one of `show_conversions` or `show_events` must be set to `true`.
+        Supports the same query filters as the conversion report endpoint.
+
+
+        Limited to the prior 365 days and a maximum date range of one year.
+      tags:
+        - Reporting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              from: "2024-01-01"
+              to: "2024-01-31"
+              timezone_id: 67
+              currency_id: "USD"
+              show_conversions: true
+              show_events: false
+            schema:
+              type: object
+              required:
+                - from
+                - to
+                - timezone_id
+                - currency_id
+              properties:
+                from:
+                  type: string
+                  description: Start date. Format `YYYY-MM-DD` or `YYYY-MM-DD HH:mm:SS`.
+                to:
+                  type: string
+                  description: End date. Format `YYYY-MM-DD` or `YYYY-MM-DD HH:mm:SS`.
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the request.
+                currency_id:
+                  type: string
+                  description: Currency code for monetary values. Currently only `USD` is supported.
+                show_conversions:
+                  type: boolean
+                  description: Include base conversions in the summary. At least one of `show_conversions` or `show_events` must be `true`.
+                show_events:
+                  type: boolean
+                  description: Include post-conversion events in the summary. At least one of `show_conversions` or `show_events` must be `true`.
+                show_only_scrub:
+                  type: boolean
+                  description: When `true`, only include scrubbed conversions/events in the summary.
+                query:
+                  type: object
+                  description: Optional query filters to narrow the summary scope.
+                  properties:
+                    filters:
+                      type: array
+                      description: >
+                        Filters to narrow results. Same resource_type filters use OR
+                        logic; different resource_type filters use AND logic.
+                      items:
+                        type: object
+                        required:
+                          - filter_id_value
+                          - resource_type
+                        properties:
+                          filter_id_value:
+                            type: string
+                            description: The value to filter on.
+                          resource_type:
+                            type: string
+                            enum:
+                              - offer
+                              - offer_group
+                              - affiliate
+                              - advertiser
+                              - offer_creative
+                              - transaction_id
+                              - campaign
+                              - billing_frequency
+                              - business_unit
+                              - label
+                              - category
+                              - sub1
+                              - sub2
+                              - sub3
+                              - sub4
+                              - sub5
+                              - source_id
+                              - country
+                              - account_manager
+                              - affiliate_manager
+                              - status
+                              - sales_manager
+                              - account_executive
+                              - offer_url
+                              - currency_id
+                              - affiliate_tier
+                              - adv1
+                              - adv2
+                              - adv3
+                              - adv4
+                              - adv5
+                              - browser
+                              - carrier
+                              - city
+                              - coupon_code
+                              - dma
+                              - date
+                              - hourly
+                              - device_brand
+                              - device_type
+                              - hour
+                              - isp
+                              - language
+                              - month
+                              - os_version
+                              - payout_amount
+                              - payout_type
+                              - platform
+                              - project_id
+                              - referrer
+                              - region
+                              - revenue_amount
+                              - revenue_type
+                              - week
+                              - conversion_id
+                              - order_id
+                              - tracking_domain
+                              - offer_payout_revenue_id
+                              - country_code
+                              - advertiser_billing_frequency
+                              - error_code
+                            description: The resource type / dimension to filter on.
+                    search_terms:
+                      type: array
+                      description: Text-based search filters.
+                      items:
+                        type: object
+                        properties:
+                          search_type:
+                            type: string
+                            enum:
+                              - transaction_id
+                              - sub_1
+                              - sub_2
+                              - sub_3
+                              - sub_4
+                              - sub_5
+                              - adv_1
+                              - adv_2
+                              - adv_3
+                              - adv_4
+                              - adv_5
+                              - source_id
+                              - user_ip
+                              - user_agent
+                              - order_id
+                              - country
+                              - region
+                              - city
+                              - status
+                              - is_scrub
+                              - email
+                              - coupon_code
+                              - event_name
+                            description: The field to search on.
+                          value:
+                            type: string
+                            description: The search value.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                    description: Total number of conversions/events matching the query.
+                  pending:
+                    type: integer
+                    description: Number of conversions/events with pending status.
+                  approved:
+                    type: integer
+                    description: Number of approved conversions/events.
+                  invalid:
+                    type: integer
+                    description: Number of invalid conversions/events.
+                  rejected_scrub:
+                    type: integer
+                    description: Number of conversions/events rejected by scrub rules.
+                  rejected_manual:
+                    type: integer
+                    description: Number of manually rejected conversions/events.
+                  payout:
+                    type: number
+                    format: double
+                    description: Total payout amount.
+                  revenue:
+                    type: number
+                    format: double
+                    description: Total revenue amount.
+                  gross_sales:
+                    type: number
+                    format: double
+                    description: Total gross sales amount.
+                  has_multi_currencies:
+                    type: boolean
+                    description: Indicates whether the result set includes conversions in multiple currencies.
+                  avg_click_to_cv_time:
+                    type: number
+                    format: double
+                    description: Average time in seconds between the click and the conversion.
+      security:
+        - API Key: []
   /networks/reporting/conversions/{conversionId}:
     get:
       summary: Get Conversion by ID

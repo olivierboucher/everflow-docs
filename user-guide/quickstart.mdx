@@ -1,0 +1,148 @@
+---
+title: "Quick Start"
+description: "Make your first Everflow API call in under 2 minutes."
+---
+
+This guide walks you through making your first API request to the Everflow platform.
+
+## Prerequisites
+
+- An Everflow account with network-level access
+- A **Network API key** — see [Authentication](/user-guide/authentication) for how to create one
+
+## Base URL
+
+All API requests are made to:
+
+```
+https://api.eflow.team/v1/
+```
+
+The path after `/v1/` depends on the API you are using:
+
+| API | Path prefix |
+|-----|------------|
+| Network | `/v1/networks/...` |
+| Affiliate | `/v1/affiliates/...` |
+| Advertiser | `/v1/advertisers/...` |
+| Marketplace | `/v1/partners/...` |
+
+## Step 1: List your offers
+
+Make a `GET` request to retrieve all offers in your network:
+
+```bash
+curl -H "X-Eflow-API-Key: <your-api-key>" \
+  https://api.eflow.team/v1/networks/offers
+```
+
+You'll receive a JSON array of offer objects:
+
+```json
+[
+  {
+    "network_offer_id": 1,
+    "network_id": 1,
+    "network_advertiser_id": 10,
+    "name": "Example Offer",
+    "offer_status": "active",
+    "currency_id": "USD",
+    "time_created": 1709500000,
+    "time_saved": 1709500000
+  }
+]
+```
+
+## Step 2: Fetch a single offer with related data
+
+Retrieve a specific offer by ID and include its payout/revenue configuration using the `relationship` parameter:
+
+```bash
+curl -H "X-Eflow-API-Key: <your-api-key>" \
+  "https://api.eflow.team/v1/networks/offers/1?relationship=payout_revenue"
+```
+
+The response includes the offer plus a `relationship` object with the requested data:
+
+```json
+{
+  "network_offer_id": 1,
+  "name": "Example Offer",
+  "offer_status": "active",
+  "relationship": {
+    "payout_revenue": {
+      "total": 1,
+      "payout_revenue_entities": [
+        {
+          "network_offer_payout_revenue_id": 100,
+          "payout_type": "fixed",
+          "payout_value": 25.00,
+          "revenue_type": "fixed",
+          "revenue_value": 100.00,
+          "is_default": true
+        }
+      ]
+    }
+  }
+}
+```
+
+See [Relationships](/user-guide/relationships) for more on including related data.
+
+## Step 3: Search with pagination
+
+Most resources have a listing endpoint (`POST .../table`) that supports pagination and filtering. Search for active offers:
+
+```bash
+curl -X POST \
+  -H "X-Eflow-API-Key: <your-api-key>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "filters": {
+      "offer_status": "active"
+    },
+    "paging": {
+      "page": 1,
+      "page_size": 10
+    }
+  }' \
+  https://api.eflow.team/v1/networks/offers/table
+```
+
+The response includes your results and pagination metadata:
+
+```json
+{
+  "offers": [
+    {
+      "network_offer_id": 1,
+      "name": "Example Offer",
+      "offer_status": "active"
+    }
+  ],
+  "paging": {
+    "page": 1,
+    "page_size": 10,
+    "total_count": 47
+  }
+}
+```
+
+See [Paging](/user-guide/paging) for more on paginating through results.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key" href="/user-guide/authentication">
+    Learn about API key types and portal access.
+  </Card>
+  <Card title="Request & Response Format" icon="code" href="/user-guide/request-response-format">
+    Understand date formats, IDs, enums, and other conventions.
+  </Card>
+  <Card title="Rate Limiting" icon="gauge" href="/user-guide/rate-limiting">
+    Know your request quotas before building integrations.
+  </Card>
+  <Card title="Network API Reference" icon="book" href="/api-reference/get-networksinfo">
+    Explore the full Network API.
+  </Card>
+</CardGroup>
