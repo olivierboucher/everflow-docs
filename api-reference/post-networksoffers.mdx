@@ -2,16 +2,3 @@
 title: Create Offer
 openapi: /openapi/offers.yaml post /networks/offers
 ---
-
-Create a new offer with full configuration including payout, revenue, caps, targeting, and tracking settings.
-
-The payload for this endpoint is complex. Everflow recommends using the **Copy Offer** endpoint (`GET /v1/networks/offers/{offerId}/copy`) with a template offer instead of building payloads from scratch.
-
-**Required fields:** `network_advertiser_id`, `name`, `destination_url`, `currency_id`, and at least one `payout_revenue` entry with `is_default: true`.
-
-**Key details:**
-- The `payout_revenue` array defines conversion events and their payout/revenue configuration
-- Set `is_caps_enabled: true` before configuring any cap fields (daily, weekly, monthly, global)
-- The `ruleset` object controls geo, device, platform, browser, and day parting targeting
-- Use `conversion_method` to set how conversions are tracked (server postback, pixel, etc.)
-- The `visibility` field controls affiliate access: `public`, `require_approval`, or `private`

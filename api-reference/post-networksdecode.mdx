@@ -2,18 +2,3 @@
 title: Decode IDs
 openapi: /openapi/utilities.yaml post /networks/decode
 ---
-
-Convert encoded ID strings back to their original numeric values. This is the inverse of the Encode IDs endpoint.
-
-Encoded values appear in tracking links, smart links, and signup URLs. Use this endpoint to determine the actual offer, affiliate, or employee ID behind an encoded string.
-
-**Encoding contexts:**
-- `tracking_link_affiliate` — Partner ID in a tracking link
-- `tracking_link_offer` — Offer ID in a tracking link
-- `smart_link_affiliate` — Partner ID in a smart link
-- `smart_link_smart_link` — Smart link ID
-- `signup_affiliate_employee` — Employee ID in a partner signup URL
-- `signup_advertiser_employee` — Employee ID in an advertiser signup URL
-- `signup_affiliate_affiliate` — Affiliate ID in a partner signup URL
-
-Values that cannot be decoded return `0` for the `decoded` field.

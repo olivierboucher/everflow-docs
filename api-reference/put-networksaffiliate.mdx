@@ -2,13 +2,3 @@
 title: Update Affiliate
 openapi: /openapi/affiliates.yaml put /networks/affiliates/{affiliateId}
 ---
-
-Update an existing affiliate. You must specify all fields in the request body; any omitted non-required fields will be reset to their defaults.
-
-If you only need to change specific fields without resending the entire object, use the **PATCH** bulk-edit endpoint (`PATCH /v1/networks/patch/affiliates/apply`) instead.
-
-**Key details:**
-- Fetch the current affiliate with `GET /v1/networks/affiliates/{affiliateId}` first, then modify the fields you need
-- The request body schema is the same as the Create endpoint
-- When `is_contact_address_enabled` is true, provide the `contact_address` object
-- The `billing.details` object is required when `billing_frequency` is not `manual` or `other`

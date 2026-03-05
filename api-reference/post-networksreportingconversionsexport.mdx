@@ -2,16 +2,3 @@
 title: Export Conversions
 openapi: /openapi/reporting-exports.yaml post /networks/reporting/conversions/export
 ---
-
-Exports conversion and/or event data in CSV or JSON format. This endpoint accepts the same parameters as the [Get Conversion Report](/api-reference/post-networksreportingconversions) endpoint, with additional `format` and `columns` fields.
-
-Each request must contain:
-
-- `from` and `to` dates (format can be `YYYY-MM-DD` or `YYYY-MM-DD HH:mm:SS`)
-- The `timezone_id` used for the request
-- The `currency_id` used for the reporting metrics
-- The `format` field (`csv` or `json`)
-
-The `columns` field lets you choose which data columns to include in the export. If omitted, all available columns are included.
-
-The `show_conversions` and `show_events` boolean values control whether base conversions and/or post-conversion events are included. Additional boolean filters (`show_only_scrub`, `show_only_vt`, `show_only_ct`, `show_only_fail_traffic`, `show_only_updated`) let you narrow the scope further.

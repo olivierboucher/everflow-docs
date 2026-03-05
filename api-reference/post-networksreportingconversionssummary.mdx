@@ -2,16 +2,3 @@
 title: Get Conversion Summary
 openapi: /openapi/reporting.yaml post /networks/reporting/conversions/summary
 ---
-
-Returns a high-level summary of conversions and/or events for a given date range. Instead of returning individual conversion records, this endpoint provides aggregated counts by status (approved, pending, invalid, rejected) along with total payout, revenue, gross sales amounts, and the average click-to-conversion time.
-
-This is useful for building dashboards or quick overviews without pulling the full conversion report.
-
-Each request must contain:
-
-- `from` and `to` dates (format can be `YYYY-MM-DD` or `YYYY-MM-DD HH:mm:SS`)
-- The `timezone_id` used for the request
-- At least one of `show_conversions` or `show_events` must be set to `true`
-- `currency_id` — currently only `USD` is supported
-
-Optional query filters and search terms can be added to narrow the scope of the summary. The filters are the same as those available on the [Conversion Report](/api-reference/post-networksreportingconversions) endpoint.

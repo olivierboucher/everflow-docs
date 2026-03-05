@@ -2,25 +2,3 @@
 title: Get Aggregated Reporting Data
 openapi: /openapi/affiliate-reporting.yaml post /affiliates/reporting/entity/table
 ---
-
-Retrieve a paginated list of aggregated reporting data for the authenticated affiliate. Supports filters, sorting, and pagination to help you browse performance data programmatically. This is the affiliate-facing equivalent of the Network API's `POST /v1/networks/reporting/entity/table`.
-
-Each request must contain:
-
-- `from` and `to` dates in `YYYY-MM-DD` format
-- `timezone_id` used for the request
-- `currency_id` used for monetary values
-- At least one `column` to group data by
-
-Optional query filters can narrow the results.
-
-**Key differences from the Network API version:**
-- Data is automatically scoped to the authenticated affiliate — no affiliate filter needed
-- The response `reporting` object includes `revenue` (your payout) but not network-level fields like `profit`
-- Filter `resource_type` values do not include network-admin dimensions like `affiliate` or `advertiser`
-
-**Constraints:**
-- Maximum reporting interval: **1 year** (365 days)
-- Maximum columns: **10** (minimum 1)
-- Maximum result rows: **10,000** (if exceeded, `incomplete_results` is `true`)
-- Time columns (`hour`, `date`, `week`, `month`, `year`) are mutually exclusive — only one per request

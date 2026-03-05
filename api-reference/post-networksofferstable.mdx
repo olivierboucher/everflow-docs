@@ -2,12 +2,3 @@
 title: List Offers
 openapi: /openapi/offers.yaml post /networks/offerstable
 ---
-
-Retrieve a paginated list of offers. Supports search filters, sorting, and pagination to help you find and browse offers programmatically.
-
-Use `page` and `page_size` query parameters to control pagination. Include the `relationship` query parameter to fetch related data like visibility settings, rulesets, or URLs alongside each offer.
-
-**Common use cases:**
-- List all active offers: set `filters.offer_status` to `active`
-- Find offers by name: add a `search_terms` entry with `search_type: "name"`
-- Get offers for a specific advertiser: use `filters.network_advertiser_ids`

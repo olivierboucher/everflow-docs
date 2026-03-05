@@ -2,21 +2,3 @@
 title: Get Invalid Clicks Report
 openapi: /openapi/reporting.yaml post /networks/reporting/invalidclicks
 ---
-
-Retrieve a list of clicks that were rejected or flagged as invalid. Each invalid click includes the `error_code` and `error_message` explaining why it was rejected.
-
-Each request must contain:
-
-- `from` and `to` dates in `YYYY-MM-DD HH:MM:SS` format
-- `timezone_id` used for the request
-
-Optional query filters can narrow results by offer, affiliate, advertiser, creative, offer group, campaign, transaction ID, or error code.
-
-**Constraints:**
-- Maximum of **1,000** invalid clicks returned per request
-- Raw data is retained for **3 months** (conversion-related data is retained indefinitely)
-
-**Common use cases:**
-- Monitor fraud patterns by filtering on specific `error_code` values
-- Investigate traffic quality for a specific affiliate: filter by `affiliate_id`
-- Debug rejected clicks for a specific offer: filter by `offer`

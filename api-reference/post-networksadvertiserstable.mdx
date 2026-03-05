@@ -2,14 +2,3 @@
 title: List Advertisers
 openapi: /openapi/advertisers.yaml post /networks/advertiserstable
 ---
-
-Retrieve a paginated list of advertisers. Supports search filters, sorting, and pagination to help you find and browse advertisers programmatically.
-
-Use `page` and `page_size` query parameters for pagination.
-
-**Common use cases:**
-- List all active advertisers: set `filters.account_status` to `active`
-- Find advertisers by name: add a `search_terms` entry with `search_type: "name"`
-- Filter by account manager: use `filters.account_manager_ids`
-- Filter by business unit: use `filters.business_unit_ids`
-- Filter by sales manager: use `filters.sales_manager_ids`

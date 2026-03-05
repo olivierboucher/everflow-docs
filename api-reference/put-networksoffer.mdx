@@ -2,17 +2,3 @@
 title: Update Offer
 openapi: /openapi/offers.yaml put /networks/offers/{offerId}
 ---
-
-Update an existing offer. You must specify **all fields** in the request body — any omitted non-required fields will be reset to their defaults.
-
-If you only need to change specific fields without resending the entire object, use the **PATCH** bulk-edit endpoint (`PATCH /v1/networks/patch/offers/apply`) instead.
-
-**Recommended workflow:**
-1. Fetch the current offer with `GET /v1/networks/offers/{offerId}?relationship=payout_revenue&relationship=targeting&relationship=urls`
-2. Modify the fields you need
-3. Send the full object back with this endpoint
-
-**Key details:**
-- The request body schema is the same as the Create Offer endpoint
-- All cap, targeting, and tracking fields must be included or they will revert to defaults
-- The `payout_revenue` array must include at least one entry with `is_default: true`

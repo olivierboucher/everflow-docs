@@ -2,15 +2,3 @@
 title: Export Partner Pixel Log
 openapi: /openapi/reporting-exports.yaml post /networks/reporting/affiliate/pixels/export
 ---
-
-Exports partner (affiliate) postback pixel log data in CSV or JSON format. This endpoint accepts the same parameters as the [Get Partner Pixel Log](/api-reference/post-networksreportingpixelslog) endpoint, with an additional `format` field.
-
-Shows when partner postback URLs were fired, their HTTP response status, and any errors. Useful for exporting postback logs for debugging integration issues.
-
-Each request must contain:
-
-- `from` and `to` dates (format can be `YYYY-MM-DD` or `YYYY-MM-DD HH:mm:SS`)
-- The `timezone_id` used for the request
-- The `format` field (`csv` or `json`)
-
-Optional query filters and search terms can narrow the scope of the export.

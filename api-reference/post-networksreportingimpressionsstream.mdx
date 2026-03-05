@@ -2,20 +2,3 @@
 title: Get Impressions Report
 openapi: /openapi/reporting.yaml post /networks/reporting/impressions/stream
 ---
-
-Extract a raw list of impressions. Each impression is one element in the response array. This endpoint requires the Impressions package to be enabled on your account.
-
-Each request must contain:
-
-- `from` and `to` dates in `YYYY-MM-DD HH:MM:SS` format
-- `timezone_id` used for the request
-
-Optional query filters can be added via the `query.filters` array.
-
-**Constraints:**
-- Maximum of **10,000** impressions returned per request
-- Date range limited to **14 days** or less
-- Raw impression data is retained for **3 months** only
-- Requesting a longer period or exceeding the row limit will not return an error, but results will be capped
-
-Filter logic: multiple filters with the same `resource_type` use **OR** logic; filters with different `resource_type` values use **AND** logic.

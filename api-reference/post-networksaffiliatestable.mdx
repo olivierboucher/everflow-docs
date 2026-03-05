@@ -2,13 +2,3 @@
 title: List Affiliates
 openapi: /openapi/affiliates.yaml post /networks/affiliatestable
 ---
-
-Retrieve a paginated list of affiliates. Supports search filters, sorting, and pagination to help you find and browse affiliates programmatically.
-
-Use `page` and `page_size` query parameters for pagination. Include the `relationship` query parameter to fetch related data like signup settings or users.
-
-**Common use cases:**
-- List all active affiliates: set `filters.account_status` to `active`
-- Find affiliates by name: add a `search_terms` entry with `search_type: "name"`
-- Find affiliates with recent traffic: use `filters.ran_traffic_in_last_hours`
-- Filter by payment type or billing frequency for finance-related queries

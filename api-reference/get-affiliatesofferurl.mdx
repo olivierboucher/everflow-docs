@@ -2,7 +2,3 @@
 title: Get Tracking URL
 openapi: /openapi/affiliate-offers.yaml get /affiliates/offers/{offerId}/url/{urlId}
 ---
-
-Generate a tracking link for a specific offer and destination URL combination. Use `urlId=0` when the offer has no extra destination URLs configured (i.e., you want the default landing page).
-
-Returns 400 if your affiliate account is not authorized to run the specified offer. You must be approved for the offer or the offer must be public before you can generate tracking links.

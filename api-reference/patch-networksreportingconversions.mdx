@@ -2,12 +2,3 @@
 title: Update Conversion Status
 openapi: /openapi/reporting.yaml patch /networks/reporting/conversions
 ---
-
-Bulk update the status of one or more conversions to `approved` or `rejected`. This is the primary endpoint for conversion management workflows where networks review and approve or reject pending conversions.
-
-**Key details:**
-- Provide an array of `conversion_ids` (not transaction IDs) to update
-- Only `approved` and `rejected` are valid target statuses
-- Processing is asynchronous — updates may take a few seconds to reflect in reporting
-- To update all conversions tied to a specific click, use `PATCH /v1/networks/reporting/conversions/{transactionId}` instead
-- For on-hold conversions, use `PATCH /v1/networks/reporting/onhold`

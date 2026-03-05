@@ -2,13 +2,3 @@
 title: List Offer Applications
 openapi: /openapi/applications.yaml post /networks/applicationstable
 ---
-
-Retrieve a paginated list of offer applications submitted by affiliates. Supports search filters, sorting, and pagination to help you find and browse applications programmatically.
-
-Use `page` and `page_size` query parameters for pagination.
-
-**Common use cases:**
-- List all pending applications: set `filters.application_status` to `pending`
-- Find applications for a specific offer: use `filters.network_offer_ids`
-- Review applications from a specific affiliate: use `filters.network_affiliate_ids`
-- Search by offer name or ID: add a `search_terms` entry with `search_type: "name"`
