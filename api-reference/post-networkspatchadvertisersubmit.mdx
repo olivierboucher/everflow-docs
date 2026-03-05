@@ -1,0 +1,23 @@
+---
+title: Advertiser Patch Preview
+openapi: /openapi/advertisers-extras.yaml post /networks/patch/advertiser/submit
+---
+
+Preview the result of applying bulk changes to one or more advertisers without actually persisting them. This is a dry-run endpoint that validates your changes and shows what would happen before you commit.
+
+The response includes:
+
+- A `changes` array showing the current value, the proposed new value, and the status (`ok`, `no_change`, or `error`) for each advertiser
+- A `resource_errors` array for any advertiser IDs that could not be processed
+
+Each field change requires:
+
+- `field_type` — the field to change (see the full list of supported fields below)
+- `field_value` — the new value (type varies by field: string, integer, boolean, number, array, or object)
+- `operator` — how to apply the value: `overwrite`, `append`, `delete`, or `clear`
+
+Available field types are organized into three categories:
+
+- **General**: `advertiser_status`, `account_manager_id`, `sales_manager_id`, `labels`, `currency`, `attribution_method`, `email_attribution_method`, `internal_note`, `verification_token`, `attribution_priority`, `advertiser_name`
+- **Variables**: `variables_affiliate_id`, `variables_affiliate`, `variables_sub_1` through `variables_sub_5`, `variables_source_id`
+- **Billing**: `billing_tax_details`, `billing_frequency`, billing period configs (`billing_frequency_weekly`, etc.), auto-invoicing settings, invoice defaults, and direct linking settings

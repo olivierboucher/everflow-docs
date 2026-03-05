@@ -1,0 +1,16 @@
+---
+title: Export Data Supplements
+openapi: /openapi/data-supplements.yaml post /networks/supplements/table/stream
+---
+
+Exports data supplement records in CSV or JSON format. This endpoint accepts the same parameters as the [List Data Supplements](/api-reference/post-networkssupplementstable) endpoint, with an additional `format` field.
+
+Each request must contain:
+
+- `from` and `to` dates
+- `timezone_id` for the date range
+- `format` (`csv` or `json`)
+
+Optional query filters and search terms can narrow the scope of the export.
+
+The response is a file download with the appropriate `Content-Type` and `Content-Disposition` headers set.

@@ -1,0 +1,18 @@
+---
+title: List Data Supplements
+openapi: /openapi/data-supplements.yaml post /networks/supplements/table
+---
+
+Returns a paginated list of data supplement records for the network. Supports filtering by supplement source, offer, affiliate, and source ID, as well as text search within supplement details.
+
+Each request must contain:
+
+- `from` and `to` dates
+- `timezone_id` for the date range
+
+Optional query filters can narrow the scope:
+
+- **Filters**: By `supplement_source`, `network_offer_ids`, `network_affiliate_ids`, or `source_ids`
+- **Search terms**: By mapping ID/name, Appsflyer/Adjust-specific fields, or generic JSON text search
+
+Related entities (offer and affiliate basic info) are included in the `relationship` field of each record.

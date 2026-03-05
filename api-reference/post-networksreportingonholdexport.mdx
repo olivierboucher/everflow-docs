@@ -1,0 +1,17 @@
+---
+title: Export On-Hold Conversions
+openapi: /openapi/reporting-exports.yaml post /networks/reporting/onhold/export
+---
+
+Exports on-hold conversion data in CSV or JSON format. On-hold conversions are pending review before being approved or rejected.
+
+Each request must contain:
+
+- `from` and `to` dates (format can be `YYYY-MM-DD` or `YYYY-MM-DD HH:mm:SS`)
+- The `timezone_id` used for the request
+- The `currency_id` used for the reporting metrics
+- The `format` field (`csv` or `json`)
+
+The `columns` field lets you choose which data columns to include in the export. The `on_hold_status_filter` field lets you limit results to a specific status (`on_hold`, `approved`, or `rejected`).
+
+Additional boolean filters (`show_conversions`, `show_events`, `show_only_scrub`, `show_only_vt`, `show_only_ct`, `show_only_fail_traffic`) let you narrow the scope further.

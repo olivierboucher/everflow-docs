@@ -1,0 +1,16 @@
+---
+title: Create Data Supplement
+openapi: /openapi/data-supplements.yaml post /networks/supplements
+---
+
+Creates a new data supplement record. Data supplements allow you to ingest third-party reporting data from sources like Appsflyer, Adjust, TikTok Ads MBC, Google Ads Cost, and others, and merge it with your Everflow reporting data.
+
+The request body contains the supplement data including:
+
+- `unix_timestamp` — the timestamp the supplement data applies to
+- `supplement_source` — the third-party data source
+- `network_offer_id` — the Everflow offer to map the data to
+- `reporting` — the metrics (clicks, conversions, revenue, payout, etc.)
+- `relationship` — source-specific mapping data (appsflyer, adjust, or tiktok_ads_mbc)
+
+Returns the created supplement record with its assigned ID.

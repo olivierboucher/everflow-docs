@@ -1,0 +1,990 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Reporting Exports
+  description: >
+    Export endpoints for the Everflow reporting system. These endpoints allow you
+    to download reporting data as CSV or JSON files. They mirror the request
+    parameters of their corresponding report endpoints, with an added format field.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Reporting Exports
+    description: Endpoints for exporting reporting data as downloadable files.
+paths:
+  /networks/reporting/entity/table/export:
+    post:
+      summary: Export Aggregated Reporting Data
+      description: >
+        Exports aggregated reporting data in the specified format (CSV or JSON).
+        Accepts the same parameters as the
+        [Get Aggregated Reporting Data](/api-reference/post-networksreportingentitytable)
+        endpoint with additional `format`, `metrics`, and `usm_columns` fields.
+
+
+        The response is a file download with the appropriate Content-Type and
+        Content-Disposition headers set.
+      tags:
+        - Reporting Exports
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              from: "2025-01-01"
+              to: "2025-01-31"
+              timezone_id: 67
+              currency_id: "USD"
+              columns:
+                - column: "offer"
+              format: "csv"
+              query:
+                filters: []
+            schema:
+              type: object
+              required:
+                - from
+                - to
+                - timezone_id
+                - currency_id
+                - columns
+                - format
+              properties:
+                from:
+                  type: string
+                  description: "Start date (format: `YYYY-MM-DD` or `YYYY-MM-DD HH:mm:SS`)."
+                to:
+                  type: string
+                  description: "End date (format: `YYYY-MM-DD` or `YYYY-MM-DD HH:mm:SS`)."
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the date range. See `/meta/timezones` for supported values.
+                currency_id:
+                  type: string
+                  description: Currency code for monetary values. Currently only `USD` is supported.
+                columns:
+                  type: array
+                  description: >
+                    Columns to group/pivot data by. Same column options as the entity table endpoint.
+                  items:
+                    type: object
+                    required:
+                      - column
+                    properties:
+                      column:
+                        type: string
+                        description: >
+                          The dimension to group by. See the
+                          [Get Aggregated Reporting Data](/api-reference/post-networksreportingentitytable)
+                          endpoint for the full list of supported columns.
+                        enum:
+                          - unix_timestamp
+                          - offer
+                          - offer_group
+                          - affiliate
+                          - advertiser
+                          - creative
+                          - category
+                          - affiliate_manager
+                          - account_manager
+                          - country
+                          - carrier
+                          - platform
+                          - os_version
+                          - device_type
+                          - browser
+                          - device_make
+                          - language
+                          - sub1
+                          - sub2
+                          - sub3
+                          - sub4
+                          - sub5
+                          - event_name
+                          - region
+                          - city
+                          - dma
+                          - connection_type
+                          - campaign
+                          - source_id
+                          - hour
+                          - date
+                          - week
+                          - month
+                          - year
+                          - offer_url
+                          - device_model
+                          - project_id
+                          - referer
+                          - offer_id
+                          - offer_group_id
+                          - affiliate_id
+                          - advertiser_id
+                          - campaign_id
+                          - creative_id
+                          - payout_type
+                          - payout_amount
+                          - revenue_type
+                          - revenue_amount
+                          - currency
+                          - sales_manager
+                          - account_executive
+                          - derived_affiliate_manager
+                          - derived_account_manager
+                          - derived_sales_manager
+                          - derived_project_id
+                          - derived_account_executive
+                          - isp
+                          - adv1
+                          - adv2
+                          - adv3
+                          - adv4
+                          - adv5
+                          - offer_status
+                          - hourly
+                          - originating_offer
+                          - is_proxy
+                          - affiliate_status
+                          - coupon_code
+                          - advertiser_campaign_name
+                          - app_identifier
+                          - bundle_id
+                          - meta_platform
+                          - score_rating
+                          - total_rating
+                          - size
+                          - developer
+                          - version
+                          - advertiser_event_name
+                          - tracking_domain
+                          - postal_code
+                          - order_id
+                          - attribution_method
+                          - custom_payout_revenue
+                          - custom_payout_revenue_id
+                          - country_code
+                          - day_of_week
+                          - transaction_id
+                          - derived_referred_by
+                format:
+                  type: string
+                  enum:
+                    - csv
+                    - json
+                  description: The file format for the export.
+                metrics:
+                  type: array
+                  description: >
+                    Optional list of specific metric columns to include in the export.
+                    If omitted, all available metrics are included.
+                  items:
+                    type: string
+                    enum:
+                      - impression
+                      - total_click
+                      - gross_click
+                      - unique_click
+                      - invalid_click
+                      - duplicate_click
+                      - ctr
+                      - cv
+                      - invalid_cv_scrub
+                      - view_through_cv
+                      - total_cv
+                      - event
+                      - cvr
+                      - evr
+                      - cpc
+                      - cpa
+                      - epc
+                      - rpc
+                      - rpa
+                      - cpm
+                      - rpm
+                      - payout
+                      - revenue
+                      - event_revenue
+                      - gross_sales
+                      - profit
+                      - margin
+                      - roas
+                      - gross_sales_vt
+                      - event_vt
+                      - redirect_traffic_revenue
+                      - avg_sale_value
+                      - gross_sales_cv
+                      - gross_sales_event
+                      - cost
+                      - media_buying_cost
+                usm_columns:
+                  type: array
+                  description: >
+                    Optional list of additional USM (user session metric) columns
+                    to include in the export.
+                  items:
+                    type: string
+                query:
+                  type: object
+                  description: >
+                    Query configuration with optional filters and exclusions. Same
+                    structure as the entity table endpoint.
+                  properties:
+                    filters:
+                      type: array
+                      description: Filters to narrow results.
+                      items:
+                        type: object
+                        properties:
+                          filter_id_value:
+                            type: string
+                          resource_type:
+                            type: string
+                    exclusions:
+                      type: array
+                      description: Exclusion filters.
+                      items:
+                        type: object
+                        properties:
+                          filter_id_value:
+                            type: string
+                          resource_type:
+                            type: string
+      responses:
+        "200":
+          description: >
+            File download. Content-Type is `text/csv` or `application/json` depending
+            on the requested format. Content-Disposition header includes the filename.
+      security:
+        - API Key: []
+
+  /networks/reporting/conversions/export:
+    post:
+      summary: Export Conversions
+      description: >
+        Exports conversion and/or event data in the specified format (CSV or JSON).
+        Accepts the same parameters as the
+        [Get Conversion Report](/api-reference/post-networksreportingconversions)
+        endpoint with additional `format` and `columns` fields.
+
+
+        The `columns` field lets you choose which data columns to include in the
+        export. If omitted, all columns are included.
+
+
+        The response is a file download with the appropriate Content-Type and
+        Content-Disposition headers set.
+      tags:
+        - Reporting Exports
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              from: "2025-01-01"
+              to: "2025-01-31"
+              timezone_id: 67
+              currency_id: "USD"
+              show_conversions: true
+              show_events: false
+              format: "csv"
+              columns:
+                - offer
+                - affiliate
+                - transaction_id
+                - conversion_date
+                - payout
+                - revenue
+                - status
+              query:
+                filters: []
+                search_terms: []
+            schema:
+              type: object
+              required:
+                - from
+                - to
+                - timezone_id
+                - currency_id
+                - format
+              properties:
+                from:
+                  type: string
+                  description: "Start date (format: `YYYY-MM-DD` or `YYYY-MM-DD HH:mm:SS`)."
+                to:
+                  type: string
+                  description: "End date (format: `YYYY-MM-DD` or `YYYY-MM-DD HH:mm:SS`)."
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the date range.
+                currency_id:
+                  type: string
+                  description: Currency code for monetary values. Currently only `USD` is supported.
+                show_conversions:
+                  type: boolean
+                  description: Include base conversion records in the export.
+                  default: true
+                show_events:
+                  type: boolean
+                  description: Include post-conversion event records in the export.
+                  default: false
+                show_only_scrub:
+                  type: boolean
+                  description: Only include scrubbed (rejected) conversions/events.
+                  default: false
+                show_only_vt:
+                  type: boolean
+                  description: Only include view-through conversions.
+                  default: false
+                show_only_ct:
+                  type: boolean
+                  description: Only include click-through conversions.
+                  default: false
+                show_only_fail_traffic:
+                  type: boolean
+                  description: Only include fail traffic conversions.
+                  default: false
+                show_only_updated:
+                  type: boolean
+                  description: Only include conversions that have been updated.
+                  default: false
+                format:
+                  type: string
+                  enum:
+                    - csv
+                    - json
+                  description: The file format for the export.
+                columns:
+                  type: array
+                  description: >
+                    Columns to include in the export. If omitted, all columns are included.
+                  items:
+                    type: string
+                    enum:
+                      - offer
+                      - affiliate
+                      - advertiser
+                      - offer_group
+                      - campaign
+                      - affiliate_manager
+                      - creative
+                      - offer_url
+                      - category
+                      - previous_offer
+                      - source_id
+                      - sub1
+                      - sub2
+                      - sub3
+                      - sub4
+                      - sub5
+                      - adv1
+                      - adv2
+                      - adv3
+                      - adv4
+                      - adv5
+                      - country
+                      - region
+                      - city
+                      - platform
+                      - os_version
+                      - isp
+                      - account_manager
+                      - android_id
+                      - android_id_md5
+                      - android_id_sha1
+                      - app_id
+                      - brand
+                      - browser
+                      - carrier
+                      - click_date
+                      - conversion_id
+                      - conversion_user_ip
+                      - coupon_code
+                      - currency
+                      - delta_hours
+                      - device
+                      - email
+                      - error_message
+                      - event_name
+                      - google_ad_id
+                      - google_ad_id_md5
+                      - google_ad_id_sha1
+                      - http_user_agent
+                      - idfa
+                      - idfa_md5
+                      - idfa_sha1
+                      - language
+                      - notes
+                      - order_id
+                      - order_line_items
+                      - order_number
+                      - payout
+                      - payout_type
+                      - referrer
+                      - revenue
+                      - revenue_type
+                      - sale_amount
+                      - session_ip
+                      - transaction_id
+                      - type
+                      - status
+                      - conversion_date
+                      - origin
+                      - network_id
+                      - payout_revenue_id
+                      - project_id
+                      - dma
+                      - is_cookie_based
+                      - previous_transaction_id
+                      - is_event_protected
+                      - is_fired_pixel
+                      - is_scrub
+                      - is_view_through
+                      - attribution_method
+                      - country_code
+                      - base_conversion_time
+                query:
+                  type: object
+                  description: >
+                    Query configuration with filters and search terms. Same structure
+                    as the conversion report endpoint.
+                  properties:
+                    filters:
+                      type: array
+                      description: >
+                        Filters to narrow results. See the
+                        [Conversion Report](/api-reference/post-networksreportingconversions)
+                        for available filter types.
+                      items:
+                        type: object
+                        properties:
+                          resource_type:
+                            type: string
+                            enum:
+                              - offer
+                              - offer_group
+                              - affiliate
+                              - advertiser
+                              - offer_creative
+                              - transaction_id
+                              - campaign
+                              - billing_frequency
+                              - business_unit
+                              - label
+                              - category
+                              - sub1
+                              - sub2
+                              - sub3
+                              - sub4
+                              - sub5
+                              - source_id
+                              - country
+                              - account_manager
+                              - affiliate_manager
+                              - status
+                              - sales_manager
+                              - account_executive
+                              - offer_url
+                              - currency_id
+                              - affiliate_tier
+                              - adv1
+                              - adv2
+                              - adv3
+                              - adv4
+                              - adv5
+                              - browser
+                              - carrier
+                              - city
+                              - coupon_code
+                              - dma
+                              - date
+                              - hourly
+                              - device_brand
+                              - device_type
+                              - hour
+                              - isp
+                              - language
+                              - month
+                              - os_version
+                              - payout_amount
+                              - payout_type
+                              - platform
+                              - project_id
+                              - referrer
+                              - region
+                              - revenue_amount
+                              - revenue_type
+                              - week
+                              - conversion_id
+                              - order_id
+                              - tracking_domain
+                              - offer_payout_revenue_id
+                              - country_code
+                              - advertiser_billing_frequency
+                              - error_code
+                          filter_id_value:
+                            type: string
+                    search_terms:
+                      type: array
+                      description: Text search terms to match conversion data.
+                      items:
+                        type: object
+                        properties:
+                          search_type:
+                            type: string
+                            enum:
+                              - transaction_id
+                              - sub_1
+                              - sub_2
+                              - sub_3
+                              - sub_4
+                              - sub_5
+                              - adv_1
+                              - adv_2
+                              - adv_3
+                              - adv_4
+                              - adv_5
+                              - source_id
+                              - user_ip
+                              - user_agent
+                              - order_id
+                              - country
+                              - region
+                              - city
+                              - status
+                              - is_scrub
+                              - email
+                              - coupon_code
+                              - event_name
+                          value:
+                            type: string
+      responses:
+        "200":
+          description: >
+            File download. Content-Type is `text/csv` or `application/json` depending
+            on the requested format.
+      security:
+        - API Key: []
+
+  /networks/reporting/postconversions/export:
+    post:
+      summary: Export Post-Conversion Events
+      description: >
+        Exports post-conversion event data in the specified format (CSV or JSON).
+        Accepts the same parameters as the
+        [Search Post-Conversion Events](/api-reference/post-networksreportingpostconversions)
+        endpoint with additional `format` and `columns` fields.
+
+
+        Post-conversion events are actions that occur after the initial conversion,
+        such as upsells, renewals, or custom events.
+
+
+        The response is a file download with the appropriate Content-Type and
+        Content-Disposition headers set.
+      tags:
+        - Reporting Exports
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              from: "2025-01-01"
+              to: "2025-01-31"
+              timezone_id: 67
+              currency_id: "USD"
+              format: "csv"
+              query:
+                filters: []
+            schema:
+              type: object
+              required:
+                - from
+                - to
+                - timezone_id
+                - currency_id
+                - format
+              properties:
+                from:
+                  type: string
+                  description: "Start date (format: `YYYY-MM-DD` or `YYYY-MM-DD HH:mm:SS`)."
+                to:
+                  type: string
+                  description: "End date (format: `YYYY-MM-DD` or `YYYY-MM-DD HH:mm:SS`)."
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the date range.
+                currency_id:
+                  type: string
+                  description: Currency code for monetary values. Currently only `USD` is supported.
+                format:
+                  type: string
+                  enum:
+                    - csv
+                    - json
+                  description: The file format for the export.
+                columns:
+                  type: array
+                  description: >
+                    Columns to group/pivot data by in the export. Same column options
+                    as the entity table endpoint.
+                  items:
+                    type: object
+                    required:
+                      - column
+                    properties:
+                      column:
+                        type: string
+                        description: The dimension to group by.
+                query:
+                  type: object
+                  description: >
+                    Query configuration with filters and search terms. Same structure
+                    as the conversion report endpoint.
+                  properties:
+                    filters:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          resource_type:
+                            type: string
+                          filter_id_value:
+                            type: string
+                    search_terms:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          search_type:
+                            type: string
+                          value:
+                            type: string
+      responses:
+        "200":
+          description: >
+            File download. Content-Type is `text/csv` or `application/json` depending
+            on the requested format.
+      security:
+        - API Key: []
+
+  /networks/reporting/affiliate/pixels/export:
+    post:
+      summary: Export Partner Pixel Log
+      description: >
+        Exports partner (affiliate) postback pixel log data in the specified format
+        (CSV or JSON). Accepts the same parameters as the
+        [Get Partner Pixel Log](/api-reference/post-networksreportingpixelslog) endpoint
+        with an additional `format` field.
+
+
+        Shows when partner postback URLs were fired, their HTTP response status,
+        and any errors. Useful for debugging postback integration issues.
+
+
+        The response is a file download with the appropriate Content-Type and
+        Content-Disposition headers set.
+      tags:
+        - Reporting Exports
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              from: "2025-01-01"
+              to: "2025-01-31"
+              timezone_id: 67
+              format: "csv"
+              query:
+                filters: []
+                search_terms: []
+            schema:
+              type: object
+              required:
+                - from
+                - to
+                - timezone_id
+                - format
+              properties:
+                from:
+                  type: string
+                  description: "Start date (format: `YYYY-MM-DD` or `YYYY-MM-DD HH:mm:SS`)."
+                to:
+                  type: string
+                  description: "End date (format: `YYYY-MM-DD` or `YYYY-MM-DD HH:mm:SS`)."
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the date range.
+                format:
+                  type: string
+                  enum:
+                    - csv
+                    - json
+                  description: The file format for the export.
+                query:
+                  type: object
+                  description: Query configuration with optional filters and search terms.
+                  properties:
+                    filters:
+                      type: array
+                      description: Filters to narrow results.
+                      items:
+                        type: object
+                        properties:
+                          resource_type:
+                            type: string
+                            enum:
+                              - offer
+                              - affiliate
+                              - delivery_status
+                            description: The resource type to filter on.
+                          filter_id_value:
+                            type: string
+                            description: The value to filter on.
+                    search_terms:
+                      type: array
+                      description: Text search terms.
+                      items:
+                        type: object
+                        properties:
+                          search_type:
+                            type: string
+                            enum:
+                              - conversion_id
+                              - payload
+                              - transaction_id
+                              - pixel_id
+                            description: The field to search.
+                          value:
+                            type: string
+                            description: The search value.
+      responses:
+        "200":
+          description: >
+            File download. Content-Type is `text/csv` or `application/json` depending
+            on the requested format.
+      security:
+        - API Key: []
+
+  /networks/reporting/onhold/export:
+    post:
+      summary: Export On-Hold Conversions
+      description: >
+        Exports on-hold conversion data in the specified format (CSV or JSON).
+        Accepts the same parameters as the on-hold conversions search endpoint
+        with additional `format`, `columns`, and `on_hold_status_filter` fields.
+
+
+        On-hold conversions are pending review before being approved or rejected.
+        The `on_hold_status_filter` field lets you filter by the on-hold status.
+
+
+        The response is a file download with the appropriate Content-Type and
+        Content-Disposition headers set.
+      tags:
+        - Reporting Exports
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              from: "2025-01-01"
+              to: "2025-01-31"
+              timezone_id: 67
+              currency_id: "USD"
+              show_conversions: true
+              show_events: false
+              format: "csv"
+              query:
+                filters: []
+            schema:
+              type: object
+              required:
+                - from
+                - to
+                - timezone_id
+                - currency_id
+                - format
+              properties:
+                from:
+                  type: string
+                  description: "Start date (format: `YYYY-MM-DD` or `YYYY-MM-DD HH:mm:SS`)."
+                to:
+                  type: string
+                  description: "End date (format: `YYYY-MM-DD` or `YYYY-MM-DD HH:mm:SS`)."
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the date range.
+                currency_id:
+                  type: string
+                  description: Currency code for monetary values. Currently only `USD` is supported.
+                show_conversions:
+                  type: boolean
+                  description: Include base conversion records.
+                  default: true
+                show_events:
+                  type: boolean
+                  description: Include post-conversion event records.
+                  default: false
+                show_only_scrub:
+                  type: boolean
+                  description: Only include scrubbed conversions/events.
+                  default: false
+                show_only_vt:
+                  type: boolean
+                  description: Only include view-through conversions.
+                  default: false
+                show_only_ct:
+                  type: boolean
+                  description: Only include click-through conversions.
+                  default: false
+                show_only_fail_traffic:
+                  type: boolean
+                  description: Only include fail traffic data.
+                  default: false
+                on_hold_status_filter:
+                  type: string
+                  description: >
+                    Filter by on-hold status. Use to show only conversions
+                    with a specific on-hold status.
+                  enum:
+                    - on_hold
+                    - approved
+                    - rejected
+                format:
+                  type: string
+                  enum:
+                    - csv
+                    - json
+                  description: The file format for the export.
+                columns:
+                  type: array
+                  description: >
+                    Columns to include in the export. If omitted, all columns are included.
+                    Same as the conversion export columns with additional on-hold specific columns.
+                  items:
+                    type: string
+                    enum:
+                      - offer
+                      - affiliate
+                      - advertiser
+                      - offer_group
+                      - campaign
+                      - affiliate_manager
+                      - creative
+                      - offer_url
+                      - category
+                      - previous_offer
+                      - source_id
+                      - sub1
+                      - sub2
+                      - sub3
+                      - sub4
+                      - sub5
+                      - adv1
+                      - adv2
+                      - adv3
+                      - adv4
+                      - adv5
+                      - country
+                      - region
+                      - city
+                      - platform
+                      - os_version
+                      - isp
+                      - account_manager
+                      - android_id
+                      - android_id_md5
+                      - android_id_sha1
+                      - app_id
+                      - brand
+                      - browser
+                      - carrier
+                      - click_date
+                      - conversion_id
+                      - conversion_user_ip
+                      - coupon_code
+                      - currency
+                      - delta_hours
+                      - device
+                      - email
+                      - error_message
+                      - event_name
+                      - google_ad_id
+                      - google_ad_id_md5
+                      - google_ad_id_sha1
+                      - http_user_agent
+                      - idfa
+                      - idfa_md5
+                      - idfa_sha1
+                      - language
+                      - notes
+                      - order_id
+                      - order_line_items
+                      - order_number
+                      - payout
+                      - payout_type
+                      - referrer
+                      - revenue
+                      - revenue_type
+                      - sale_amount
+                      - session_ip
+                      - transaction_id
+                      - type
+                      - conversion_status
+                      - conversion_date
+                      - origin
+                      - network_id
+                      - payout_revenue_id
+                      - project_id
+                      - dma
+                      - is_cookie_based
+                      - previous_transaction_id
+                      - is_event_protected
+                      - is_fired_pixel
+                      - is_scrub
+                      - is_view_through
+                      - attribution_method
+                      - country_code
+                      - on_hold_conversion_id
+                      - holding_period_end
+                      - on_hold_status
+                query:
+                  type: object
+                  description: >
+                    Query configuration with filters and search terms. Same structure
+                    as the conversion report endpoint.
+                  properties:
+                    filters:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          resource_type:
+                            type: string
+                          filter_id_value:
+                            type: string
+                    search_terms:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          search_type:
+                            type: string
+                          value:
+                            type: string
+      responses:
+        "200":
+          description: >
+            File download. Content-Type is `text/csv` or `application/json` depending
+            on the requested format.
+      security:
+        - API Key: []
+
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

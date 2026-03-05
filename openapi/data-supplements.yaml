@@ -1,0 +1,639 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Data Supplements
+  description: >
+    Data Supplement endpoints for the Everflow partner marketing platform. Data
+    supplements allow you to ingest third-party reporting data (from Appsflyer,
+    Adjust, TikTok Ads MBC, Google Ads Cost, and other sources) and merge it
+    with your Everflow reporting data.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Data Supplements
+    description: Endpoints for creating, reverting, listing, and exporting data supplement records.
+paths:
+  /networks/supplements:
+    post:
+      summary: Create Data Supplement
+      description: >
+        Creates a new data supplement record. Data supplements allow you to ingest
+        third-party reporting data and merge it with your Everflow reporting.
+
+
+        The request body is a flat object representing the supplement data, including
+        the source integration type, offer/affiliate mapping, tracking parameters,
+        and reporting metrics.
+
+
+        Returns the created supplement record with its assigned ID and timestamps.
+      tags:
+        - Data Supplements
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              unix_timestamp: 1704067200
+              supplement_source: "appsflyer"
+              network_offer_id: 100
+              network_affiliate_id: 200
+              source_id: "campaign_123"
+              sub1: "ad_group_1"
+              currency_id: "USD"
+              reporting:
+                cv: 50
+                revenue: 250.00
+                payout: 200.00
+                gross_sales: 500.00
+              relationship:
+                appsflyer:
+                  appsflyer_campaign_id: "camp_abc"
+                  appsflyer_publisher_id: "pub_xyz"
+                  appsflyer_event_id: "install"
+            schema:
+              type: object
+              required:
+                - unix_timestamp
+                - supplement_source
+                - network_offer_id
+              properties:
+                unix_timestamp:
+                  type: integer
+                  description: Unix timestamp for when the supplement data applies.
+                supplement_source:
+                  type: string
+                  description: The third-party source of the supplement data.
+                  enum:
+                    - appsflyer
+                    - adjust
+                    - google_ads_cost
+                    - ad_colony_vas
+                    - tiktok_ads_mbc
+                    - generic
+                network_offer_id:
+                  type: integer
+                  description: The Everflow offer ID to associate the supplement data with.
+                network_affiliate_id:
+                  type: integer
+                  description: The Everflow affiliate ID to associate the supplement data with.
+                source_id:
+                  type: string
+                  description: Source identifier from the third-party platform.
+                sub1:
+                  type: string
+                  description: Sub-parameter 1 value.
+                sub2:
+                  type: string
+                  description: Sub-parameter 2 value.
+                sub3:
+                  type: string
+                  description: Sub-parameter 3 value.
+                sub4:
+                  type: string
+                  description: Sub-parameter 4 value.
+                sub5:
+                  type: string
+                  description: Sub-parameter 5 value.
+                adv1:
+                  type: string
+                  description: Advertiser parameter 1 value.
+                adv2:
+                  type: string
+                  description: Advertiser parameter 2 value.
+                adv3:
+                  type: string
+                  description: Advertiser parameter 3 value.
+                adv4:
+                  type: string
+                  description: Advertiser parameter 4 value.
+                adv5:
+                  type: string
+                  description: Advertiser parameter 5 value.
+                currency_id:
+                  type: string
+                  description: Currency code for monetary values (e.g., `USD`).
+                reporting:
+                  type: object
+                  description: >
+                    Reporting metrics to associate with this supplement record.
+                    These metrics get merged into your Everflow reporting.
+                  properties:
+                    imp:
+                      type: integer
+                      description: Impression count.
+                    total_click:
+                      type: integer
+                      description: Total click count.
+                    unique_click:
+                      type: integer
+                      description: Unique click count.
+                    invalid_click:
+                      type: integer
+                      description: Invalid click count.
+                    duplicate_click:
+                      type: integer
+                      description: Duplicate click count.
+                    gross_click:
+                      type: integer
+                      description: Gross click count.
+                    cv:
+                      type: integer
+                      description: Conversion count.
+                    total_cv:
+                      type: integer
+                      description: Total conversions (including scrubbed).
+                    invalid_cv_scrub:
+                      type: integer
+                      description: Invalid/scrubbed conversion count.
+                    view_through_cv:
+                      type: integer
+                      description: View-through conversion count.
+                    event:
+                      type: integer
+                      description: Event count.
+                    event_vt:
+                      type: integer
+                      description: View-through event count.
+                    payout:
+                      type: number
+                      description: Payout amount.
+                    revenue:
+                      type: number
+                      description: Revenue amount.
+                    event_revenue:
+                      type: number
+                      description: Event revenue amount.
+                    gross_sales:
+                      type: number
+                      description: Gross sales amount.
+                    gross_sales_vt:
+                      type: number
+                      description: View-through gross sales.
+                    gross_sales_cv:
+                      type: number
+                      description: Gross sales from conversions.
+                    gross_sales_event:
+                      type: number
+                      description: Gross sales from events.
+                    cost:
+                      type: number
+                      description: Cost amount.
+                    media_buying_cost:
+                      type: number
+                      description: Media buying cost amount.
+                    redirect_traffic_revenue:
+                      type: number
+                      description: Redirect/fallback traffic revenue.
+                network_offer_payout_revenue_id:
+                  type: integer
+                  description: >
+                    Optional payout/revenue setting ID to associate with this supplement.
+                source_details_json:
+                  type: string
+                  description: >
+                    Raw JSON string containing additional source-specific details.
+                relationship:
+                  type: object
+                  description: >
+                    Source-specific relationship data. Include the sub-object
+                    matching the `supplement_source` type.
+                  properties:
+                    appsflyer:
+                      type: object
+                      description: Appsflyer-specific mapping data.
+                      properties:
+                        appsflyer_campaign_id:
+                          type: string
+                        appsflyer_publisher_id:
+                          type: string
+                        appsflyer_event_id:
+                          type: string
+                        network_integration_appsflyer_data_import_app_id:
+                          type: integer
+                    tiktok_ads_mbc:
+                      type: object
+                      description: TikTok Ads MBC-specific mapping data.
+                      properties:
+                        network_integration_tiktok_ads_mbc_config_id:
+                          type: integer
+                        mapping_id:
+                          type: string
+                        mapping_name:
+                          type: string
+                        mapping_type:
+                          type: string
+                        service_type:
+                          type: string
+                    adjust:
+                      type: object
+                      description: Adjust-specific mapping data.
+                      properties:
+                        adjust_campaign_id:
+                          type: string
+                        adjust_adgroup_id:
+                          type: string
+                        adjust_creative_id:
+                          type: string
+                        adjust_partner_id:
+                          type: string
+                        adjust_event_id:
+                          type: string
+                        network_integration_adjust_data_import_app_id:
+                          type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  network_data_supplement_id:
+                    type: integer
+                    description: Unique ID of the created supplement record.
+                  network_id:
+                    type: integer
+                    description: Network ID.
+                  unix_timestamp:
+                    type: integer
+                    description: Timestamp the supplement data applies to.
+                  supplement_source:
+                    type: string
+                    description: The source integration type.
+                  network_offer_id:
+                    type: integer
+                  network_affiliate_id:
+                    type: integer
+                  source_id:
+                    type: string
+                  currency_id:
+                    type: string
+                  reporting:
+                    type: object
+                    description: The reporting metrics.
+                  time_created:
+                    type: integer
+                    description: Unix timestamp of when the record was created.
+      security:
+        - API Key: []
+
+  /networks/supplements/revert:
+    post:
+      summary: Revert Data Supplements
+      description: >
+        Reverts (deletes) one or more data supplement records by their IDs. This
+        removes the supplement data from your reporting. Use this when supplement
+        data was incorrectly imported or is no longer needed.
+
+
+        Returns `true` on success.
+      tags:
+        - Data Supplements
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              data_supplement_ids:
+                - 12345
+                - 12346
+                - 12347
+            schema:
+              type: object
+              required:
+                - data_supplement_ids
+              properties:
+                data_supplement_ids:
+                  type: array
+                  description: Array of data supplement IDs to revert.
+                  items:
+                    type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: boolean
+                    description: Whether the revert was successful.
+      security:
+        - API Key: []
+
+  /networks/supplements/table:
+    post:
+      summary: List Data Supplements
+      description: >
+        Returns a paginated list of data supplement records for the network.
+        Supports filtering by supplement source, offer, affiliate, and source ID,
+        as well as text search within supplement details.
+
+
+        Related entities (offer and affiliate basic info) are included in the
+        `relationship` field of each record.
+      tags:
+        - Data Supplements
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              from: "2025-01-01"
+              to: "2025-01-31"
+              timezone_id: 67
+              query:
+                filters:
+                  supplement_source: "appsflyer"
+                  network_offer_ids: []
+                  network_affiliate_ids: []
+                search_terms: []
+            schema:
+              type: object
+              required:
+                - from
+                - to
+                - timezone_id
+              properties:
+                from:
+                  type: string
+                  description: "Start date (format: `YYYY-MM-DD`)."
+                to:
+                  type: string
+                  description: "End date (format: `YYYY-MM-DD`)."
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the date range.
+                query:
+                  type: object
+                  description: Query configuration with optional filters and search terms.
+                  properties:
+                    filters:
+                      type: object
+                      description: Filters to narrow results.
+                      properties:
+                        supplement_source:
+                          type: string
+                          description: Filter by supplement source type.
+                          enum:
+                            - appsflyer
+                            - adjust
+                            - google_ads_cost
+                            - ad_colony_vas
+                            - tiktok_ads_mbc
+                            - generic
+                        network_offer_ids:
+                          type: array
+                          description: Filter by specific offer IDs.
+                          items:
+                            type: integer
+                        network_affiliate_ids:
+                          type: array
+                          description: Filter by specific affiliate IDs.
+                          items:
+                            type: integer
+                        source_ids:
+                          type: array
+                          description: Filter by specific source IDs.
+                          items:
+                            type: integer
+                    search_terms:
+                      type: array
+                      description: Text search terms to match supplement data.
+                      items:
+                        type: object
+                        properties:
+                          search_type:
+                            type: string
+                            description: The field to search.
+                            enum:
+                              - json_mapping_id
+                              - json_mapping_name
+                              - appsflyer_event_id
+                              - appsflyer_campaign_id
+                              - appsflyer_publisher_id
+                              - adjust_event_id
+                              - adjust_adgroup_id
+                              - adjust_partner_id
+                              - adjust_campaign_id
+                              - adjust_creative_id
+                              - json_text
+                          value:
+                            type: string
+                            description: The search value.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data_supplements:
+                    type: array
+                    description: Array of data supplement table records.
+                    items:
+                      type: object
+                      properties:
+                        network_data_supplement_id:
+                          type: integer
+                          description: Unique supplement record ID.
+                        network_id:
+                          type: integer
+                        unix_timestamp:
+                          type: integer
+                          description: Timestamp the supplement applies to.
+                        supplement_source:
+                          type: string
+                          description: Source integration type.
+                        network_offer_id:
+                          type: integer
+                        network_affiliate_id:
+                          type: integer
+                        source_id:
+                          type: string
+                        sub1:
+                          type: string
+                        sub2:
+                          type: string
+                        sub3:
+                          type: string
+                        sub4:
+                          type: string
+                        sub5:
+                          type: string
+                        adv1:
+                          type: string
+                        adv2:
+                          type: string
+                        adv3:
+                          type: string
+                        adv4:
+                          type: string
+                        adv5:
+                          type: string
+                        currency_id:
+                          type: string
+                        reporting:
+                          type: object
+                          description: Reporting metrics.
+                        time_created:
+                          type: integer
+                          description: Unix timestamp of record creation.
+                        source_details:
+                          type: string
+                          description: Raw source-specific JSON details.
+                        relationship:
+                          type: object
+                          description: Related entities.
+                          properties:
+                            offer:
+                              type: object
+                              description: Basic offer information.
+                              properties:
+                                network_offer_id:
+                                  type: integer
+                                network_id:
+                                  type: integer
+                                name:
+                                  type: string
+                            affiliate:
+                              type: object
+                              description: Basic affiliate information.
+                              properties:
+                                network_affiliate_id:
+                                  type: integer
+                                network_id:
+                                  type: integer
+                                name:
+                                  type: string
+                  paging:
+                    type: object
+                    description: Pagination information.
+                    properties:
+                      page:
+                        type: integer
+                      page_size:
+                        type: integer
+                      total_count:
+                        type: integer
+      security:
+        - API Key: []
+
+  /networks/supplements/table/stream:
+    post:
+      summary: Export Data Supplements
+      description: >
+        Exports data supplement records in the specified format (CSV or JSON).
+        Accepts the same parameters as the
+        [List Data Supplements](/api-reference/post-networkssupplementstable) endpoint
+        with an additional `format` field.
+
+
+        The response is a file download with the appropriate Content-Type and
+        Content-Disposition headers set.
+      tags:
+        - Data Supplements
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              from: "2025-01-01"
+              to: "2025-01-31"
+              timezone_id: 67
+              format: "csv"
+              query:
+                filters: {}
+                search_terms: []
+            schema:
+              type: object
+              required:
+                - from
+                - to
+                - timezone_id
+                - format
+              properties:
+                from:
+                  type: string
+                  description: "Start date (format: `YYYY-MM-DD`)."
+                to:
+                  type: string
+                  description: "End date (format: `YYYY-MM-DD`)."
+                timezone_id:
+                  type: integer
+                  description: Timezone identifier for the date range.
+                format:
+                  type: string
+                  enum:
+                    - csv
+                    - json
+                  description: The file format for the export.
+                query:
+                  type: object
+                  description: >
+                    Query configuration. Same structure as the list endpoint.
+                  properties:
+                    filters:
+                      type: object
+                      properties:
+                        supplement_source:
+                          type: string
+                          enum:
+                            - appsflyer
+                            - adjust
+                            - google_ads_cost
+                            - ad_colony_vas
+                            - tiktok_ads_mbc
+                            - generic
+                        network_offer_ids:
+                          type: array
+                          items:
+                            type: integer
+                        network_affiliate_ids:
+                          type: array
+                          items:
+                            type: integer
+                        source_ids:
+                          type: array
+                          items:
+                            type: integer
+                    search_terms:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          search_type:
+                            type: string
+                            enum:
+                              - json_mapping_id
+                              - json_mapping_name
+                              - appsflyer_event_id
+                              - appsflyer_campaign_id
+                              - appsflyer_publisher_id
+                              - adjust_event_id
+                              - adjust_adgroup_id
+                              - adjust_partner_id
+                              - adjust_campaign_id
+                              - adjust_creative_id
+                              - json_text
+                          value:
+                            type: string
+      responses:
+        "200":
+          description: >
+            File download. Content-Type is `text/csv` or `application/json` depending
+            on the requested format. Content-Disposition header includes the filename.
+      security:
+        - API Key: []
+
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

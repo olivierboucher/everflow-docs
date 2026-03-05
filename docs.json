@@ -80,7 +80,8 @@
                   "api-reference/get-networksadvertiserglobalevents",
                   "api-reference/post-networksadvertiserevents",
                   "api-reference/post-networksadvertiserproductfeeds",
-                  "api-reference/delete-networksadvertiserproductfeed"
+                  "api-reference/delete-networksadvertiserproductfeed",
+                  "api-reference/post-networkspatchadvertisersubmit"
                 ]
               },
               {
@@ -257,6 +258,16 @@
                   "api-reference/get-networkscustomscrubrate",
                   "api-reference/post-networkscustomscrubratetable",
                   "api-reference/delete-networkscustomscrubrate"
+                ]
+              },
+              {
+                "group": "Data Supplements",
+                "expanded": false,
+                "pages": [
+                  "api-reference/post-networkssupplements",
+                  "api-reference/post-networkssupplementsrevert",
+                  "api-reference/post-networkssupplementstable",
+                  "api-reference/post-networkssupplementstablestream"
                 ]
               },
               {
@@ -437,7 +448,12 @@
                   "api-reference/post-networksreportingcustomcaps",
                   "api-reference/post-networksreportingadjustments",
                   "api-reference/get-networksreportingadjustments",
-                  "api-reference/post-networksreportingadjustmentstable"
+                  "api-reference/post-networksreportingadjustmentstable",
+                  "api-reference/post-networksreportingentitytableexport",
+                  "api-reference/post-networksreportingconversionsexport",
+                  "api-reference/post-networksreportingpostconversionsexport",
+                  "api-reference/post-networksreportingaffiliatepixelsexport",
+                  "api-reference/post-networksreportingonholdexport"
                 ]
               },
               {
@@ -445,11 +461,7 @@
                 "expanded": false,
                 "pages": [
                   "api-reference/post-networkssignupaffiliate",
-                  "api-reference/put-networkssignupaffiliate",
-                  "api-reference/get-networkssignupaffiliate",
-                  "api-reference/post-networkssignupaffiliatelogin",
-                  "api-reference/post-networkssignupadvertiser",
-                  "api-reference/get-networkssignupadvertiser"
+                  "api-reference/post-networkssignupadvertiser"
                 ]
               },
               {

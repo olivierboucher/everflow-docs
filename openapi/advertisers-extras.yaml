@@ -1,0 +1,238 @@
+openapi: 3.0.3
+info:
+  title: Everflow Network API - Advertisers (Additional Endpoints)
+  description: >
+    Additional advertiser endpoints for the Everflow partner marketing platform,
+    including the patch preview/submit endpoint.
+  version: 1.0.0
+servers:
+  - description: Production Server
+    url: https://api.eflow.team/v1
+tags:
+  - name: Advertisers
+    description: Additional advertiser management endpoints.
+paths:
+  /networks/patch/advertiser/submit:
+    post:
+      summary: Advertiser Patch Preview
+      description: >
+        Preview the result of applying bulk changes to one or more advertisers
+        without actually persisting them. This is a dry-run endpoint that returns
+        what each advertiser's field would change to, any validation errors, and
+        the current value of each field.
+
+
+        Use this to validate changes before calling the apply endpoint. The response
+        includes a `changes` array showing the before/after for each advertiser,
+        and a `resource_errors` array for any IDs that could not be processed.
+
+
+        Each field to change requires a `field_type`, a `field_value` (whose type
+        depends on the field), and an `operator` that controls how the value is
+        applied.
+      tags:
+        - Advertisers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              network_advertiser_ids:
+                - 100
+                - 101
+                - 102
+              fields:
+                - field_type: "advertiser_status"
+                  field_value: "active"
+                  operator: "overwrite"
+                - field_type: "labels"
+                  field_value:
+                    - label_id: 5
+                  operator: "append"
+            schema:
+              type: object
+              required:
+                - network_advertiser_ids
+                - fields
+              properties:
+                network_advertiser_ids:
+                  type: array
+                  description: Array of advertiser IDs to preview changes for.
+                  items:
+                    type: integer
+                fields:
+                  type: array
+                  description: >
+                    Array of field changes to preview. Each item specifies a field
+                    type, the new value, and how to apply it.
+                  items:
+                    type: object
+                    required:
+                      - field_type
+                      - field_value
+                      - operator
+                    properties:
+                      field_type:
+                        type: string
+                        description: >
+                          The field to change. Available fields are grouped into
+                          General, Variables, and Billing categories.
+                        enum:
+                          - advertiser_status
+                          - account_manager_id
+                          - sales_manager_id
+                          - labels
+                          - currency
+                          - attribution_method
+                          - email_attribution_method
+                          - internal_note
+                          - verification_token
+                          - attribution_priority
+                          - advertiser_name
+                          - variables_affiliate_id
+                          - variables_affiliate
+                          - variables_sub_1
+                          - variables_sub_2
+                          - variables_sub_3
+                          - variables_sub_4
+                          - variables_sub_5
+                          - variables_source_id
+                          - billing_tax_details
+                          - billing_frequency
+                          - billing_frequency_weekly
+                          - billing_frequency_bimonthly
+                          - billing_frequency_monthly
+                          - billing_frequency_two_months
+                          - billing_frequency_quarterly
+                          - billing_auto_invoicing_auto_creation
+                          - billing_auto_invoicing_creation_amount_threshold
+                          - billing_auto_invoicing_auto_invoice_start_date
+                          - billing_auto_invoicing_generation_days_delay
+                          - billing_invoice_setting_terms_days
+                          - billing_invoice_setting_hide_from_advertiser
+                          - direct_linking_offer_id
+                          - direct_linking_affiliate_id
+                      field_value:
+                        description: >
+                          The new value for the field. The type depends on the `field_type`:
+
+                          - **String**: `advertiser_status`, `currency`, `attribution_method`,
+                            `email_attribution_method`, `attribution_priority`, `internal_note`,
+                            `advertiser_name`, `billing_frequency`, `billing_tax_details`,
+                            `billing_auto_invoicing_auto_invoice_start_date`,
+                            `direct_linking_offer_id`, `direct_linking_affiliate_id`,
+                            `verification_token`
+
+                          - **Integer**: `account_manager_id`, `sales_manager_id`,
+                            `billing_auto_invoicing_generation_days_delay`,
+                            `billing_invoice_setting_terms_days`
+
+                          - **Boolean**: All `variables_*` fields,
+                            `billing_auto_invoicing_auto_creation`,
+                            `billing_invoice_setting_hide_from_advertiser`
+
+                          - **Number**: `billing_auto_invoicing_creation_amount_threshold`
+
+                          - **Array**: `labels` (array of label objects with `label_id`)
+
+                          - **Object**: `billing_frequency_weekly`, `billing_frequency_bimonthly`,
+                            `billing_frequency_monthly`, `billing_frequency_two_months`,
+                            `billing_frequency_quarterly` (billing period configuration objects)
+                      operator:
+                        type: string
+                        description: >
+                          How to apply the value. `overwrite` replaces the current value.
+                          `append` adds to the current value (for arrays like labels).
+                          `delete` removes specific values. `clear` resets to default.
+                        enum:
+                          - overwrite
+                          - append
+                          - delete
+                          - clear
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  changes:
+                    type: array
+                    description: >
+                      Array of change previews, one per advertiser. Shows what would
+                      change if the patch were applied.
+                    items:
+                      type: object
+                      properties:
+                        network_advertiser:
+                          type: object
+                          description: Basic advertiser information.
+                          properties:
+                            network_advertiser_id:
+                              type: integer
+                            network_id:
+                              type: integer
+                            name:
+                              type: string
+                            account_status:
+                              type: string
+                              enum:
+                                - active
+                                - inactive
+                                - pending
+                                - suspended
+                        change_status:
+                          type: string
+                          description: >
+                            The result of the preview for this advertiser.
+                          enum:
+                            - ok
+                            - no_change
+                            - error
+                        current_field:
+                          type: object
+                          description: The current value of the field before the change.
+                          properties:
+                            field_type:
+                              type: string
+                            field_value: {}
+                            operator:
+                              type: string
+                        changed_field:
+                          type: object
+                          description: The value the field would change to.
+                          properties:
+                            field_type:
+                              type: string
+                            field_value: {}
+                            operator:
+                              type: string
+                        error_message:
+                          type: string
+                          description: Error message if the change would fail.
+                        related_changes:
+                          type: string
+                          description: Description of any side-effect changes.
+                  resource_errors:
+                    type: array
+                    description: >
+                      Errors for advertiser IDs that could not be processed (e.g.,
+                      invalid ID, insufficient permissions).
+                    items:
+                      type: object
+                      properties:
+                        resource_id:
+                          type: integer
+                        error_message:
+                          type: string
+      security:
+        - API Key: []
+
+components:
+  securitySchemes:
+    API Key:
+      description: The Everflow API key generated from the Control Center > Security.
+      in: header
+      name: X-Eflow-Api-Key
+      type: apiKey

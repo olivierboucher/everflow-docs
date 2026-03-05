@@ -1,0 +1,16 @@
+---
+title: Export Aggregated Reporting Data
+openapi: /openapi/reporting-exports.yaml post /networks/reporting/entity/table/export
+---
+
+Exports aggregated reporting data in CSV or JSON format. This endpoint accepts the same parameters as the [Get Aggregated Reporting Data](/api-reference/post-networksreportingentitytable) endpoint, with additional `format`, `metrics`, and `usm_columns` fields.
+
+Each request must contain:
+
+- `from` and `to` dates (format can be `YYYY-MM-DD` or `YYYY-MM-DD HH:mm:SS`)
+- The `timezone_id` used for the request
+- The `currency_id` used for the reporting metrics
+- At least one `column` to group by
+- The `format` field (`csv` or `json`)
+
+The response is a file download. The `Content-Type` header is set to `text/csv` or `application/json` and the `Content-Disposition` header includes the filename.
