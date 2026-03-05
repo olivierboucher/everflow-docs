@@ -9,6 +9,20 @@ The Everflow JavaScript SDK enables client-side tracking directly on your websit
 
 ## Installation
 
+### Via npm
+
+```bash
+npm install @everflow/everflow-sdk
+```
+
+```javascript
+import EverflowSDK from "@everflow/everflow-sdk";
+
+EverflowSDK.configure({ tracking_domain: "YOUR-TRACKING-DOMAIN.com" });
+```
+
+### Via script tag
+
 Add the SDK script tag to every page where you want to track events. Replace `YOUR-TRACKING-DOMAIN.com` with your actual Everflow tracking domain:
 
 ```html
@@ -16,6 +30,10 @@ Add the SDK script tag to every page where you want to track events. Replace `YO
 ```
 
 The script exposes the global `EF` object with methods for click tracking, conversion tracking, and impression tracking.
+
+<Card title="GitHub Repository" icon="github" href="https://github.com/everflow-io/everflow-sdk">
+  View the source code, report issues, and contribute on GitHub.
+</Card>
 
 ## Available Modules
 
